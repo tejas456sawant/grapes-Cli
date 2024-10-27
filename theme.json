@@ -1,0 +1,274 @@
+{
+  "themeoptions": {
+    "fonts": {
+      "primary": "Inter",
+      "secondary": "Poppins",
+      "scale": "1.2"
+    },
+
+    "colors": {
+      "primary": "#006D5B",
+      "primaryLight": "#009D84",
+      "primaryDark": "#004C41",
+      "textLight": "#C6D8D1",
+      "textPrimary": "#232323",
+      "textSecondary": "#555555",
+      "sectionLight": "#F7F9FC",
+      "sectionAccent1": "#B2E7D7",
+      "sectionAccent2": "#D9E7E0",
+      "sectionDark": "#001B3A",
+
+      "_description": "Defines the website's color scheme. 'primary' is the main color for buttons, gradients, links, highlights in the website. The 'primary' should not be too dark. 'primaryLight' and 'primaryDark' are shades used for hover effects. 'sectionLight' is for backgrounds of standard sections, kept white or off-white with tints that complement the primary color. 'sectionAccent1' and 'sectionAccent2' are slightly darker than 'sectionLight', leaning towards greys or tints. 'sectionDark' serves as a secondary color and for darker sections, black, closer to black or deep hues that complement 'primary'. Do not just make it a shade of the primary, give it different hues and saturations as needed. 'textLight' is for text on dark backgrounds, 'textPrimary' for headings, and 'textSecondary' for body text on lighter sections."
+    }
+  },
+
+  "components": [
+    {
+      "type": "section",
+      "attributes": {
+        "sectiontype": "dark"
+      },
+      "components": [],
+      "_description": "A component to separate different sections in the website. Use it to logically divide content, and you can nest containers and other components inside. Background attribute can have four possible values: normal, accent-1, accent-2, dark"
+    },
+    {
+      "type": "image-section",
+      "attributes": {
+        "sectiontype": "dark",
+        "imageposition": "right"
+      },
+      "components": [
+        {
+          "type": "custom-image",
+          "attributes": {
+            "src": "URL or image description",
+            "alt": "Image Description"
+          }
+        },
+        {
+          "type": "blank-component",
+          "components": [],
+          "_description": "A layout component that is just used as a wrapper around content."
+        }
+      ],
+      "_description": "A component to separate different sections in the website. Half of it will be occupied by a image relevant to the content in it. Other half will have content made of other components inside. Use it to logically divide content, and you can nest containers and other components inside. Background attribute can have four possible values: normal, accent-1, accent-2, dark. imageposition attribute changes whether the image will be left or right in the section."
+    },
+    {
+      "type": "container",
+      "components": [],
+      "_description": "A wrapper component that aligns content within a fixed-width container. Use for grouping components like images, text, or headings that require structured layout but do not stretch across the full width."
+    },
+    {
+      "type": "blank-component",
+      "components": [],
+      "_description": "A layout component that is just used as a wrapper around content. Always put this around any components inside sections and two-columns."
+    },
+    {
+      "type": "two-columns",
+      "attributes": {
+        "offset": "none"
+      },
+      "components": [
+        {
+          "type": "blank-component",
+          "components": [],
+          "_description": "A layout component that is just used as a wrapper around content. Always put this around any components inside sections and two-columns."
+        },
+        {
+          "type": "blank-component",
+          "components": [],
+          "_description": "A layout component that is just used as a wrapper around content. Always put this around any components inside sections and two-columns."
+        }
+      ],
+      "_description": "A layout component that arranges two child components into two columns. The 'offset' attribute allows for asymmetrical columns where the second column is larger (offset: 'right') or the first column is larger (offset: 'left'). Use 'none' for equal-sized columns."
+    },
+    {
+      "type": "icon",
+      "attributes": {
+        "source": "Tailwind icon classname from heroicons pack. eg: heroicons-outline-home",
+        "alt-text": "Describe the icon",
+        "size": "small"
+      },
+      "_description": "An icon component. The source defines the classname from heroicons pack. eg: heroicons-outline-home, and alt-text provides accessibility."
+    },
+
+    {
+      "type": "content-title",
+      "content": "",
+      "_description": "Title text for other sections, such as about us or services. Keep it concise, no longer than a short phrase."
+    },
+    {
+      "type": "content-subtitle",
+      "content": "",
+      "_description": "A subtitle or additional description accompanying the section title. Keep it brief and secondary in hierarchy to the heading title. Always keep it above the content-title component."
+    },
+    {
+      "type": "content-heading",
+      "content": "",
+      "_description": "heading text that will be used in content sections like cards, feature cards, services sections, etc"
+    },
+    {
+      "type": "hero-section",
+      "attributes": {
+        "bg-image": "Image Description to search from Unsplash",
+        "center-layout": "true"
+      },
+      "components": [
+        {
+          "type": "hero-section-container",
+          "components": [
+            {
+              "type": "hero-text-subtitle",
+              "content": "",
+              "_description": "Subtitle text accompanying the main hero title. Required and should provide supportive information."
+            },
+            {
+              "type": "hero-text-title",
+              "content": "",
+              "_description": "Main text for the hero section. This is required and should grab attention."
+            },
+
+            {
+              "type": "row-container",
+              "components": [],
+              "_description": "A row layout below the hero texts, typically for buttons, icons, or other small interactive elements."
+            }
+          ],
+          "_description": "A hero section with a background image and content aligned inside a container. Includes mandatory container, hero title and subtitle, and optional small interactive content below."
+        }
+      ]
+    },
+    {
+      "type": "button-primary",
+      "attributes": {
+        "link": "URL"
+      },
+      "content": "Get Started",
+      "_description": "Clickable button. Primary button that is solid primary color. Link to some page or section within the website or a third party link."
+    },
+    {
+      "type": "button-secondary",
+      "attributes": {
+        "link": "URL"
+      },
+      "content": "Get Started",
+      "_description": "Clickable button. Secondary button that is transarent and has border. Link to some page or section within the website or a third party link."
+    },
+    {
+      "type": "button-tertiary",
+      "attributes": {
+        "link": "URL"
+      },
+      "content": "Get Started",
+      "_description": "Clickable button. Tertiary button that is has an underline. Should be used in content sections, cards, etc. Link to some page or section within the website or a third party link."
+    },
+    {
+      "type": "custom-image",
+      "attributes": {
+        "src": "URL or image description",
+        "alt-text": "Describe the image"
+      },
+      "_description": "An image component. Can be used in different sections like the hero or within columns. 'source' defines the image URL or description to search from an image library, and 'alt-text' provides accessibility."
+    },
+    {
+      "type": "paragraph",
+      "attributes": {
+        "color": "primary"
+      },
+      "content": "",
+      "_description": "A text component that can be used in sections like about us, services, etc. Use this for longer form content or descriptive text. This can have any text or content made from HTML tags like <p>,<br>,<ul>,etc"
+    },
+    {
+      "type": "social-media-icons",
+      "attributes": {
+        "platforms": ["facebook", "twitter", "linkedin"]
+      },
+      "components": [],
+      "_description": "A set of social media icons. The platforms array defines which icons to show, and you can adjust the size or layout. Typically used in footers or hero sections."
+    },
+    {
+      "type": "card-list",
+      "components": [],
+      "_description": "A list component for displaying repeated  card components. Displays 3 cards per row "
+    },
+    {
+      "type": "card",
+      "components": [
+        {
+          "type": "custom-image",
+          "attributes": {
+            "src": "URL or image description",
+            "alt-text": "Describe the image"
+          },
+          "_description": "An image component for the card. 'src' defines the image URL or description to search from an image library, and 'alt-text' provides accessibility."
+        },
+        {
+          "type": "content-heading",
+          "content": "",
+          "_description": "Heading text that will be the title of the card. Keep the content such that it will take two lines at most in the card which will be 24rem in width"
+        },
+        {
+          "type": "paragraph",
+          "attributes": {
+            "color": "primary"
+          },
+          "content": "",
+          "_description": "A text component. This can have any text or content made from HTML tags like <p>,<br>,<ul>,etc. Keep the content such that it will take three lines at most in the card which will be 24rem in width while the text will be 16px font."
+        },
+        {
+          "type": "blank-component",
+          "components": [],
+          "_description": "A layout component that is just used as a wrapper around content. Put optional components of the card in here."
+        }
+      ],
+      "_description": "A card component that has a image, title and text component. You can add small interactive elements like buttons, icons, social media, etc in the blank container below the text."
+    }
+    // {
+    //   "type": "icon-card",
+    //   "attributes": {
+    //     "layout": "vertical",
+    //     "alignment": "centered"
+    //   },
+    //   "components": [
+    //     {
+    //       "type": "icon",
+    //       "attributes": {
+    //         "source": "Tailwind icon classname from heroicons pack. eg: heroicons-outline-home",
+    //         "alt-text": "Describe the icon",
+    //         "size": "small"
+    //       },
+    //       "_description": "An icon component. The source defines the classname from heroicons pack. eg: heroicons-outline-home, and alt-text provides accessibility. Size defines how large the icon will be."
+    //     },
+    //     {
+    //       "type": "title",
+    //       "content": "Card Title",
+    //       "attributes": {
+    //         "color": "text-primary"
+    //       },
+    //       "_description": "The main title of the card. Should be concise and attention-grabbing."
+    //     },
+    //     {
+    //       "type": "text-paragraph",
+    //       "content": "Optional paragraph text. This section provides more details about the card content.",
+    //       "attributes": {
+    //         "color": "text-secondary"
+    //       },
+    //       "_description": "Optional paragraph text for the card, typically used for additional details."
+    //     },
+    //     {
+    //       "type": "button",
+    //       "attributes": {
+    //         "style": "primary",
+    //         "size": "small",
+    //         "link": "/"
+    //       },
+    //       "content": "Learn More",
+    //       "_description": "An optional button for user interaction. Set its style and size attributes."
+    //     }
+    //   ],
+    //   "_description": "A card component that includes an icon (required), a title (required), an optional paragraph, and an optional small sized button. Layout can be vertical or horizontal, and alignment can be centered, left, normal. Choose the alignment and layout which would suit the overall design of the section for example a centered layout on an icon card that takes half the screen space would not look good."
+    // }
+  ],
+
+  "_rules": "Always keep subtitle components before title ccomponents so that they render above the title in the theme. paragraph component can have html tags like p,ul,li,br. Add these classes to the ul tags if used in paragraphs : `list-disc mt-2 pl-5` "
+}

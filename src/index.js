@@ -1,505 +1,545 @@
-// import loadComponents from './components';
-// import loadBlocks from './blocks';
-// import en from './locale/en';
+import loadComponents from "./components"; // Import your components definition
+import loadBlocks from "./blocks"; // Assuming you have blocks to load
+import {
+  generateWebsiteStructure,
+  loadWebsiteStructure,
+} from "./websiteStructure";
+import en from "./locale/en";
 
-const componentJson = {
-  // type: 'div',
-  // style: { margin: '20px', padding: '20px', border: '1px solid #ddd' },
-  // components: [
-  //   {
-  //     type: 'header',
-  //     components: [
-  //       {
-  //         type: 'h1',
-  //         content: 'Leading IT Services Provider - Byteplexure',
-  //         style: { color: '#333', 'margin-bottom': '10px' }
-  //       },
-  //       {
-  //         type: 'h3',
-  //         content: 'Discover Byteplexure Solutions',
-  //         style: { color: '#666', 'font-weight': '300' }
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     type: 'section',
-  //     components: [
-  //       {
-  //         type: 'h2',
-  //         content: 'Our Expertise',
-  //         style: { 'margin-top': '20px', 'margin-bottom': '10px' }
-  //       },
-  //       {
-  //         type: 'paragraph',
-  //         content: 'Byteplexure is a leading provider of IT services, offering a wide range of solutions to help businesses optimize their digital infrastructure. With expertise in cybersecurity, cloud computing, software development, and IT support, Byteplexure ensures clients stay ahead in the ever-evolving technology landscape.',
-  //         style: { 'line-height': '1.6' }
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     type: 'section',
-  //     components: [
-  //       {
-  //         type: 'h2',
-  //         content: 'Our Services',
-  //         style: { 'margin-top': '20px', 'margin-bottom': '10px' }
-  //       },
-  //       {
-  //         type: 'ul',
-  //         components: [
-  //           {
-  //             type: 'li',
-  //             content: 'Cybersecurity',
-  //             link: 'https://www.byteplexure.com/cybersecurity',
-  //             style: { 'margin-bottom': '5px' }
-  //           },
-  //           {
-  //             type: 'li',
-  //             content: 'Cloud Computing Solutions',
-  //             link: 'https://www.byteplexure.com/cloud-computing',
-  //             style: { 'margin-bottom': '5px' }
-  //           },
-  //           {
-  //             type: 'li',
-  //             content: 'Software Development',
-  //             link: 'https://www.byteplexure.com/software-development',
-  //             style: { 'margin-bottom': '5px' }
-  //           },
-  //           {
-  //             type: 'li',
-  //             content: 'IT Support Services',
-  //             link: 'https://www.byteplexure.com/it-support',
-  //             style: { 'margin-bottom': '5px' }
-  //           },
-  //           {
-  //             type: 'li',
-  //             content: 'Innovative Solutions',
-  //             link: 'https://www.byteplexure.com/innovative-solutions',
-  //             style: { 'margin-bottom': '5px' }
-  //           }
-  //         ],
-  //         style: { 'padding-left': '20px' }
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     type: 'section',
-  //     components: [
-  //       {
-  //         type: 'h2',
-  //         content: 'Portfolio',
-  //         style: { 'margin-top': '20px', 'margin-bottom': '10px' }
-  //       },
-  //       {
-  //         type: 'image',
-  //         src: 'https://images.unsplash.com/photo-1557733686-3f8641465d21?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2MjczNDh8MHwxfHNlYXJjaHwxfHxWaWV3JTIwb3VyJTIwY29tcGxldGVkJTIwcHJvamVjdHMlMjB0aGF0JTIwc2hvd2Nhc2UlMjBvdXIlMjBleHBlcnRpc2UlMjBhbmQlMjBjb21taXRtZW50JTIwdG8lMjBxdWFsaXR5LnxlbnwwfHx8fDE3MjU3Mzk0MzF8MA&ixlib=rb-4.0.3&q=80&w=1080',
-  //         alt: 'Portfolio of Successful Projects',
-  //         style: { 'margin-bottom': '20px', width: '100%' }
-  //       },
-  //       {
-  //         type: 'paragraph',
-  //         content: 'View our completed projects that showcase our expertise and commitment to quality.',
-  //         style: { 'line-height': '1.6' }
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     type: 'footer',
-  //     components: [
-  //       {
-  //         type: 'paragraph',
-  //         content: '© 2024 Byteplexure. All rights reserved.',
-  //         style: { 'margin-top': '20px', 'font-size': '0.9em', color: '#888' }
-  //       }
-  //     ]
-  //   }
-  // ]
-};
-
-// const addEditableComponent = (editor) => {
-//   editor.DomComponents.addType('my-editable-component', {
-//     model: {
-//       defaults: {
-//         ...componentJson,
-//         droppable: true,
-//         editable: true,
-//       }
-//     },
-//     view: {
-//       onRender({ el }) {
-//         el.contentEditable = true;
-//       }
-//     }
-//   });
-// };
-
-// export default (editor, opts = {}) => {
-//   const options = { ...{
-//     i18n: {},
-//     // default options
-//   },  ...opts };
-
-//   // Add components
-//   loadComponents(editor, options);
-//   // Add blocks
-//   loadBlocks(editor, options);
-//   // Load i18n files
-//   editor.I18n && editor.I18n.addMessages({
-//       en,
-//       ...options.i18n,
-//   });
-
-//   // Add the editable component
-//   addEditableComponent(editor);
-
-//   // Add the component to the canvas when the editor loads
-//   editor.on('load', () => {
-//     editor.addComponents({
-//       type: 'my-editable-component'
-//     });
-//   })
-
-  
-// };
-
-// import loadComponents from './components';
-// import loadBlocks from './blocks';
-// import en from './locale/en';
-
-// // Function to fetch the component JSON dynamically
-// const fetchComponentJson = async () => {
-//   try {
-//     const response = await fetch('http://localhost:5000/api/users/website/create',
-//       {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MjU4MjU5ODIsImV4cCI6MTcyNTgyNjA0MiwianRpIjoiYWZlNjA3MjUtZGRlNC00MjM2LWJiYjgtOGI5MzhiNDIzNDQzIiwiaWQiOjIsInJscyI6InVzZXIiLCJyZl9leHAiOjE3MjU4MjYwNDJ9.E71YQT2eQVHojfyWNFNYjwgAHd96cNF4g-eB1VV_2SM'
-//         },
-//         body: JSON.stringify({
-//           template: 'default'
-//         })
-//       }
-//     ); // Use your API endpoint
-//     console.log(response);
-//     if (!response.ok) {
-//       throw new Error('Failed to fetch component JSON');
-//     }
-//     return await response.json();
-//   } catch (error) {
-//     console.error(error);
-//     return null;
-//   }
-// };
-// const componentJson = {
-//   type: 'div',
-//   style: { margin: '20px', padding: '20px', border: '1px solid #ddd' },
-//   components: [
-//     {
-//       type: 'header',
-//       components: [
-//         {
-//           type: 'h1',
-//           content: 'Leading IT Services Provider - Byteplexure',
-//           style: { color: '#333', 'margin-bottom': '10px' }
-//         },
-//         {
-//           type: 'h3',
-//           content: 'Discover Byteplexure Solutions',
-//           style: { color: '#666', 'font-weight': '300' }
-//         }
-//       ]
-//     },
-//     {
-//       type: 'section',
-//       components: [
-//         {
-//           type: 'h2',
-//           content: 'Our Expertise',
-//           style: { 'margin-top': '20px', 'margin-bottom': '10px' }
-//         },
-//         {
-//           type: 'paragraph',
-//           content: 'Byteplexure is a leading provider of IT services, offering a wide range of solutions to help businesses optimize their digital infrastructure. With expertise in cybersecurity, cloud computing, software development, and IT support, Byteplexure ensures clients stay ahead in the ever-evolving technology landscape.',
-//           style: { 'line-height': '1.6' }
-//         }
-//       ]
-//     },
-//     {
-//       type: 'section',
-//       components: [
-//         {
-//           type: 'h2',
-//           content: 'Our Services',
-//           style: { 'margin-top': '20px', 'margin-bottom': '10px' }
-//         },
-//         {
-//           type: 'ul',
-//           components: [
-//             {
-//               type: 'li',
-//               content: 'Cybersecurity',
-//               link: 'https://www.byteplexure.com/cybersecurity',
-//               style: { 'margin-bottom': '5px' }
-//             },
-//             {
-//               type: 'li',
-//               content: 'Cloud Computing Solutions',
-//               link: 'https://www.byteplexure.com/cloud-computing',
-//               style: { 'margin-bottom': '5px' }
-//             },
-//             {
-//               type: 'li',
-//               content: 'Software Development',
-//               link: 'https://www.byteplexure.com/software-development',
-//               style: { 'margin-bottom': '5px' }
-//             },
-//             {
-//               type: 'li',
-//               content: 'IT Support Services',
-//               link: 'https://www.byteplexure.com/it-support',
-//               style: { 'margin-bottom': '5px' }
-//             },
-//             {
-//               type: 'li',
-//               content: 'Innovative Solutions',
-//               link: 'https://www.byteplexure.com/innovative-solutions',
-//               style: { 'margin-bottom': '5px' }
-//             }
-//           ],
-//           style: { 'padding-left': '20px' }
-//         }
-//       ]
-//     },
-//     {
-//       type: 'section',
-//       components: [
-//         {
-//           type: 'h2',
-//           content: 'Portfolio',
-//           style: { 'margin-top': '20px', 'margin-bottom': '10px' }
-//         },
-//         {
-//           type: 'image',
-//           src: 'https://images.unsplash.com/photo-1557733686-3f8641465d21?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2MjczNDh8MHwxfHNlYXJjaHwxfHxWaWV3JTIwb3VyJTIwY29tcGxldGVkJTIwcHJvamVjdHMlMjB0aGF0JTIwc2hvd2Nhc2UlMjBvdXIlMjBleHBlcnRpc2UlMjBhbmQlMjBjb21taXRtZW50JTIwdG8lMjBxdWFsaXR5LnxlbnwwfHx8fDE3MjU3Mzk0MzF8MA&ixlib=rb-4.0.3&q=80&w=1080',
-//           alt: 'Portfolio of Successful Projects',
-//           style: { 'margin-bottom': '20px', width: '100%' }
-//         },
-//         {
-//           type: 'paragraph',
-//           content: 'View our completed projects that showcase our expertise and commitment to quality.',
-//           style: { 'line-height': '1.6' }
-//         }
-//       ]
-//     },
-//     {
-//       type: 'footer',
-//       components: [
-//         {
-//           type: 'paragraph',
-//           content: '© 2024 Byteplexure. All rights reserved.',
-//           style: { 'margin-top': '20px', 'font-size': '0.9em', color: '#888' }
-//         }
-//       ]
-//     }
-//   ]
-// };
-
-// const addEditableComponent = (editor, componentJson) => {
-//   editor.DomComponents.addType('my-editable-component', {
-//     model: {
-//       defaults: {
-//         ...componentJson,
-//         droppable: true,
-//         editable: true,
-//       }
-//     },
-//     view: {
-//       onRender({ el }) {
-//         el.contentEditable = true;
-//       }
-//     }
-//   });
-// };
-
-// export default async (editor, opts = {}) => {
-//   const options = { 
-//     i18n: {},
-//     ...opts 
-//   };
-
-//   // Add components
-//   loadComponents(editor, options);
-//   // Add blocks
-//   loadBlocks(editor, options);
-//   // Load i18n files
-//   editor.I18n && editor.I18n.addMessages({
-//       en,
-//       ...options.i18n,
-//   });
-
-//   // Fetch the dynamic component JSON
-//   const componentJson = await fetchComponentJson();
-
-//   if (componentJson) {
-//     // Add the editable component with the fetched JSON
-//     addEditableComponent(editor, componentJson);
-
-//     // Add the component to the canvas when the editor loads
-//     editor.on('load', () => {
-//       editor.addComponents({
-//         type: 'my-editable-component'
-//       });
-//     });
-//   } else {
-//     console.error('Component JSON could not be fetched.');
-//   }
-// };
-
-import loadComponents from './components';
-import loadBlocks from './blocks';
-import en from './locale/en';
-
-// Function to fetch the component JSON dynamically from IndexedDB
-const openDatabase = () => {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open('WebsiteGeneratorDB', 1);
-
-    request.onerror = (event) => {
-      console.error('IndexedDB error:', event.target.error);
-      reject(event.target.error);
-    };
-
-    request.onsuccess = (event) => {
-      const db = event.target.result;
-      resolve(db);
-     
-    };
-
-
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
-      if (!db.objectStoreNames.contains('websiteData')) {
-        db.createObjectStore('websiteData', { keyPath: 'id', autoIncrement: true });
-        console.log('Created object store: websiteData');
-      }
-    };
-  });
-};
-
-const getWebsiteData = async () => {
-  try {
-    const db = await openDatabase();
-
-    if (db.objectStoreNames.contains('websiteData')) {
-      const transaction = db.transaction(['websiteData'], 'readonly');
-      const store = transaction.objectStore('websiteData');
-      const request = store.getAll();
-      const getAllKeysRequest = objectStore.getAllKeys();
-      // const getAllKeysRequest = objectStore.getAllKeys();
-      getAllKeysRequest.onsuccess = function() {
-        console.log('Keys:', getAllKeysRequest.result); // Access the keys (from the # column)
-      };
-      getAllKeysRequest.onerror = function() {
-      console.error('Error retrieving keys');
-     };
-    // const transaction = db.transaction(['websiteData'], 'readonly');
-    //     const store = transaction.objectStore('websiteData');
-
-        // // Get all keys from the object store
-        // const getAllKeysRequest = store.getAllKeys();
-
-        // getAllKeysRequest.onsuccess = function() {
-        //     console.log('Keys:', getAllKeysRequest.result); // Access the keys (from the # column)
-        // };
-
-        // getAllKeysRequest.onerror = function() {
-        //     console.error('Error retrieving keys');
-        // };
-
-      return new Promise((resolve, reject) => {
-        request.onsuccess = (event) => {
-          //
-          console.log('Website data from IndexedDB jiyan:', event.target.result[0]['apiResponse']);
-          //convert the event.target.result to json
-          // const json = JSON.stringify(event.target.result);
-          // console.log('Website data from IndexedDB:', json);
-
-          resolve(event.target.result); // Return the data from IndexedDB
-         
-
-        };
-
-        request.onerror = (event) => {
-          console.error('Error fetching data from IndexedDB:', event.target.error);
-          reject(event.target.error);
-        };
-      });
-    } else {
-      console.error('Object store "websiteData" not found');
-      return [];
-    }
-  } catch (error) {
-    console.error('Error accessing IndexedDB:', error);
-    return [];
-  }
-};
-
-const addEditableComponent = (editor, componentJson) => {
-  editor.DomComponents.addType('my-editable-component', {
-    model: {
-      defaults: {
-        ...componentJson, // Use the dynamically fetched componentJson
-        droppable: true,
-        editable: true,
-      }
-    },
-    view: {
-      onRender({ el }) {
-        el.contentEditable = true;
-      }
-    }
-  });
-};
-
-export default async (editor, opts = {}) => {
-  const options = { 
+export default (editor, opts = {}) => {
+  const options = {
     i18n: {},
-    ...opts 
+    ...opts,
   };
 
-  // Add components
-  loadComponents(editor, options);
+  // Register components
+  loadComponents(editor);
+
   // Add blocks
   loadBlocks(editor, options);
+
   // Load i18n files
-  editor.I18n && editor.I18n.addMessages({
+  editor.I18n &&
+    editor.I18n.addMessages({
       en,
       ...options.i18n,
-  });
+    });
 
-  // Access the IndexedDB data when the editor loads
-  editor.on('load', async () => {
-    console.log("inside load event");
+  // Example JSON data mapping to existing components
+  const websiteData = {
+    themeoptions: {
+      fonts: {
+        primary: "Arial",
+        secondary: "Helvetica",
+        scale: "1.2",
+      },
+      "colors": {
+        "primary": "#A67C52",  // Warm, luxurious tone for primary elements like buttons and highlights.
+        "primaryLight": "#C2986E",  // Lighter, warm shade for interactive elements (hover effects).
+        "primaryDark": "#8C643F",  // Rich, deeper tone for contrast in interactive elements.
+        "textLight": "#EDE3D9",  // Light, refined text for dark backgrounds, soft for elegance.
+        "textPrimary": "#2B2B2B",  // Dark, classic tone for headings and main text.
+        "textSecondary": "#5D5D5D",  // Softer grey for body text on light backgrounds.
+        "sectionLight": "#FAF8F5",  // Elegant off-white for clean, welcoming sections.
+        "sectionAccent1": "#E4D7C7",  // Subtle, warm beige for a gentle contrast on light sections.
+        "sectionAccent2": "#F1E9DC",  // Very light, soft neutral for depth without overpowering.
+        "sectionDark": "#1F1A17"  // Deep, almost black shade with warm undertones for luxurious dark sections.
+      },
+    },
+    components: [
+      {
+        type: "hero-section",
+        attributes: {
+          "bg-image":
+            "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c29mdHdhcmUlMjBkZXZlbG9wbWVudCUyMGNvbXBhbnl8ZW58MHx8MHx8fDA%3D",
+          centerLayout: false,
+        },
+        components: [
+          {
+            type: "hero-section-container",
+            components: [
+              {
+                type: "hero-text-subtitle",
+                attributes: {
+                  content:
+                    "An extraordinary world imagine by Byteplexure & partners",
+                },
+              },
+              {
+                type: "hero-text-title",
+                content: "A Stunning Heaven to Call Home.",
+              },
+              {
+                type: "row-container",
+                components: [
+                  {
+                    type: "button-primary",
+                    attributes: { content: "Our Portfolio" },
+                  },
+                  {
+                    type: "button-primary",
+                    attributes: { content: "Contact Us →" },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
 
-    // Fetch the data from IndexedDB
-    const storedData = await getWebsiteData();
-    
-    if (storedData && storedData.length > 0) {
-      console.log('Stored data retrieved:', storedData);
-      
-      // Assuming the first entry in IndexedDB has the componentJson you need
-      const componentJson = storedData[0]['apiResponse']; 
-      
-      // Add the editable component with the fetched JSON
-      addEditableComponent(editor, componentJson);
+      {
+        type: "section",
+        components: [
+          {
+            type: "container",
+            components: [
+              {
+                type: "content-subtitle",
+                content: "Features",
+              },
+              {
+                type: "content-title",
+                content: "What makes a home?",
+              },
+              {
+                type: "two-columns",
+                attributes: {
+                  offset: "left",
+                },
+                components: [
+                  {
+                    type: "blank-container",
+                    components: [
+                      {
+                        type: "paragraph",
+                        content: `<p>This attractive new neighbourhood for young families and active people delivers fresh contemporary living with numerous free-time opportunities.<br>Ovocne sady’s high- quality and practical apartments with functional architecture, public spaces, and excellent options for sport and relaxation – all just steps from your new home.
+                          <ul class="list-disc mt-2 pl-5">
+  <li>Open floor plan for spaciousness</li>
+  <li>High ceilings to enhance natural light</li>
+  <li>Stylish lighting fixtures for ambiance</li>
+  <li>Quality hardwood flooring</li>
+  <li>Custom cabinetry for storage</li>
+  <li>Modern kitchen appliances</li>
+  <li>Elegant countertops (granite, quartz, etc.)</li></ul>
+                          </p>`,
+                      },
+                    ],
+                  },
 
-      // Add the component to the canvas
-      editor.addComponents({
-        type: 'my-editable-component'
-      });
-    } else {
-      console.error('No data found in IndexedDB.');
-    }
+                  {
+                    type: "blank-container",
+                    components: [
+                      {
+                        type: "visuals-full-image",
+                        content: " ",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: "image-section",
+        attributes: {
+          sectiontype: "accent-1",
+          direction: "left",
+        },
+        components: [
+          {
+            type: "custom-image",
+            attributes: {
+              sectiontype: "accent-1",
+              src: "https://www.decormyplace.co.in/uploaded-files/page-images/image25.jpg",
+            },
+          },
+          {
+            type: "blank-container",
+            components: [
+              {
+                type: "content-subtitle",
+                content: "Features",
+              },
+              {
+                type: "content-title",
+                content: "What makes a home?",
+              },
+              {
+                type: "paragraph",
+                content: `<p>This attractive new neighbourhood for young families and active people delivers fresh contemporary living with numerous free-time opportunities.<br>Ovocne sady’s high- quality and practical apartments with functional architecture, public spaces, and excellent options for sport and relaxation – all just steps from your new home.
+
+                </p>`,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: "image-section",
+        attributes: {
+          sectiontype: "accent-2",
+          direction: "right",
+        },
+        components: [
+          {
+            type: "custom-image",
+            attributes: {
+              sectiontype: "accent-1",
+              src: "https://chateau.qodeinteractive.com/wp-content/uploads/2023/01/main-home-img1.jpg",
+            },
+          },
+          {
+            type: "blank-container",
+            components: [
+              {
+                type: "content-subtitle",
+                content: "Services",
+              },
+              {
+                type: "content-title",
+                content: "Our Services are the best in the world",
+              },
+              {
+                type: "paragraph",
+                content: `<p>This attractive new neighbourhood for young families and active people delivers fresh contemporary living with numerous free-time opportunities.<br>Ovocne sady’s high- quality and practical apartments with functional architecture, public spaces, and excellent options for sport and relaxation – all just steps from your new home.
+
+                </p>`,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: "section",
+        attributes: {
+          sectiontype: "dark",
+        },
+        components: [
+          {
+            type: "container",
+            components: [
+              {
+                type: "content-subtitle",
+                content: "Features",
+              },
+              {
+                type: "content-title",
+                content: "What makes a home?",
+              },
+              {
+                type: "card-list",
+                attributes: {
+                  layout: "grid",
+                },
+
+                components: [
+                  {
+                    type: "card",
+                    attributes: {
+                      sectiontype: "",
+                    },
+                    components: [
+                      {
+                        type: "custom-image",
+                        attributes: {
+                          src: "https://statusneo.com/wp-content/uploads/2023/02/MicrosoftTeams-image551ad57e01403f080a9df51975ac40b6efba82553c323a742b42b1c71c1e45f1.jpg",
+                        },
+                      },
+                      {
+                        type: "content-heading",
+                        content: "Henry C. Turner Prize for Innovation",
+                      },
+                      {
+                        type: "paragraph",
+                        content:
+                          "The sun collectors, shall provide the electricity of the social areas of the site and shall do its part for protecting the environment.",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };  
+  // const websiteData = {
+  //   themeoptions: {
+  //     fonts: {
+  //       primary: "Arial",
+  //       secondary: "Helvetica",
+  //       scale: "1.2",
+  //     },
+  //     colors: {
+  //       primary: "#FF5722",
+  //       primaryLight: "#FF7D4D",
+  //       primaryDark: "#C63D00",
+  //       textLight: "#FFFFFF",
+  //       textPrimary: "#212121",
+  //       textSecondary: "#757575",
+  //       sectionLight: "#F5F5F5",
+  //       sectionAccent1: "#E0E0E0",
+  //       sectionAccent2: "#BDBDBD",
+  //       sectionDark: "#424242",
+  //     },
+  //   },
+  //   components: [
+  //     {
+  //       type: "hero-section",
+  //       attributes: {
+  //         "bg-image": "Image Description to search from Unsplash",
+  //         "center-layout": "true",
+  //       },
+  //       components: [
+  //         {
+  //           type: "hero-text-title",
+  //           content: "Welcome to Our Website",
+  //           _description:
+  //             "Main text for the hero section. This is required and should grab attention.",
+  //         },
+  //         {
+  //           type: "hero-text-subtitle",
+  //           content: "Your journey begins here.",
+  //           _description:
+  //             "Subtitle text accompanying the main hero title. Required and should provide supportive information.",
+  //         },
+  //         {
+  //           type: "row-container",
+  //           components: [
+  //             {
+  //               type: "button-primary",
+  //               attributes: {
+  //                 link: "#",
+  //               },
+  //               content: "Get Started",
+  //               _description:
+  //                 "Clickable button. Primary button that is solid primary color.",
+  //             },
+  //             {
+  //               type: "button-secondary",
+  //               attributes: {
+  //                 link: "#",
+  //               },
+  //               content: "Learn More",
+  //               _description:
+  //                 "Clickable button. Secondary button that is transparent and has a border.",
+  //             },
+  //           ],
+  //           _description:
+  //             "A row layout below the hero texts, typically for buttons, icons, or other small interactive elements.",
+  //         },
+  //       ],
+  //       _description:
+  //         "A hero section with a background image and content aligned inside a container.",
+  //     },
+  //     {
+  //       type: "section",
+  //       attributes: {
+  //         sectiontype: "dark",
+  //       },
+  //       components: [
+  //         {
+  //           type: "container",
+  //           components: [
+  //             {
+  //               type: "content-title",
+  //               content: "Our Services",
+  //               _description:
+  //                 "Title text for other sections, such as about us or services.",
+  //             },
+  //             {
+  //               type: "content-subtitle",
+  //               content: "What we offer to our clients.",
+  //               _description:
+  //                 "A subtitle or additional description accompanying the section title.",
+  //             },
+  //             {
+  //               type: "card-list",
+  //               components: [
+  //                 {
+  //                   type: "card",
+  //                   components: [
+  //                     {
+  //                       type: "custom-image",
+  //                       attributes: {
+  //                         src: "URL or image description",
+  //                         "alt-text": "Service 1 Image",
+  //                       },
+  //                     },
+  //                     {
+  //                       type: "content-heading",
+  //                       content: "Service 1",
+  //                       _description:
+  //                         "Heading text that will be used in content sections like cards, feature cards, services sections, etc.",
+  //                     },
+  //                     {
+  //                       type: "paragraph",
+  //                       attributes: {
+  //                         color: "primary",
+  //                       },
+  //                       content: "Description of Service 1.",
+  //                       _description:
+  //                         "A text component that can be used in sections like about us, services, etc.",
+  //                     },
+  //                     {
+  //                       type: "blank-component",
+  //                       components: [],
+  //                     },
+  //                   ],
+  //                   _description:
+  //                     "A card component that has a image, title and text component.",
+  //                 },
+  //                 {
+  //                   type: "card",
+  //                   components: [
+  //                     {
+  //                       type: "custom-image",
+  //                       attributes: {
+  //                         src: "URL or image description",
+  //                         "alt-text": "Service 2 Image",
+  //                       },
+  //                     },
+  //                     {
+  //                       type: "content-heading",
+  //                       content: "Service 2",
+  //                       _description:
+  //                         "Heading text that will be used in content sections like cards, feature cards, services sections, etc.",
+  //                     },
+  //                     {
+  //                       type: "paragraph",
+  //                       attributes: {
+  //                         color: "primary",
+  //                       },
+  //                       content: "Description of Service 2.",
+  //                       _description:
+  //                         "A text component that can be used in sections like about us, services, etc.",
+  //                     },
+  //                     {
+  //                       type: "blank-component",
+  //                       components: [],
+  //                     },
+  //                   ],
+  //                   _description:
+  //                     "A card component that has a image, title and text component.",
+  //                 },
+  //                 {
+  //                   type: "card",
+  //                   components: [
+  //                     {
+  //                       type: "custom-image",
+  //                       attributes: {
+  //                         src: "URL or image description",
+  //                         "alt-text": "Service 3 Image",
+  //                       },
+  //                     },
+  //                     {
+  //                       type: "content-heading",
+  //                       content: "Service 3",
+  //                       _description:
+  //                         "Heading text that will be used in content sections like cards, feature cards, services sections, etc.",
+  //                     },
+  //                     {
+  //                       type: "paragraph",
+  //                       attributes: {
+  //                         color: "primary",
+  //                       },
+  //                       content: "Description of Service 3.",
+  //                       _description:
+  //                         "A text component that can be used in sections like about us, services, etc.",
+  //                     },
+  //                     {
+  //                       type: "blank-component",
+  //                       components: [],
+  //                     },
+  //                   ],
+  //                   _description:
+  //                     "A card component that has a image, title and text component.",
+  //                 },
+  //               ],
+  //               _description:
+  //                 "A list component for displaying repeated card components.",
+  //             },
+  //           ],
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       type: "section",
+  //       attributes: {
+  //         sectiontype: "dark",
+  //       },
+  //       components: [
+  //         {
+  //           type: "image-section",
+  //           attributes: {
+  //             sectiontype: "dark",
+  //             imageposition: "right",
+  //           },
+  //           components: [
+  //             {
+  //               type: "custom-image",
+  //               attributes: {
+  //                 src: "URL or image description",
+  //                 alt: "Image Description",
+  //               },
+  //             },
+  //             {
+  //               type: "blank-component",
+  //               components: [],
+  //             },
+  //           ],
+  //           _description:
+  //             "A component to separate different sections in the website. Half of it will be occupied by an image relevant to the content.",
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       type: "section",
+  //       attributes: {
+  //         sectiontype: "dark",
+  //       },
+  //       components: [
+  //         {
+  //           type: "container",
+  //           components: [
+  //             {
+  //               type: "content-title",
+  //               content: "Get in Touch",
+  //               _description:
+  //                 "Title text for other sections, such as about us or services.",
+  //             },
+  //             {
+  //               type: "content-subtitle",
+  //               content: "We're here to help.",
+  //               _description:
+  //                 "A subtitle or additional description accompanying the section title.",
+  //             },
+  //             {
+  //               type: "social-media-icons",
+  //               attributes: {
+  //                 platforms: ["facebook", "twitter", "linkedin"],
+  //               },
+  //               components: [],
+  //               _description: "A set of social media icons.",
+  //             },
+  //           ],
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // };
+  console.log("Components and blocks loaded");
+
+  // Generate the website structure
+  const websiteStructure = generateWebsiteStructure(editor, websiteData);
+
+  // Load the website structure into GrapeJS
+  editor.on("load", () => {
+    // Call your function here, ensuring the editor is ready
+
+    loadWebsiteStructure(editor, websiteStructure);
   });
 };
