@@ -46,7 +46,7 @@
           }
         },
         {
-          "type": "blank-component",
+          "type": "blank-container",
           "components": [],
           "_description": "A layout component that is just used as a wrapper around content."
         }
@@ -59,7 +59,7 @@
       "_description": "A wrapper component that aligns content within a fixed-width container. Use for grouping components like images, text, or headings that require structured layout but do not stretch across the full width."
     },
     {
-      "type": "blank-component",
+      "type": "blank-container",
       "components": [],
       "_description": "A layout component that is just used as a wrapper around content. Always put this around any components inside sections and two-columns."
     },
@@ -70,12 +70,12 @@
       },
       "components": [
         {
-          "type": "blank-component",
+          "type": "blank-container",
           "components": [],
           "_description": "A layout component that is just used as a wrapper around content. Always put this around any components inside sections and two-columns."
         },
         {
-          "type": "blank-component",
+          "type": "blank-container",
           "components": [],
           "_description": "A layout component that is just used as a wrapper around content. Always put this around any components inside sections and two-columns."
         }
@@ -172,9 +172,6 @@
     },
     {
       "type": "paragraph",
-      "attributes": {
-        "color": "primary"
-      },
       "content": "",
       "_description": "A text component that can be used in sections like about us, services, etc. Use this for longer form content or descriptive text. This can have any text or content made from HTML tags like <p>,<br>,<ul>,etc"
     },
@@ -209,14 +206,11 @@
         },
         {
           "type": "paragraph",
-          "attributes": {
-            "color": "primary"
-          },
           "content": "",
           "_description": "A text component. This can have any text or content made from HTML tags like <p>,<br>,<ul>,etc. Keep the content such that it will take three lines at most in the card which will be 24rem in width while the text will be 16px font."
         },
         {
-          "type": "blank-component",
+          "type": "blank-container",
           "components": [],
           "_description": "A layout component that is just used as a wrapper around content. Put optional components of the card in here."
         }
