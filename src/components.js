@@ -208,28 +208,28 @@ export default (editor, options) => {
       },
 
       updateDirection() {
-          const children = this.get('components'); // Get all child components
-          if (children.length >= 2) {
-            const firstChild = children.at(0); // First child (Image)
-            const secondChild = children.at(1); // Second child (Container)
-        
-            // Determine the direction to set order classes
-            const direction = this.get("attributes")["direction"] || "left"; // Default direction is left
-        
-            // Remove existing order classes
-            firstChild.removeClass('order-1 order-2');
-            secondChild.removeClass('order-1 order-2');
-        
-            // Assign order classes based on direction
-            if (direction === "left") {
-              firstChild.addClass('order-1'); // Image gets order-1
-              secondChild.addClass('order-2'); // Container gets order-2
-            } else if (direction === "right") {
-              firstChild.addClass('order-2'); // Image gets order-2
-              secondChild.addClass('order-1'); // Container gets order-1
-            }
+        const children = this.get("components"); // Get all child components
+        if (children.length >= 2) {
+          const firstChild = children.at(0); // First child (Image)
+          const secondChild = children.at(1); // Second child (Container)
+
+          // Determine the direction to set order classes
+          const direction = this.get("attributes")["direction"] || "left"; // Default direction is left
+
+          // Remove existing order classes
+          firstChild.removeClass("order-1 order-2");
+          secondChild.removeClass("order-1 order-2");
+
+          // Assign order classes based on direction
+          if (direction === "left") {
+            firstChild.addClass("order-1"); // Image gets order-1
+            secondChild.addClass("order-2"); // Container gets order-2
+          } else if (direction === "right") {
+            firstChild.addClass("order-2"); // Image gets order-2
+            secondChild.addClass("order-1"); // Container gets order-1
           }
-        },
+        }
+      },
 
       updateSectionType() {
         const sectionType = this.get("attributes")["sectiontype"] || "normal"; // Get the current attribute for section type
@@ -811,7 +811,86 @@ export default (editor, options) => {
         container.trigger("change:classes");
       },
     },
+    view: {
+      ...withEditButton,
+      // Custom click handler for hero section
+      onEditButtonClick(e) {
+        console.log("Hero section edit button clicked");
+        // Add your custom edit logic here
+      },
+    },
   });
+
+  const withEditButton = {
+    init() {
+      this.handleHover = this.handleHover.bind(this);
+      this.handleMouseLeave = this.handleMouseLeave.bind(this);
+    },
+
+    onRender() {
+      this.el.addEventListener("mouseover", this.handleHover);
+      this.el.addEventListener("mouseleave", this.handleMouseLeave);
+    },
+
+    createEditButton() {
+      const btn = document.createElement("button");
+      btn.className =
+        "gjs-edit-btn text-gray-900 border-gray-300 bg-white absolute bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px] z-10";
+      btn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
+          <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z"></path>
+        </svg>
+      `;
+      return btn;
+    },
+
+    handleHover(e) {
+      e.stopPropagation();
+      const editor = this.em.get("Editor");
+
+      // Remove any existing edit buttons
+      const existing = editor.getContainer().querySelector(".gjs-edit-btn");
+      if (existing) existing.remove();
+
+      const btn = this.createEditButton();
+
+      // Position the button relative to the component
+      const rect = this.el.getBoundingClientRect();
+
+      btn.style.position = "fixed";
+      btn.style.top = `${rect.top + rect.height / 2 - 15}px`;
+      btn.style.left = `${rect.right - 35}px`;
+
+      // Add click handler
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        // Allow custom click handler if provided
+        if (typeof this.onEditButtonClick === "function") {
+          this.onEditButtonClick(e);
+        }
+      });
+
+      // Add to editor
+      editor.getContainer().appendChild(btn);
+    },
+
+    handleMouseLeave(e) {
+      const relatedTarget = e.relatedTarget;
+      if (!relatedTarget?.closest(".gjs-edit-btn")) {
+        const editor = this.em.get("Editor");
+        const btn = editor.getContainer().querySelector(".gjs-edit-btn");
+        if (btn) btn.remove();
+      }
+    },
+
+    remove() {
+      this.el.removeEventListener("mouseover", this.handleHover);
+      this.el.removeEventListener("mouseleave", this.handleMouseLeave);
+      const editor = this.em.get("Editor");
+      const btn = editor.getContainer().querySelector(".gjs-edit-btn");
+      if (btn) btn.remove();
+    },
+  };
   editor.DomComponents.addType("navbar", {
     model: {
       defaults: {
