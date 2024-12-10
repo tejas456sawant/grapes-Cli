@@ -100,7 +100,7 @@ function loadWebsiteStructure(editor, websiteStructure) {
   // Create a body wrapper component
   const bodyWrapper = {
     type: "body",
-    components: websiteStructure.components, 
+    components: websiteStructure.components,
   };
 
   // Apply CSS styles from websiteStructure
