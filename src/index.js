@@ -289,6 +289,138 @@ export default (editor, opts = {}) => {
         ],
       },
       {
+        type: "video-section",
+        components: [
+          {
+            type: "container",
+            attributes: {
+              class: "container mx-auto px-6 max-w-[90%]"
+            },
+            components: [
+              {
+                type: "content-subtitle",
+                content: "Featured Video",
+                attributes: {
+                  class: "text-center mb-6 text-2xl text-rose-500 font-semibold tracking-wide uppercase"
+                }
+              },
+              {
+                type: "content-title",
+                content: "Watch Our Story",
+                attributes: {
+                  class: "text-center mb-12 text-5xl md:text-6xl font-bold text-white"
+                }
+              },
+              {
+                tagName: 'div',
+                attributes: {
+                  class: 'w-full aspect-video rounded-xl overflow-hidden shadow-2xl border-4 border-white/5'
+                },
+                content: `
+                  <video 
+                    class="w-full h-full object-cover"
+                    controls
+                    playsinline
+                    src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4"
+                  >
+                    <source src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                  </video>
+                `
+              }
+            ]
+          }
+        ],
+        attributes: {
+          class: 'video-section bg-gray-900 py-32 w-full overflow-hidden'
+        }
+      },
+      {
+        type: "map-section",
+        components: [
+          {
+            type: "container",
+            attributes: {
+              class: "container mx-auto px-6 max-w-[90%]"
+            },
+            components: [
+              {
+                type: "content-subtitle",
+                content: "Our Location",
+                attributes: {
+                  class: "text-center mb-6 text-2xl text-rose-500 font-semibold tracking-wide uppercase"
+                }
+              },
+              {
+                type: "content-title",
+                content: "Visit Our Office Today",
+                attributes: {
+                  class: "text-center mb-12 text-5xl md:text-6xl font-bold text-white"
+                }
+              },
+              {
+                tagName: 'div',
+                attributes: {
+                  class: 'w-full aspect-[21/9] min-h-[900px] overflow-hidden shadow-2xl rounded-xl border-4 border-white/5'
+                },
+                content: `
+                  <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.1422937950147!2d-73.98731968524056!3d40.757977142857454!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes+Square!5e0!3m2!1sen!2sus!4v1510579767190" 
+                    width="100%" 
+                    height="100%" 
+                    style="border:0; filter: contrast(1.2) saturate(1.1);" 
+                    allowfullscreen
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                  ></iframe>
+                `
+              },
+              {
+                tagName: 'div',
+                attributes: {
+                  class: 'container mx-auto grid md:grid-cols-3 gap-12 mt-20 text-center px-6'
+                },
+                components: [
+                  {
+                    tagName: 'div',
+                    attributes: {
+                      class: 'bg-white/5 p-10 rounded-2xl hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-1'
+                    },
+                    content: `
+                      <h3 class="text-3xl font-bold text-white mb-4">Address</h3>
+                      <p class="text-gray-300 text-xl leading-relaxed">123 Business Street<br>New York, NY 10001</p>
+                    `
+                  },
+                  {
+                    tagName: 'div',
+                    attributes: {
+                      class: 'bg-white/5 p-10 rounded-2xl hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-1'
+                    },
+                    content: `
+                      <h3 class="text-3xl font-bold text-white mb-4">Contact</h3>
+                      <p class="text-gray-300 text-xl leading-relaxed">Phone: (555) 123-4567<br>Email: contact@byteplexure.com</p>
+                    `
+                  },
+                  {
+                    tagName: 'div',
+                    attributes: {
+                      class: 'bg-white/5 p-10 rounded-2xl hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-1'
+                    },
+                    content: `
+                      <h3 class="text-3xl font-bold text-white mb-4">Hours</h3>
+                      <p class="text-gray-300 text-xl leading-relaxed">Mon-Fri: 9:00 AM - 6:00 PM<br>Sat-Sun: Closed</p>
+                    `
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        attributes: {
+          class: 'map-section bg-gray-900 py-32 w-full overflow-hidden'
+        }
+      },
+      {
         type: "footer",
         components: [
           {
@@ -316,6 +448,7 @@ export default (editor, opts = {}) => {
                           <p class="text-gray-400">Creating digital experiences that inspire.</p>
                         `
                       }
+
                     ]
                   },
                   {

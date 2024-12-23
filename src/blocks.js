@@ -14,5 +14,15 @@ export default (editor, opts = {}) => {
     content: { type: 'navbar' },
     category: 'Theme'
   });
+  bm.add('map-section', {
+    label: 'Map Section',
+    content: { type: 'map-section' },
+    category: 'Theme'
+  });
+  bm.add('video-section', {
+    label: 'Video Section',
+    content: { type: 'video-section' },
+    category: 'Theme'
+  });
 };
 

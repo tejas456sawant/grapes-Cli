@@ -1566,6 +1566,7 @@ export default (editor, options) => {
         const modalContent = handler.createModalContent(component);
 
 
+
         modal.innerHTML = `
           <div class="bg-white p-6 rounded-lg max-w-md w-full relative">
             <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-gray-900">
@@ -1594,6 +1595,7 @@ export default (editor, options) => {
         const closeModal = () => modal.remove();
         closeBtn.addEventListener("click", closeModal);
         cancelBtn.addEventListener("click", closeModal);
+
 
 
         saveBtn.addEventListener("click", () => {
@@ -1630,6 +1632,7 @@ export default (editor, options) => {
         });
 
 
+
         document.body.appendChild(modal);
       },
 
@@ -1655,6 +1658,7 @@ export default (editor, options) => {
         btn.style.position = "absolute";
         btn.style.top = `${rect.top + rect.height / 2 - 15}px`;
         btn.style.right = `${rect.right - 35}px`;
+
 
 
         this.el.appendChild(btn);
@@ -1961,6 +1965,18 @@ export default (editor, options) => {
     },
   });
   // Corrected JavaScript function to toggle the mobile menu
+
+  // Add this with other component registrations
+  editor.DomComponents.addType("map-section", {
+    isComponent: el => el.tagName === 'SECTION' && el.classList.contains('map-section'),
+
+  });
+
+  // Add this with other component registrations
+  editor.DomComponents.addType("video-section", {
+    isComponent: el => el.tagName === 'SECTION' && el.classList.contains('video-section'),
+
+  });
 };
 
 
