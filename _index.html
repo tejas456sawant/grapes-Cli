@@ -440,7 +440,17 @@
             ],
           },
           plugins: ["gjs-blocks-basic", "cli", "grapesjs-tailwind"],
+          style: `
+        .gjs-badge,
+        .gjs-no-select,
+        .gjs-cv-tools {
+            display: none !important;
+        }
 
+        .gjs-selected {
+            outline: 2px solid rgba(0, 123, 255, 0.5) !important;
+        }
+    `,
           pluginsOpts: {
             cli: {
               /* Test here your options  */
@@ -448,6 +458,10 @@
           },
         });
       }, 100);
+
+
+      window.editor.Panels.removeButton('options', 'gjs-move-component');
+      window.editor.Panels.removeButton('options', 'gjs-duplicate-component');
 
       document
         .getElementById("toggleDeviceDesktop")

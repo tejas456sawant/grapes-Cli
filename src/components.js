@@ -1,4 +1,435 @@
+const getRegisteredBlocks = () => [
+  { id: "text", name: "Custom Block", icon: "📝" },
+  { id: "image", name: "Image Section", icon: "🖼️" },
+  { id: "gallery", name: "Image Gallery", icon: "🎭" },
+  { id: "video", name: "Video Section", icon: "🎥" },
+  { id: "form", name: "Contact Form", icon: "📋" },
+];
+
+// Simulate API call with 3 second delay
+async function fetchComponentConfig(type, description) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        type,
+        content: `Test block of type ${type} with description: ${description}`,
+      });
+    }, 3000); // 3 second delay
+  });
+}
+
+// Add component after target component
+function addComponentAfter(targetComponent, newComponent) {
+  const parent = targetComponent.parent();
+  const index = parent.components().indexOf(targetComponent);
+  parent.components().add(newComponent, { at: index + 1 });
+}
+
+// Show modal and handle component addition
+function showAddComponentModal(targetComponent) {
+  let currentStep = 1;
+  let selectedType = null;
+  let isLoading = false;
+  const registeredBlocks = getRegisteredBlocks();
+
+  const modal = document.createElement("div");
+  modal.className =
+    "fixed inset-0 bg-black bg-opacity-50 z-[1000] flex items-center justify-center";
+
+  function updateModalContent() {
+    modal.innerHTML = `
+      <div class="bg-white rounded-lg max-w-2xl w-full mx-4 relative">
+        ${
+          isLoading
+            ? `
+          <div class="absolute inset-0 bg-white bg-opacity-75 z-10 flex items-center justify-center rounded-lg">
+            <div class="flex flex-col items-center space-y-3">
+              <div class="animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-blue-500"></div>
+              <span class="text-lg font-medium">Adding block...</span>
+            </div>
+          </div>
+        `
+            : ""
+        }
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-semibold">
+              ${currentStep === 1 ? "Choose Block Type" : "Block Details"}
+            </h2>
+            <button class="close-modal text-gray-400 hover:text-gray-600" ${
+              isLoading ? "disabled" : ""
+            }>
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <div class="modal-body mb-6">
+            ${
+              currentStep === 1
+                ? `
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                ${registeredBlocks
+                  .map(
+                    (block) => `
+                  <button 
+                    class="component-type-btn flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                    data-type="${block.id}"
+                    ${isLoading ? "disabled" : ""}
+                  >
+                    <span class="text-2xl">${block.icon}</span>
+                    <span class="text-left font-medium">${block.name}</span>
+                  </button>
+                `
+                  )
+                  .join("")}
+              </div>
+            `
+                : `
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Selected Block: ${
+                      registeredBlocks.find((t) => t.id === selectedType)?.name
+                    }
+                  </label>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1" for="componentDescription">
+                    Description
+                  </label>
+                  <textarea
+                    id="componentDescription"
+                    class="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    rows="4"
+                    placeholder="Enter a description for this block..."
+                    ${isLoading ? "disabled" : ""}
+                  ></textarea>
+                </div>
+              </div>
+            `
+            }
+          </div>
+
+          <div class="flex justify-between">
+            <button class="back-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium ${
+              currentStep === 1 ? "invisible" : ""
+            }" ${isLoading ? "disabled" : ""}>
+              Back
+            </button>
+            <div class="space-x-3">
+              <button class="cancel-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium" ${
+                isLoading ? "disabled" : ""
+              }>
+                Cancel
+              </button>
+              <button 
+                class="next-btn px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" 
+                ${currentStep === 1 || isLoading ? "disabled" : ""}
+              >
+                ${currentStep === 1 ? "Next" : "Add Block"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    attachModalListeners();
+  }
+
+  function attachModalListeners() {
+    const closeModal = () => {
+      if (!isLoading) {
+        modal.remove();
+      }
+    };
+
+    modal.querySelector(".close-modal").addEventListener("click", closeModal);
+    modal.querySelector(".cancel-btn").addEventListener("click", closeModal);
+
+    if (currentStep === 1) {
+      modal.querySelectorAll(".component-type-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (!isLoading) {
+            modal
+              .querySelectorAll(".component-type-btn")
+              .forEach((b) =>
+                b.classList.remove("ring-2", "ring-blue-500", "bg-blue-50")
+              );
+
+            btn.classList.add("ring-2", "ring-blue-500", "bg-blue-50");
+            selectedType = btn.dataset.type;
+            modal.querySelector(".next-btn").disabled = false;
+          }
+        });
+      });
+    }
+
+    modal.querySelector(".next-btn").addEventListener("click", async () => {
+      if (isLoading) return;
+
+      if (currentStep === 1) {
+        currentStep = 2;
+        updateModalContent();
+      } else {
+        const description = modal.querySelector("#componentDescription").value;
+
+        // Show loading state
+        isLoading = true;
+        updateModalContent();
+
+        try {
+          const blockConfig = await fetchComponentConfig(
+            selectedType,
+            description
+          );
+          addComponentAfter(targetComponent, blockConfig);
+          closeModal();
+        } catch (error) {
+          console.error("Failed to add block:", error);
+          const errorDiv = document.createElement("div");
+          errorDiv.className = "text-red-500 text-sm mt-2";
+          errorDiv.textContent = "Failed to add block. Please try again.";
+          modal.querySelector(".modal-body").appendChild(errorDiv);
+        } finally {
+          isLoading = false;
+          updateModalContent();
+        }
+      }
+    });
+
+    modal.querySelector(".back-btn").addEventListener("click", () => {
+      if (!isLoading && currentStep === 2) {
+        currentStep = 1;
+        updateModalContent();
+      }
+    });
+  }
+
+  updateModalContent();
+  document.body.appendChild(modal);
+}
+
 export default (editor, options) => {
+  // Add this to your GrapesJS editor initialization
+
+  const withEditButton3 = {
+    init() {
+      this.componentEditHandlers = {
+        // Default handler for generic components
+        default: {
+          createModalContent(component) {
+            const container = document.createElement("div");
+            container.innerHTML = `
+              <div class="space-y-4">
+                <div>
+                  <label class="block mb-2">Component Type</label>
+                  <input type="text" value="${component.get(
+                    "type"
+                  )}" class="w-full border p-2 rounded" disabled>
+                </div>
+                <div>
+                  <label class="block mb-2">Attributes</label>
+                  <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
+                    component.getAttributes(),
+                    null,
+                    2
+                  )}</textarea>
+                </div>
+              </div>
+            `;
+
+            return {
+              container,
+              getData() {
+                try {
+                  const attrs = JSON.parse(
+                    container.querySelector(".component-attributes").value
+                  );
+                  return { attributes: attrs };
+                } catch (e) {
+                  alert("Invalid JSON for attributes");
+                  return null;
+                }
+              },
+            };
+          },
+        },
+
+        // Specific handlers for different component types
+        image: {
+          createModalContent(component) {
+            const container = document.createElement("div");
+            container.innerHTML = `
+              <div class="space-y-4">
+                <div>
+                  <label class="block mb-2">Image Source</label>
+                  <input type="text" class="w-full border p-2 rounded image-src" value="${
+                    component.getAttributes().src || ""
+                  }">
+                </div>
+                <div>
+                  <label class="block mb-2">Alt Text</label>
+                  <input type="text" class="w-full border p-2 rounded image-alt" value="${
+                    component.getAttributes().alt || ""
+                  }">
+                </div>
+              </div>
+            `;
+
+            return {
+              container,
+              getData() {
+                return {
+                  attributes: {
+                    src: container.querySelector(".image-src").value,
+                    alt: container.querySelector(".image-alt").value,
+                  },
+                };
+              },
+            };
+          },
+        },
+
+        text: {
+          createModalContent(component) {
+            const container = document.createElement("div");
+            container.innerHTML = `
+              <div class="space-y-4">
+                <div>
+                  <label class="block mb-2">Content</label>
+                  <textarea class="w-full border p-2 rounded text-content" rows="4">${
+                    component.getContent() || ""
+                  }</textarea>
+                </div>
+              </div>
+            `;
+
+            return {
+              container,
+              getData() {
+                return {
+                  content: container.querySelector(".text-content").value,
+                };
+              },
+            };
+          },
+        },
+      };
+    },
+
+    onRender() {
+      const editor = this.em.get("Editor");
+      editor.on("component:select", this.handleSelect.bind(this));
+      editor.on("component:deselect", this.handleDeselect.bind(this));
+    },
+
+    createModal(component) {
+      const componentType = component.get("type") || "default";
+      const handler =
+        this.componentEditHandlers[componentType] ||
+        this.componentEditHandlers.default;
+
+      const modal = document.createElement("div");
+      modal.className =
+        "fixed inset-0 bg-black bg-opacity-50 z-[1000] flex items-center justify-center";
+
+      const modalContent = handler.createModalContent(component);
+
+      modal.innerHTML = `
+        <div class="bg-white p-6 rounded-lg max-w-md w-full relative">
+          <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-gray-900">
+            &times;
+          </button>
+          <h2 class="text-xl font-semibold mb-4">Edit ${componentType} Component</h2>
+          <div class="modal-body"></div>
+          <div class="mt-4 flex justify-end space-x-2">
+            <button class="cancel-modal px-4 py-2 bg-gray-200 rounded">Cancel</button>
+            <button class="save-modal px-4 py-2 bg-rose-500 text-white rounded">Save</button>
+          </div>
+        </div>
+      `;
+
+      const modalBody = modal.querySelector(".modal-body");
+      modalBody.appendChild(modalContent.container);
+
+      // Event Listeners
+      const closeBtn = modal.querySelector(".close-modal");
+      const cancelBtn = modal.querySelector(".cancel-modal");
+      const saveBtn = modal.querySelector(".save-modal");
+
+      const closeModal = () => modal.remove();
+      closeBtn.addEventListener("click", closeModal);
+      cancelBtn.addEventListener("click", closeModal);
+
+      saveBtn.addEventListener("click", () => {
+        const editData = modalContent.getData();
+        if (editData) {
+          // Apply changes to the component
+          if (editData.attributes) {
+            component.setAttributes(editData.attributes);
+          }
+          if (editData.content) {
+            component.set("content", editData.content);
+          }
+          closeModal();
+        }
+      });
+
+      return modal;
+    },
+
+    handleSelect(component) {
+      if (component.getEl() === this.el) {
+        const btn = this.createEditButton();
+        const rect = this.el.getBoundingClientRect();
+
+        btn.style.position = "fixed";
+        btn.style.top = `${rect.top + rect.height / 2 - 15}px`;
+        btn.style.left = `${rect.right - 35}px`;
+
+        btn.addEventListener("click", () => {
+          const modal = this.createModal(component);
+          document.body.appendChild(modal);
+        });
+
+        const editor = this.em.get("Editor");
+        editor.getContainer().appendChild(btn);
+      }
+    },
+
+    handleDeselect(component) {
+      if (component.getEl() === this.el) {
+        const editor = this.em.get("Editor");
+        const btn = editor.getContainer().querySelector(".gjs-edit-btn");
+        if (btn) btn.remove();
+      }
+    },
+
+    createEditButton() {
+      const btn = document.createElement("button");
+      btn.className =
+        "gjs-edit-btn text-gray-900 border-gray-300 bg-white absolute bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px] z-50";
+      btn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
+          <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z"></path>
+        </svg>
+      `;
+      return btn;
+    },
+
+    remove() {
+      const editor = this.em.get("Editor");
+      editor.off("component:select", this.handleSelect);
+      editor.off("component:deselect", this.handleDeselect);
+
+      const btn = editor.getContainer().querySelector(".gjs-edit-btn");
+      if (btn) btn.remove();
+    },
+  };
+
   editor.Commands.add("edit-navbar-links", {
     run(editor, sender, options = {}) {
       const { model } = options;
@@ -142,7 +573,7 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "grid grid-cols-1 md:grid-cols-2 py-24 image-section ",
+          class: "grid grid-cols-1 md:grid-cols-2 py-24 image-section relative",
           sectiontype: "normal",
           direction: "left",
         },
@@ -181,12 +612,10 @@ export default (editor, options) => {
   margin: auto
         }
         .image-section>img{
-          width: 100%;
-          min-height: 240px;
-          max-height: 540px;
-  height: auto; /* Maintain aspect ratio */
-  object-fit: cover;
+          min-height: 360px;
+          max-height: 768px;
         }
+
         
         
 
@@ -240,6 +669,7 @@ export default (editor, options) => {
           "md:grid-cols-2",
           "text-left",
           "image-section",
+          "relative",
         ];
 
         // Modify class list based on section type
@@ -263,6 +693,274 @@ export default (editor, options) => {
         this.setClass(classes); // Set the classes dynamically
       },
     },
+    view: {
+      init() {
+        this.componentEditHandlers = {
+          // Default handler for generic components
+          default: {
+            createModalContent(component) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+                          <div class="space-y-4">
+                              <div>
+                                  <label class="block mb-2">Component Type</label>
+                                  <input type="text" value="${component.get(
+                                    "type"
+                                  )}" class="w-full border p-2 rounded" disabled>
+                              </div>
+                              <div>
+                                  <label class="block mb-2">Attributes</label>
+                                  <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
+                                    component.getAttributes(),
+                                    null,
+                                    2
+                                  )}</textarea>
+                              </div>
+                          </div>
+                      `;
+
+              return {
+                container,
+                getData() {
+                  try {
+                    const attrs = JSON.parse(
+                      container.querySelector(".component-attributes").value
+                    );
+                    return { attributes: attrs };
+                  } catch (e) {
+                    alert("Invalid JSON for attributes");
+                    return null;
+                  }
+                },
+              };
+            },
+          },
+        };
+      },
+
+      onRender() {
+        console.log("2. About to create bottom button");
+        const buttonRow2 = this.createBottomButton();
+        const buttonRowCenter = this.createMiddleButton();
+
+        console.log("3. Bottom button created:", buttonRow2);
+        console.log("4. this.el:", this.el);
+
+        this.el.appendChild(buttonRow2);
+        this.el.appendChild(buttonRowCenter);
+        this.updateEditButton();
+      },
+      createBottomButton() {
+        console.log("A. createBottomButton called");
+
+        const row = document.createElement("div");
+        row.className =
+          "gjs-component-buttons2 absolute -bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-[99]";
+
+        console.log("B. About to create add button");
+        const addBtn = this.createAddButton();
+        console.log("C. Add button created:", addBtn);
+
+        row.appendChild(addBtn);
+        this.buttonRow2 = row;
+
+        console.log("D. Returning row:", row);
+        return row;
+      },
+      createAddButton() {
+        console.log("X. createAddButton called");
+
+        const btn = document.createElement("button");
+
+        btn.className =
+          "relative overflow-hidden z-[99]  hover:text-rose-400 flex z-100 items-center group flex-row relative rounded-md py-1 px-3 text-md leading-6 text-white bg-black ring-1 ring-gray-900/10 hover:ring-gray-900/20";
+
+        btn.innerHTML = `
+        
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 my-1">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      
+
+      <div class="ml-3 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out block">
+      Add Section
+      </div>
+          `;
+
+        btn.addEventListener("click", () => {
+          showAddComponentModal(this.model);
+        });
+
+        this.addButton = btn;
+        console.log("Y. Button created:", btn);
+        return btn;
+      },
+
+      createMiddleButton() {
+        const row = document.createElement("div");
+        row.className =
+          "gjs-component-buttons2 absolute top-1/2  left-1/2 transform -translate-x-1/2 flex space-x-2 z-[99]";
+
+        const addBtn = this.createSwapButton();
+
+        row.appendChild(addBtn);
+        this.buttonRowCenter = row;
+
+        return row;
+      },
+
+      createSwapButton() {
+        console.log("X. createAddButton called");
+
+        const btn = document.createElement("button");
+
+        btn.className =
+          "relative overflow-hidden text-rose-400 flex z-100 items-center group flex-row relative rounded-full py-1 px-3 text-md leading-6 text-gray-600 bg-white ring-1 ring-gray-900/10 hover:ring-gray-900/20";
+
+        btn.innerHTML = `
+        
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+</svg>
+
+
+      <div class="lg:absolute lg:group-hover:relative lg:left-10  lg:group-hover:left-1 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out hidden lg:block opacity-0 lg:group-hover:opacity-100">
+        Swap
+      </div>
+          `;
+
+        btn.addEventListener("click", () => {
+          const model = this.model; // Access the model
+
+          if (model) {
+            // Get the current direction from attributes
+            const currentDirection =
+              model.get("attributes").direction || "left"; // Default to 'left' if not set
+
+            // Toggle the direction
+            const newDirection = currentDirection === "left" ? "right" : "left";
+
+            // Update the model's direction attribute
+            model.set("attributes", {
+              ...model.get("attributes"), // Retain existing attributes
+              direction: newDirection,
+            });
+
+            // Reflect the updated attribute in the DOM
+            model.addAttributes({
+              direction: newDirection,
+            });
+
+            // Optional: Re-render if necessary
+            model.trigger("change:attributes");
+            model.view?.render();
+          }
+        });
+
+        this.swapButton = btn;
+        console.log("Y. Button created:", btn);
+        return btn;
+      },
+
+      createButtonRow() {
+        if (this.buttonRow) return this.buttonRow;
+
+        const row = document.createElement("div");
+        row.className =
+          "gjs-component-buttons absolute bottom-6 left-2 md:left-14 m-2 flex space-x-2 z-50";
+
+        // Edit Button
+        const aiBtn = this.createAiButton();
+        row.appendChild(aiBtn);
+
+        // Delete Button
+        // const deleteBtn = document.createElement("button");
+        // deleteBtn.className =
+        //   "text-gray-900 border-gray-300 bg-white bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px]";
+        // deleteBtn.innerHTML = `
+        //       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
+        //           <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.26 51.26 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.227a49.18 49.18 0 00-6 0v-.227c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd" />
+        //       </svg>
+        //   `;
+        // deleteBtn.addEventListener("click", () => {
+        //   if (confirm("Are you sure you want to delete this component?")) {
+        //     this.model.remove();
+        //   }
+        // });
+        // row.appendChild(deleteBtn);
+
+        // Duplicate Button
+        // const duplicateBtn = document.createElement("button");
+        // duplicateBtn.className =
+        //   "text-gray-900 border-gray-300 bg-white bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px]";
+        // duplicateBtn.innerHTML = `
+        //       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
+        //           <path d="M7.5 3.375c0-1.036.84-1.875 1.875-1.875h.375a3.75 3.75 0 013.75 3.75v1.875C13.5 8.161 14.34 9 15.375 9h1.875A3.75 3.75 0 0121 12.75v3.375C21 17.16 20.16 18 19.125 18h-9.75A1.875 1.875 0 017.5 16.125V3.375z" />
+        //           <path d="M15 5.25a5.23 5.23 0 00-1.279-3.434 9.768 9.768 0 016.963 6.963A5.23 5.23 0 0017.25 7.5h-1.875A.375.375 0 0115 7.125V5.25zM4.875 6H6.75a.75.75 0 00.75-.75V3.375c0-1.036-.84-1.875-1.875-1.875h-1.5A1.875 1.875 0 000 3.375v9.75C0 14.16.84 15 1.875 15H3v-3.75a3.75 3.75 0 013.75-3.75h4.125A3.75 3.75 0 0114.625 9h3.375v-.375A1.875 1.875 0 0016.125 6h-1.5a.75.75 0 01-.75-.75V3.375C13.875 2.025 12.85 1 11.5 1h-1.875a.75.75 0 01-.75-.75V1c0-1.036-.84-1.875-1.875-1.875H4.875C3.839 0 3 .84 3 1.875V4.5a.75.75 0 00.75.75z" />
+        //       </svg>
+        //   `;
+        // duplicateBtn.addEventListener("click", () => {
+        //   const newComponent = this.model.clone();
+        //   this.model.parent.add(newComponent);
+        // });
+        // row.appendChild(duplicateBtn);
+
+        this.buttonRow = row;
+        return row;
+      },
+
+      handleSelect(selectedComponent) {
+        if (selectedComponent !== this.model) {
+          this.removeButtonRow();
+          return;
+        }
+
+        const buttonRow = this.createButtonRow();
+        this.el.appendChild(buttonRow);
+      },
+
+      handleDeselect() {
+        this.removeButtonRow();
+      },
+
+      removeButtonRow() {
+        if (this.buttonRow) {
+          this.buttonRow.remove();
+          this.buttonRow = null;
+        }
+      },
+
+      createAiButton() {
+        if (this.aiButton) return this.aiButton;
+
+        const btn = document.createElement("button");
+
+        btn.className =
+          "relative overflow-hidden text-rose-400 flex z-100 items-center group flex-row relative rounded-full py-1 px-3 text-md leading-6 text-gray-600 bg-white ring-1 ring-gray-900/10 hover:ring-gray-900/20";
+
+        btn.innerHTML = `
+        
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+      </svg>
+      
+
+      <div class="lg:absolute lg:group-hover:relative lg:left-10  lg:group-hover:left-1 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out hidden lg:block opacity-0 lg:group-hover:opacity-100">
+        Regenerate Section
+      </div>
+          `;
+
+        this.aiButton = btn;
+        return btn;
+      },
+
+      updateEditButton() {
+        const editor = this.em.get("Editor");
+        editor.on("component:select", this.handleSelect.bind(this));
+        editor.on("component:deselect", this.handleDeselect.bind(this));
+      },
+    },
   });
 
   editor.DomComponents.addType("section", {
@@ -272,7 +970,7 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "flex flex-col py-24 bg-slate-600 light-text px-8",
+          class: "flex flex-col py-24 bg-slate-600 light-text px-8 relative",
           sectiontype: "normal",
         },
         traits: [
@@ -341,7 +1039,7 @@ export default (editor, options) => {
       updateSectionType() {
         const sectionType = this.get("attributes")["sectiontype"] || "normal"; // Get the current attribute for section type
 
-        let classes = ["flex", "flex-col", "py-28"];
+        let classes = ["flex", "flex-col", "py-28", "relative"];
 
         // Modify class list based on section type
         switch (sectionType) {
@@ -362,6 +1060,62 @@ export default (editor, options) => {
         }
 
         this.setClass(classes); // Set the classes dynamically
+      },
+    },
+    view: {
+      onRender() {
+        console.log("2. About to create bottom button");
+        const buttonRow2 = this.createBottomButton();
+
+        console.log("3. Bottom button created:", buttonRow2);
+        console.log("4. this.el:", this.el);
+
+        this.el.appendChild(buttonRow2);
+      },
+      createBottomButton() {
+        console.log("A. createBottomButton called");
+
+        const row = document.createElement("div");
+        row.className =
+          "gjs-component-buttons2 absolute -bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-[99]";
+
+        console.log("B. About to create add button");
+        const addBtn = this.createAddButton();
+        console.log("C. Add button created:", addBtn);
+
+        row.appendChild(addBtn);
+        this.buttonRow2 = row;
+
+        console.log("D. Returning row:", row);
+        return row;
+      },
+      createAddButton() {
+        console.log("X. createAddButton called");
+
+        const btn = document.createElement("button");
+
+        btn.className =
+          "relative overflow-hidden z-[99]  hover:text-rose-400 flex z-100 items-center group flex-row relative rounded-md py-1 px-3 text-md leading-6 text-white bg-black ring-1 ring-gray-900/10 hover:ring-gray-900/20";
+
+        btn.innerHTML = `
+        
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 my-1">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      
+
+      <div class="ml-3 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out block">
+      Add Section
+      </div>
+          `;
+
+        btn.addEventListener("click", () => {
+          showAddComponentModal(this.model);
+        });
+
+        this.addButton = btn;
+        console.log("Y. Button created:", btn);
+        return btn;
       },
     },
   });
@@ -494,7 +1248,7 @@ export default (editor, options) => {
     },
   });
 
-  editor.Components.addType("blank-container", {
+  editor.Components.addType("stack", {
     model: {
       defaults: {
         tagName: "div",
@@ -503,6 +1257,249 @@ export default (editor, options) => {
         attributes: {
           class: "item-container",
         },
+      },
+    },
+    view: {
+      init() {
+        this.componentEditHandlers = {
+          // Default handler for generic components
+          default: {
+            createModalContent(component) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+                          <div class="space-y-4">
+                              <div>
+                                  <label class="block mb-2">Component Type</label>
+                                  <input type="text" value="${component.get(
+                                    "type"
+                                  )}" class="w-full border p-2 rounded" disabled>
+                              </div>
+                              <div>
+                                  <label class="block mb-2">Attributes</label>
+                                  <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
+                                    component.getAttributes(),
+                                    null,
+                                    2
+                                  )}</textarea>
+                              </div>
+                          </div>
+                      `;
+
+              return {
+                container,
+                getData() {
+                  try {
+                    const attrs = JSON.parse(
+                      container.querySelector(".component-attributes").value
+                    );
+                    return { attributes: attrs };
+                  } catch (e) {
+                    alert("Invalid JSON for attributes");
+                    return null;
+                  }
+                },
+              };
+            },
+          },
+        };
+      },
+
+      onRender() {
+        console.log("2. About to create bottom button");
+        const buttonRow2 = this.createBottomButton();
+        const buttonRowCenter = this.createMiddleButton();
+
+        console.log("3. Bottom button created:", buttonRow2);
+        console.log("4. this.el:", this.el);
+
+        this.el.appendChild(buttonRow2);
+        this.el.appendChild(buttonRowCenter);
+        this.updateEditButton();
+      },
+      createBottomButton() {
+        console.log("A. createBottomButton called");
+
+        const row = document.createElement("div");
+        row.className =
+          "gjs-component-buttons2 absolute -bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-[99]";
+
+        console.log("B. About to create add button");
+        const addBtn = this.createAddButton();
+        console.log("C. Add button created:", addBtn);
+
+        row.appendChild(addBtn);
+        this.buttonRow2 = row;
+
+        console.log("D. Returning row:", row);
+        return row;
+      },
+      createAddButton() {
+        console.log("X. createAddButton called");
+
+        const btn = document.createElement("button");
+
+        btn.className =
+          "relative overflow-hidden z-[99]  hover:text-rose-400 flex z-100 items-center group flex-row relative rounded-md py-1 px-3 text-md leading-6 text-white bg-black ring-1 ring-gray-900/10 hover:ring-gray-900/20";
+
+        btn.innerHTML = `
+        
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 my-1">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      
+
+      <div class="ml-3 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out block">
+      Add Section
+      </div>
+          `;
+
+        btn.addEventListener("click", () => {
+          showAddComponentModal(this.model);
+        });
+
+        this.addButton = btn;
+        console.log("Y. Button created:", btn);
+        return btn;
+      },
+
+      createMiddleButton() {
+        const row = document.createElement("div");
+        row.className =
+          "gjs-component-buttons2 mx-auto my-3 text-center z-[99]";
+
+        const addBtn = this.createSwapButton();
+
+        row.appendChild(addBtn);
+        this.buttonRowCenter = row;
+
+        return row;
+      },
+
+      createSwapButton() {
+        console.log("X. createAddButton called");
+
+        const btn = document.createElement("button");
+
+        btn.className =
+          "relative overflow-hidden mx-auto text-rose-400 flex z-100 items-center group flex-row relative rounded-full py-1 px-3 text-md leading-6 text-gray-600 bg-white ring-1 ring-gray-900/10 hover:ring-gray-900/20";
+
+        btn.innerHTML = `
+        
+      
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+      </svg>
+      
+
+
+      <div class="lg:absolute lg:group-hover:relative lg:left-10  lg:group-hover:left-1 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out hidden lg:block opacity-0 lg:group-hover:opacity-100">
+        Add Item
+      </div>
+          `;
+
+        btn.addEventListener("click", () => {});
+
+        this.swapButton = btn;
+        console.log("Y. Button created:", btn);
+        return btn;
+      },
+
+      createButtonRow() {
+        if (this.buttonRow) return this.buttonRow;
+
+        const row = document.createElement("div");
+        row.className =
+          "gjs-component-buttons absolute bottom-6 left-2 md:left-14 m-2 flex space-x-2 z-50";
+
+        // Edit Button
+        const aiBtn = this.createAiButton();
+        row.appendChild(aiBtn);
+
+        // Delete Button
+        // const deleteBtn = document.createElement("button");
+        // deleteBtn.className =
+        //   "text-gray-900 border-gray-300 bg-white bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px]";
+        // deleteBtn.innerHTML = `
+        //       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
+        //           <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.26 51.26 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.227a49.18 49.18 0 00-6 0v-.227c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd" />
+        //       </svg>
+        //   `;
+        // deleteBtn.addEventListener("click", () => {
+        //   if (confirm("Are you sure you want to delete this component?")) {
+        //     this.model.remove();
+        //   }
+        // });
+        // row.appendChild(deleteBtn);
+
+        // Duplicate Button
+        // const duplicateBtn = document.createElement("button");
+        // duplicateBtn.className =
+        //   "text-gray-900 border-gray-300 bg-white bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px]";
+        // duplicateBtn.innerHTML = `
+        //       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
+        //           <path d="M7.5 3.375c0-1.036.84-1.875 1.875-1.875h.375a3.75 3.75 0 013.75 3.75v1.875C13.5 8.161 14.34 9 15.375 9h1.875A3.75 3.75 0 0121 12.75v3.375C21 17.16 20.16 18 19.125 18h-9.75A1.875 1.875 0 017.5 16.125V3.375z" />
+        //           <path d="M15 5.25a5.23 5.23 0 00-1.279-3.434 9.768 9.768 0 016.963 6.963A5.23 5.23 0 0017.25 7.5h-1.875A.375.375 0 0115 7.125V5.25zM4.875 6H6.75a.75.75 0 00.75-.75V3.375c0-1.036-.84-1.875-1.875-1.875h-1.5A1.875 1.875 0 000 3.375v9.75C0 14.16.84 15 1.875 15H3v-3.75a3.75 3.75 0 013.75-3.75h4.125A3.75 3.75 0 0114.625 9h3.375v-.375A1.875 1.875 0 0016.125 6h-1.5a.75.75 0 01-.75-.75V3.375C13.875 2.025 12.85 1 11.5 1h-1.875a.75.75 0 01-.75-.75V1c0-1.036-.84-1.875-1.875-1.875H4.875C3.839 0 3 .84 3 1.875V4.5a.75.75 0 00.75.75z" />
+        //       </svg>
+        //   `;
+        // duplicateBtn.addEventListener("click", () => {
+        //   const newComponent = this.model.clone();
+        //   this.model.parent.add(newComponent);
+        // });
+        // row.appendChild(duplicateBtn);
+
+        this.buttonRow = row;
+        return row;
+      },
+
+      handleSelect(selectedComponent) {
+        if (selectedComponent !== this.model) {
+          this.removeButtonRow();
+          return;
+        }
+
+        const buttonRow = this.createButtonRow();
+        this.el.appendChild(buttonRow);
+      },
+
+      handleDeselect() {
+        this.removeButtonRow();
+      },
+
+      removeButtonRow() {
+        if (this.buttonRow) {
+          this.buttonRow.remove();
+          this.buttonRow = null;
+        }
+      },
+
+      createAiButton() {
+        if (this.aiButton) return this.aiButton;
+
+        const btn = document.createElement("button");
+
+        btn.className =
+          "relative overflow-hidden text-rose-400 flex z-100 items-center group flex-row relative rounded-full py-1 px-3 text-md leading-6 text-gray-600 bg-white ring-1 ring-gray-900/10 hover:ring-gray-900/20";
+
+        btn.innerHTML = `
+        
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+      </svg>
+      
+
+      <div class="lg:absolute lg:group-hover:relative lg:left-10  lg:group-hover:left-1 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out hidden lg:block opacity-0 lg:group-hover:opacity-100">
+        Regenerate Section
+      </div>
+          `;
+
+        this.aiButton = btn;
+        return btn;
+      },
+
+      updateEditButton() {
+        const editor = this.em.get("Editor");
+        editor.on("component:select", this.handleSelect.bind(this));
+        editor.on("component:deselect", this.handleDeselect.bind(this));
       },
     },
   });
@@ -528,7 +1525,7 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "button-primary transition flex flex-row justify-center items-center px-8 py-4 mx-2 my-2",
+            "button-primary relative transition flex flex-row justify-center items-center px-8 py-4 mx-2 my-2",
         },
         styles: `
         .button-primary{
@@ -543,6 +1540,290 @@ export default (editor, options) => {
           background-color:var(--color-primary-dark);
         }
         `,
+      },
+    },
+    view: {
+      init() {
+        this.componentEditHandlers = {
+          // Default handler for generic components
+          default: {
+            createModalContent(component) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+                          <div class="space-y-4">
+                              <div>
+                                  <label class="block mb-2">Component Type</label>
+                                  <input type="text" value="${component.get(
+                                    "type"
+                                  )}" class="w-full border p-2 rounded" disabled>
+                              </div>
+                              <div>
+                                  <label class="block mb-2">Attributes</label>
+                                  <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
+                                    component.getAttributes(),
+                                    null,
+                                    2
+                                  )}</textarea>
+                              </div>
+                          </div>
+                      `;
+
+              return {
+                container,
+                getData() {
+                  try {
+                    const attrs = JSON.parse(
+                      container.querySelector(".component-attributes").value
+                    );
+                    return { attributes: attrs };
+                  } catch (e) {
+                    alert("Invalid JSON for attributes");
+                    return null;
+                  }
+                },
+              };
+            },
+          },
+        };
+      },
+
+      onRender() {
+        this.updateEditButton();
+      },
+
+      createButtonRow() {
+        if (this.buttonRow) return this.buttonRow;
+
+        const row = document.createElement("div");
+        row.className =
+          "gjs-component-buttons absolute bottom-6 left-2 md:left-14 m-2 flex space-x-2 z-50";
+
+        // Edit Button
+        const editBtn = this.createEditButton();
+        row.appendChild(editBtn);
+
+        // Edit Button
+        const aiBtn = this.createAiButton();
+        row.appendChild(aiBtn);
+
+        // Delete Button
+        // const deleteBtn = document.createElement("button");
+        // deleteBtn.className =
+        //   "text-gray-900 border-gray-300 bg-white bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px]";
+        // deleteBtn.innerHTML = `
+        //       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
+        //           <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.26 51.26 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.227a49.18 49.18 0 00-6 0v-.227c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd" />
+        //       </svg>
+        //   `;
+        // deleteBtn.addEventListener("click", () => {
+        //   if (confirm("Are you sure you want to delete this component?")) {
+        //     this.model.remove();
+        //   }
+        // });
+        // row.appendChild(deleteBtn);
+
+        // Duplicate Button
+        // const duplicateBtn = document.createElement("button");
+        // duplicateBtn.className =
+        //   "text-gray-900 border-gray-300 bg-white bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px]";
+        // duplicateBtn.innerHTML = `
+        //       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
+        //           <path d="M7.5 3.375c0-1.036.84-1.875 1.875-1.875h.375a3.75 3.75 0 013.75 3.75v1.875C13.5 8.161 14.34 9 15.375 9h1.875A3.75 3.75 0 0121 12.75v3.375C21 17.16 20.16 18 19.125 18h-9.75A1.875 1.875 0 017.5 16.125V3.375z" />
+        //           <path d="M15 5.25a5.23 5.23 0 00-1.279-3.434 9.768 9.768 0 016.963 6.963A5.23 5.23 0 0017.25 7.5h-1.875A.375.375 0 0115 7.125V5.25zM4.875 6H6.75a.75.75 0 00.75-.75V3.375c0-1.036-.84-1.875-1.875-1.875h-1.5A1.875 1.875 0 000 3.375v9.75C0 14.16.84 15 1.875 15H3v-3.75a3.75 3.75 0 013.75-3.75h4.125A3.75 3.75 0 0114.625 9h3.375v-.375A1.875 1.875 0 0016.125 6h-1.5a.75.75 0 01-.75-.75V3.375C13.875 2.025 12.85 1 11.5 1h-1.875a.75.75 0 01-.75-.75V1c0-1.036-.84-1.875-1.875-1.875H4.875C3.839 0 3 .84 3 1.875V4.5a.75.75 0 00.75.75z" />
+        //       </svg>
+        //   `;
+        // duplicateBtn.addEventListener("click", () => {
+        //   const newComponent = this.model.clone();
+        //   this.model.parent.add(newComponent);
+        // });
+        // row.appendChild(duplicateBtn);
+
+        this.buttonRow = row;
+        return row;
+      },
+
+      createModal(component) {
+        const componentType = component.get("type") || "default";
+        const handler =
+          this.componentEditHandlers[componentType] ||
+          this.componentEditHandlers.default;
+
+        // Add console logging for debugging
+        console.log("Creating modal for component:", component);
+        console.log("Component type:", componentType);
+        console.log("Handler:", handler);
+
+        if (!handler || typeof handler.createModalContent !== "function") {
+          console.error("Invalid handler or missing createModalContent method");
+          return null;
+        }
+
+        const modal = document.createElement("div");
+        modal.className =
+          "fixed inset-0 bg-black bg-opacity-50 z-[1000] flex items-center justify-center";
+
+        try {
+          const modalContent = handler.createModalContent(component);
+
+          if (!modalContent || !modalContent.container) {
+            console.error("Failed to create modal content");
+            return null;
+          }
+
+          modal.innerHTML = `
+                  <div class="bg-white p-6 rounded-lg max-w-md w-full relative">
+                      <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-gray-900">
+                          &times;
+                      </button>
+                      <h2 class="text-xl font-semibold mb-4">Edit Component</h2>
+                      <div class="modal-body"></div>
+                      <div class="mt-4 flex justify-end space-x-2">
+                          <button class="cancel-modal px-4 py-2 bg-gray-200 rounded">Cancel</button>
+                          <button class="save-modal px-4 py-2 !bg-rose-500 text-white rounded">Save</button>
+                      </div>
+                  </div>
+              `;
+
+          const modalBody = modal.querySelector(".modal-body");
+
+          // Add additional error checking
+          if (!modalBody) {
+            console.error("Could not find modal body");
+            return null;
+          }
+
+          modalBody.appendChild(modalContent.container);
+
+          // Event Listeners
+          const closeBtn = modal.querySelector(".close-modal");
+          const cancelBtn = modal.querySelector(".cancel-modal");
+          const saveBtn = modal.querySelector(".save-modal");
+
+          if (!closeBtn || !cancelBtn || !saveBtn) {
+            console.error("Missing modal buttons");
+            return null;
+          }
+
+          const closeModal = () => modal.remove();
+          closeBtn.addEventListener("click", closeModal);
+          cancelBtn.addEventListener("click", closeModal);
+
+          saveBtn.addEventListener("click", () => {
+            const editData = modalContent.getData();
+            if (editData) {
+              // Apply changes to the component
+              if (editData.attributes) {
+                component.setAttributes(editData.attributes);
+              }
+              if (editData.content) {
+                component.set("content", editData.content);
+              }
+              closeModal();
+            }
+          });
+
+          return modal;
+        } catch (error) {
+          console.error("Error creating modal:", error);
+          return null;
+        }
+      },
+
+      onEditButtonClick() {
+        console.log("Edit button clicked, model:", this.model);
+
+        const modal = this.createModal(this.model);
+
+        // Add additional error checking
+        if (!modal) {
+          console.error("Failed to create modal");
+          return;
+        }
+
+        // Verify modal is a valid Node before appending
+        if (modal instanceof Node) {
+          document.body.appendChild(modal);
+        } else {
+          console.error("Invalid modal created", modal);
+        }
+      },
+
+      handleSelect(selectedComponent) {
+        if (selectedComponent !== this.model) {
+          this.removeButtonRow();
+          return;
+        }
+
+        const buttonRow = this.createButtonRow();
+        this.el.appendChild(buttonRow);
+      },
+
+      handleDeselect() {
+        this.removeButtonRow();
+      },
+
+      removeButtonRow() {
+        if (this.buttonRow) {
+          this.buttonRow.remove();
+          this.buttonRow = null;
+        }
+      },
+
+      createEditButton() {
+        if (this.editButton) return this.editButton;
+
+        const btn = document.createElement("button");
+
+        btn.className =
+          "relative overflow-hidden text-rose-400 flex z-100 items-center group flex-row relative rounded-full py-1 px-3 text-md leading-6 text-gray-600 bg-white ring-1 ring-gray-900/10 hover:ring-gray-900/20";
+
+        btn.innerHTML = `
+        
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 my-1"">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+      </svg>
+
+      <div class="lg:absolute lg:group-hover:relative lg:left-10  lg:group-hover:left-1 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out hidden lg:block opacity-0 lg:group-hover:opacity-100">
+      Edit Image
+      </div>
+          `;
+
+        btn.addEventListener("click", this.onEditButtonClick.bind(this));
+
+        this.editButton = btn;
+        return btn;
+      },
+
+      createAiButton() {
+        if (this.aiButton) return this.aiButton;
+
+        const btn = document.createElement("button");
+
+        btn.className =
+          "relative overflow-hidden text-rose-400 flex z-100 items-center group flex-row relative rounded-full py-1 px-3 text-md leading-6 text-gray-600 bg-white ring-1 ring-gray-900/10 hover:ring-gray-900/20";
+
+        btn.innerHTML = `
+        
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+      </svg>
+      
+
+      <div class="lg:absolute lg:group-hover:relative lg:left-10  lg:group-hover:left-1 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out hidden lg:block opacity-0 lg:group-hover:opacity-100">
+        Regenerate Section
+      </div>
+          `;
+
+        btn.addEventListener("click", this.onEditButtonClick.bind(this));
+
+        this.aiButton = btn;
+        return btn;
+      },
+
+      updateEditButton() {
+        const editor = this.em.get("Editor");
+        editor.on("component:select", this.handleSelect.bind(this));
+        editor.on("component:deselect", this.handleDeselect.bind(this));
       },
     },
   });
@@ -662,7 +1943,7 @@ export default (editor, options) => {
     },
   });
 
-  editor.Components.addType("paragraph", {
+  editor.Components.addType("text-content", {
     extend: "text",
     model: {
       defaults: {
@@ -696,7 +1977,7 @@ export default (editor, options) => {
           },
         ],
         styles: `
-        .hero-section *{
+        .hero-section *:not(.gjs-component-buttons):not(.gjs-component-buttons *){
           z-index:2;
           color:white!important
         }
@@ -812,86 +2093,435 @@ export default (editor, options) => {
       },
     },
     view: {
-      ...withEditButton,
-      // Custom click handler for hero section
-      onEditButtonClick(e) {
-        console.log("Hero section edit button clicked");
-        // Add your custom edit logic here
+      init() {
+        this.componentEditHandlers = {
+          // Default handler for generic components
+          default: {
+            createModalContent(component) {
+              const container = document.createElement("div");
+              const currentBgImage =
+                component.get("attributes")["bg-image"] || "";
+
+              container.innerHTML = `
+                <div class="space-y-4">
+                  <div class="flex flex-col gap-4">
+                    <div class="relative">
+                      <img src="${currentBgImage}" alt="Current background"
+                        class="w-full h-48 object-cover rounded-lg shadow-sm" />
+                      <div class="absolute inset-0 bg-black bg-opacity-50 hidden items-center justify-center" id="upload-loading">
+                        <svg class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      </div>
+                    </div>
+                   
+                    <div class="flex items-center justify-center w-full">
+                      <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-rose-300 border-dashed rounded-lg cursor-pointer bg-rose-50 hover:bg-rose-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                          <svg class="w-8 h-8 mb-4 text-rose-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2"/>
+                          </svg>
+                          <p class="mb-2 text-sm text-rose-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                          <p class="text-xs text-rose-500">PNG, JPG or JPEG</p>
+                        </div>
+                        <input id="bg-image-upload" type="file" class="hidden" accept="image/*" />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              `;
+
+              let selectedFile = null;
+              const previewImg = container.querySelector("img");
+              const loadingEl = container.querySelector("#upload-loading");
+
+              // Handle file selection for preview
+              const fileInput = container.querySelector("#bg-image-upload");
+              fileInput.addEventListener("change", (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                // Validate file type
+                const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+                if (!allowedTypes.includes(file.type)) {
+                  alert("Please select a valid image file (JPG, JPEG or PNG)");
+                  return;
+                }
+
+                selectedFile = file;
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                  previewImg.src = e.target.result;
+                };
+
+                reader.readAsDataURL(file);
+              });
+
+              return {
+                container,
+                async getData() {
+                  if (!selectedFile) {
+                    return {
+                      attributes: {
+                        "bg-image": component.get("attributes")["bg-image"],
+                      },
+                    };
+                  }
+
+                  try {
+                    loadingEl.classList.remove("hidden");
+                    loadingEl.classList.add("flex");
+
+                    // Generate unique filename with proper extension
+                    const fileExt = selectedFile.name
+                      .split(".")
+                      .pop()
+                      .toLowerCase();
+                    const uniqueFileName = `${crypto.randomUUID()}.${fileExt}`;
+
+                    // Get presigned URL with correct content type
+                    const presignedResponse = await fetch(
+                      "https://dev.byteai.bytesuite.io/api/get-presigned-url",
+                      {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                          Authorization:
+                            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMWMwZWMzMS0wZDIzLTRiMDQtYTdkOS04OTRiOWE0NTNjYWIiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzMzMzg2MTUzLCJpYXQiOjE3MzI3ODEzNTMsImVtYWlsIjoic2lkZGhhcnRoLnNhYmxlNDYxOEBnbWFpbC5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIiwiZ29vZ2xlIl19LCJ1c2VyX21ldGFkYXRhIjp7ImF2YXRhcl91cmwiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NMU3BETjlQbS1DaDdGazl2RnJrVkhVWXRHRGV3NVJqSTJUbWMweFg5WnpDZGxoNjBNMj1zOTYtYyIsImVtYWlsIjoic2lkZGhhcnRoLnNhYmxlNDYxOEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZnVsbF9uYW1lIjoiU2lkZGhhcnRoIFNhYmFsZSIsImlzcyI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbSIsIm5hbWUiOiJTaWRkaGFydGggU2FiYWxlIiwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jTFNwRE45UG0tQ2g3Rms5dkZya1ZIVVl0R0RldzVSakkyVG1jMHhYOVp6Q2RsaDYwTTI9czk2LWMiLCJwcm92aWRlcl9pZCI6IjEwNzcyMjEyMzY4ODM1OTAxNzA2NyIsInN1YiI6IjEwNzcyMjEyMzY4ODM1OTAxNzA2NyJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzMyNzgxMzUzfV0sInNlc3Npb25faWQiOiJiOGFhODJhNi1mOGJlLTQ1ZGEtYTMzOC1jODdkOGRiZWRjMjMiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.wT4ONOL3peUJwIHXyJpR4znAFXwcSAW6zFe5pE6YmFQ",
+                        },
+                        body: JSON.stringify({
+                          file_name: uniqueFileName,
+                          file_type: selectedFile.type,
+                        }),
+                      }
+                    );
+
+                    const { file_url, presigned_url } =
+                      await presignedResponse.json();
+
+                    // Upload to S3 using PUT request with correct headers
+                    const uploadResponse = await fetch(presigned_url, {
+                      method: "PUT",
+                      headers: {
+                        "Content-Type": selectedFile.type,
+                      },
+                      body: selectedFile,
+                    });
+
+                    if (!uploadResponse.ok) {
+                      throw new Error(
+                        `Upload failed with status: ${uploadResponse.status}`
+                      );
+                    }
+
+                    // Get clean URL without query params
+                    const imageUrl = file_url.split("?")[0];
+
+                    // First set the new bg-image attribute
+                    component.setAttributes({ "bg-image": imageUrl });
+
+                    // Then call updateBackgroundImage to refresh the view
+                    component.updateBackgroundImage();
+
+                    // Return the new attributes
+                    return {
+                      attributes: {
+                        "bg-image": imageUrl,
+                      },
+                    };
+                  } catch (error) {
+                    console.error("Error uploading image:", error);
+                    // Log more detailed error information
+                    if (error.response) {
+                      console.error("Response status:", error.response.status);
+                      console.error(
+                        "Response data:",
+                        await error.response.text()
+                      );
+                    }
+                    // Show more specific error message to user
+                    let errorMessage = "Failed to upload image. ";
+                    if (error.message) {
+                      errorMessage += error.message;
+                    }
+                    if (error.response && error.response.status) {
+                      errorMessage += ` (Status: ${error.response.status})`;
+                    }
+                    alert(errorMessage);
+                    return null;
+                  } finally {
+                    loadingEl.classList.add("hidden");
+                    loadingEl.classList.remove("flex");
+                  }
+                },
+              };
+            },
+          },
+        };
+      },
+
+      onRender() {
+        console.log("2. About to create bottom button");
+        const buttonRow2 = this.createBottomButton();
+
+        console.log("3. Bottom button created:", buttonRow2);
+        console.log("4. this.el:", this.el);
+
+        this.el.appendChild(buttonRow2);
+        this.updateEditButton();
+      },
+
+      createButtonRow() {
+        if (this.buttonRow) return this.buttonRow;
+
+        const row = document.createElement("div");
+        row.className =
+          "gjs-component-buttons absolute bottom-6 left-2 md:left-14 m-2 flex space-x-2 z-50";
+
+        // Edit Button
+        const editBtn = this.createEditButton();
+        row.appendChild(editBtn);
+
+        // Edit Button
+        const aiBtn = this.createAiButton();
+        row.appendChild(aiBtn);
+
+        // Delete Button
+        // const deleteBtn = document.createElement("button");
+        // deleteBtn.className =
+        //   "text-gray-900 border-gray-300 bg-white bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px]";
+        // deleteBtn.innerHTML = `
+        //       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
+        //           <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.26 51.26 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.227a49.18 49.18 0 00-6 0v-.227c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd" />
+        //       </svg>
+        //   `;
+        // deleteBtn.addEventListener("click", () => {
+        //   if (confirm("Are you sure you want to delete this component?")) {
+        //     this.model.remove();
+        //   }
+        // });
+        // row.appendChild(deleteBtn);
+
+        // Duplicate Button
+        // const duplicateBtn = document.createElement("button");
+        // duplicateBtn.className =
+        //   "text-gray-900 border-gray-300 bg-white bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px]";
+        // duplicateBtn.innerHTML = `
+        //       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
+        //           <path d="M7.5 3.375c0-1.036.84-1.875 1.875-1.875h.375a3.75 3.75 0 013.75 3.75v1.875C13.5 8.161 14.34 9 15.375 9h1.875A3.75 3.75 0 0121 12.75v3.375C21 17.16 20.16 18 19.125 18h-9.75A1.875 1.875 0 017.5 16.125V3.375z" />
+        //           <path d="M15 5.25a5.23 5.23 0 00-1.279-3.434 9.768 9.768 0 016.963 6.963A5.23 5.23 0 0017.25 7.5h-1.875A.375.375 0 0115 7.125V5.25zM4.875 6H6.75a.75.75 0 00.75-.75V3.375c0-1.036-.84-1.875-1.875-1.875h-1.5A1.875 1.875 0 000 3.375v9.75C0 14.16.84 15 1.875 15H3v-3.75a3.75 3.75 0 013.75-3.75h4.125A3.75 3.75 0 0114.625 9h3.375v-.375A1.875 1.875 0 0016.125 6h-1.5a.75.75 0 01-.75-.75V3.375C13.875 2.025 12.85 1 11.5 1h-1.875a.75.75 0 01-.75-.75V1c0-1.036-.84-1.875-1.875-1.875H4.875C3.839 0 3 .84 3 1.875V4.5a.75.75 0 00.75.75z" />
+        //       </svg>
+        //   `;
+        // duplicateBtn.addEventListener("click", () => {
+        //   const newComponent = this.model.clone();
+        //   this.model.parent.add(newComponent);
+        // });
+        // row.appendChild(duplicateBtn);
+
+        this.buttonRow = row;
+        return row;
+      },
+
+      createModal(component) {
+        const componentType = component.get("type") || "default";
+        const handler =
+          this.componentEditHandlers[componentType] ||
+          this.componentEditHandlers.default;
+
+        const modal = document.createElement("div");
+        modal.className =
+          "fixed inset-0 bg-black bg-opacity-50 z-[1000] flex items-center justify-center";
+
+        const modalContent = handler.createModalContent(component);
+
+        modal.innerHTML = `
+          <div class="bg-white p-6 rounded-lg max-w-md w-full relative">
+            <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-gray-900">
+              &times;
+            </button>
+            <h2 class="text-xl font-semibold mb-4">Edit Component</h2>
+            <div class="modal-body"></div>
+            <div class="mt-4 flex justify-end space-x-2">
+              <button class="cancel-modal px-4 py-2 bg-gray-200 rounded">Cancel</button>
+              <button class="save-modal px-4 py-2 bg-blue-500 border border-rose-500 text-white rounded bg-rose-500">Save</button>
+            </div>
+          </div>
+        `;
+
+        const modalBody = modal.querySelector(".modal-body");
+        modalBody.appendChild(modalContent.container);
+
+        // Event Listeners
+        const closeBtn = modal.querySelector(".close-modal");
+        const cancelBtn = modal.querySelector(".cancel-modal");
+        const saveBtn = modal.querySelector(".save-modal");
+
+        const closeModal = () => modal.remove();
+        closeBtn.addEventListener("click", closeModal);
+        cancelBtn.addEventListener("click", closeModal);
+
+        saveBtn.addEventListener("click", () => {
+          const editData = modalContent.getData();
+          if (editData) {
+            // Apply changes to the component
+            if (editData.attributes) {
+              component.setAttributes(editData.attributes);
+            }
+            if (editData.content) {
+              component.set("content", editData.content);
+            }
+            closeModal();
+          }
+        });
+
+        return modal;
+      },
+
+      onEditButtonClick() {
+        const modal = this.createModal(this.model);
+
+        // Add save button handler
+        const saveBtn = modal.querySelector(".save-modal");
+        saveBtn.addEventListener("click", () => {
+          // Implement save logic here
+          if (typeof this.onEditSave === "function") {
+            this.onEditSave(this.el);
+          }
+          modal.remove();
+        });
+
+        document.body.appendChild(modal);
+      },
+
+      updateEditButton() {
+        const editor = this.em.get("Editor");
+        editor.on("component:select", this.handleSelect.bind(this));
+        editor.on("component:deselect", this.handleDeselect.bind(this));
+      },
+
+      handleSelect(selectedComponent) {
+        if (selectedComponent !== this.model) {
+          this.removeButtonRow();
+          return;
+        }
+
+        const buttonRow = this.createButtonRow();
+        this.el.appendChild(buttonRow);
+      },
+
+      handleDeselect() {
+        this.removeButtonRow();
+      },
+
+      removeButtonRow() {
+        if (this.buttonRow) {
+          this.buttonRow.remove();
+          this.buttonRow = null;
+        }
+      },
+
+      createBottomButton() {
+        console.log("A. createBottomButton called");
+
+        const row = document.createElement("div");
+        row.className =
+          "gjs-component-buttons2 absolute -bottom-6 m-2 flex space-x-2 z-500";
+
+        console.log("B. About to create add button");
+        const addBtn = this.createAddButton();
+        console.log("C. Add button created:", addBtn);
+
+        row.appendChild(addBtn);
+        this.buttonRow2 = row;
+
+        console.log("D. Returning row:", row);
+        return row;
+      },
+      createAddButton() {
+        console.log("X. createAddButton called");
+
+        const btn = document.createElement("button");
+
+        btn.className =
+          "relative overflow-hidden   hover:text-rose-400 flex z-100 items-center group flex-row relative rounded-md py-1 px-3 text-md leading-6 text-gray-600 bg-black ring-1 ring-gray-900/10 hover:ring-gray-900/20";
+
+        btn.innerHTML = `
+        
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 my-1">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      
+
+      <div class="ml-3 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out block">
+      Add Section
+      </div>
+          `;
+
+        btn.addEventListener("click", () => {
+          showAddComponentModal(this.model);
+        });
+
+        this.addButton = btn;
+        console.log("Y. Button created:", btn);
+        return btn;
+      },
+
+      createEditButton() {
+        if (this.editButton) return this.editButton;
+
+        const btn = document.createElement("button");
+
+        btn.className =
+          "relative overflow-hidden text-rose-400 flex z-100 items-center group flex-row relative rounded-full py-1 px-3 text-md leading-6 text-gray-600 bg-white ring-1 ring-gray-900/10 hover:ring-gray-900/20";
+
+        btn.innerHTML = `
+        
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 my-1"">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+      </svg>
+
+      <div class="lg:absolute lg:group-hover:relative lg:left-10  lg:group-hover:left-1 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out hidden lg:block opacity-0 lg:group-hover:opacity-100">
+      Edit Image
+      </div>
+          `;
+
+        btn.addEventListener("click", this.onEditButtonClick.bind(this));
+
+        this.editButton = btn;
+        return btn;
+      },
+
+      createAiButton() {
+        if (this.aiButton) return this.aiButton;
+
+        const btn = document.createElement("button");
+
+        btn.className =
+          "relative overflow-hidden text-rose-400 flex z-100 items-center group flex-row relative rounded-full py-1 px-3 text-md leading-6 text-gray-600 bg-white ring-1 ring-gray-900/10 hover:ring-gray-900/20";
+
+        btn.innerHTML = `
+        
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+      </svg>
+      
+
+      <div class="lg:absolute lg:group-hover:relative lg:left-10  lg:group-hover:left-1 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out hidden lg:block opacity-0 lg:group-hover:opacity-100">
+        Regenerate Section
+      </div>
+          `;
+
+        btn.addEventListener("click", this.onEditButtonClick.bind(this));
+
+        this.aiButton = btn;
+        return btn;
       },
     },
   });
 
-  const withEditButton = {
-    init() {
-      this.handleHover = this.handleHover.bind(this);
-      this.handleMouseLeave = this.handleMouseLeave.bind(this);
-    },
-
-    onRender() {
-      this.el.addEventListener("mouseover", this.handleHover);
-      this.el.addEventListener("mouseleave", this.handleMouseLeave);
-    },
-
-    createEditButton() {
-      const btn = document.createElement("button");
-      btn.className =
-        "gjs-edit-btn text-gray-900 border-gray-300 bg-white absolute bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px] z-10";
-      btn.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
-          <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z"></path>
-        </svg>
-      `;
-      return btn;
-    },
-
-    handleHover(e) {
-      e.stopPropagation();
-      const editor = this.em.get("Editor");
-
-      // Remove any existing edit buttons
-      const existing = editor.getContainer().querySelector(".gjs-edit-btn");
-      if (existing) existing.remove();
-
-      const btn = this.createEditButton();
-
-      // Position the button relative to the component
-      const rect = this.el.getBoundingClientRect();
-
-      btn.style.position = "fixed";
-      btn.style.top = `${rect.top + rect.height / 2 - 15}px`;
-      btn.style.left = `${rect.right - 35}px`;
-
-      // Add click handler
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        // Allow custom click handler if provided
-        if (typeof this.onEditButtonClick === "function") {
-          this.onEditButtonClick(e);
-        }
-      });
-
-      // Add to editor
-      editor.getContainer().appendChild(btn);
-    },
-
-    handleMouseLeave(e) {
-      const relatedTarget = e.relatedTarget;
-      if (!relatedTarget?.closest(".gjs-edit-btn")) {
-        const editor = this.em.get("Editor");
-        const btn = editor.getContainer().querySelector(".gjs-edit-btn");
-        if (btn) btn.remove();
-      }
-    },
-
-    remove() {
-      this.el.removeEventListener("mouseover", this.handleHover);
-      this.el.removeEventListener("mouseleave", this.handleMouseLeave);
-      const editor = this.em.get("Editor");
-      const btn = editor.getContainer().querySelector(".gjs-edit-btn");
-      if (btn) btn.remove();
-    },
-  };
-  editor.DomComponents.addType("navbar", {
+  editor.DomComponents.addType("navbar1", {
     model: {
       defaults: {
         tagName: "nav",
@@ -1175,7 +2805,7 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "flex overflow-x-auto space-x-4 p-4", // Default class for scrolling list
+          class: "flex flex-wrap space-x-4 p-4", // Default class for scrolling list
         },
         traits: [
           {
@@ -1183,7 +2813,7 @@ export default (editor, options) => {
             label: "Layout",
             name: "layout",
             options: [
-              { id: "scroll", name: "Horizontal Scroll" },
+              { id: "auto", name: "Auto" },
               { id: "grid", name: "Grid" },
             ],
             changeProp: 1, // Indicate a change will occur
@@ -1197,7 +2827,7 @@ export default (editor, options) => {
       },
 
       updateLayout() {
-        const layout = this.get("attributes")["layout"] || "scroll"; // Default to scroll layout
+        const layout = this.get("attributes")["layout"] || "grid"; // Default to scroll layout
         let classes;
 
         if (layout === "grid") {
@@ -1205,10 +2835,288 @@ export default (editor, options) => {
           classes = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4";
         } else {
           // Default to horizontal scrolling
-          classes = "flex overflow-x-auto space-x-4 p-4";
+          classes = "flex flex-wrap justify-center space-x-4 p-4";
         }
 
         this.set({ attributes: { class: classes } }); // Set the updated classes
+      },
+    },
+    view: {
+      init() {
+        this.componentEditHandlers = {
+          // Default handler for generic components
+          default: {
+            createModalContent(component) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+                          <div class="space-y-4">
+                              <div>
+                                  <label class="block mb-2">Component Type</label>
+                                  <input type="text" value="${component.get(
+                                    "type"
+                                  )}" class="w-full border p-2 rounded" disabled>
+                              </div>
+                              <div>
+                                  <label class="block mb-2">Attributes</label>
+                                  <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
+                                    component.getAttributes(),
+                                    null,
+                                    2
+                                  )}</textarea>
+                              </div>
+                          </div>
+                      `;
+
+              return {
+                container,
+                getData() {
+                  try {
+                    const attrs = JSON.parse(
+                      container.querySelector(".component-attributes").value
+                    );
+                    return { attributes: attrs };
+                  } catch (e) {
+                    alert("Invalid JSON for attributes");
+                    return null;
+                  }
+                },
+              };
+            },
+          },
+        };
+      },
+
+      onRender() {
+        console.log("2. About to create bottom button");
+        const buttonRow2 = this.createBottomButton();
+        const buttonRowCenter = this.createMiddleButton();
+
+        console.log("3. Bottom button created:", buttonRow2);
+        console.log("4. this.el:", this.el);
+
+        this.el.appendChild(buttonRow2);
+        this.el.appendChild(buttonRowCenter);
+        this.updateEditButton();
+      },
+      createBottomButton() {
+        console.log("A. createBottomButton called");
+
+        const row = document.createElement("div");
+        row.className =
+          "gjs-component-buttons2 absolute -bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-[99]";
+
+        console.log("B. About to create add button");
+        const addBtn = this.createAddButton();
+        console.log("C. Add button created:", addBtn);
+
+        row.appendChild(addBtn);
+        this.buttonRow2 = row;
+
+        console.log("D. Returning row:", row);
+        return row;
+      },
+      createAddButton() {
+        console.log("X. createAddButton called");
+
+        const btn = document.createElement("button");
+
+        btn.className =
+          "relative overflow-hidden z-[99]  hover:text-rose-400 flex z-100 items-center group flex-row relative rounded-md py-1 px-3 text-md leading-6 text-white bg-black ring-1 ring-gray-900/10 hover:ring-gray-900/20";
+
+        btn.innerHTML = `
+        
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 my-1">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      
+
+      <div class="ml-3 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out block">
+      Add Section
+      </div>
+          `;
+
+        btn.addEventListener("click", () => {
+          showAddComponentModal(this.model);
+        });
+
+        this.addButton = btn;
+        console.log("Y. Button created:", btn);
+        return btn;
+      },
+
+      createMiddleButton() {
+        const row = document.createElement("div");
+        row.className =
+          "gjs-component-buttons2 h-auto flex items-center justify-center w-full p-6 mx-auto border-2 border-blue-500 border-dashed bg-blue-500 bg-opacity-5 hover:bg-opacity-20 text-center z-[99]";
+
+        const addBtn = this.createSwapButton();
+
+        row.appendChild(addBtn);
+        this.buttonRowCenter = row;
+
+        return row;
+      },
+
+      createMiddleButton2() {
+        const row = document.createElement("div");
+        row.className =
+          "gjs-component-buttons2 mx-auto my-3 text-center z-[99]";
+
+        const addBtn = this.createSwapButton();
+
+        row.appendChild(addBtn);
+        this.buttonRowCenter = row;
+
+        return row;
+      },
+
+      createSwapButton() {
+        console.log("X. createAddButton called");
+
+        const btn = document.createElement("button");
+
+        btn.className =
+          "relative overflow-hidden mx-auto my-auto text-rose-400 flex z-100 items-center group flex-row relative rounded-full py-1 px-3 text-md leading-6 text-gray-600 bg-white ring-1 ring-gray-900/10 hover:ring-gray-900/20";
+
+        btn.innerHTML = `
+        
+      
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+      </svg>
+      
+
+
+      <div class="lg:absolute lg:group-hover:relative lg:left-10  lg:group-hover:left-1 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out hidden lg:block opacity-0 lg:group-hover:opacity-100">
+        Add Card
+      </div>
+          `;
+
+          btn.addEventListener("click", () => {
+            // Get the current component
+            const currentComponent = this.model;
+      
+            // Get the children of the current component
+            const children = currentComponent.components();
+      
+            // Check if there are any children
+            if (children.length > 0) {
+              // Get the first child component
+              const firstChild = children.at(0);
+      
+              // Clone the first child component
+              const clonedChild = firstChild.clone();
+      
+              // Append the cloned child to the end of the current component's children
+              currentComponent.append(clonedChild);
+      
+              console.log("First child component duplicated and appended to the end.");
+            } else {
+              console.log("No children to duplicate.");
+            }
+          });
+
+        this.swapButton = btn;
+        console.log("Y. Button created:", btn);
+        return btn;
+      },
+
+      createButtonRow() {
+        if (this.buttonRow) return this.buttonRow;
+
+        const row = document.createElement("div");
+        row.className =
+          "gjs-component-buttons absolute bottom-6 left-2 md:left-14 m-2 flex space-x-2 z-50";
+
+        // Edit Button
+        const aiBtn = this.createAiButton();
+        row.appendChild(aiBtn);
+
+        // Delete Button
+        // const deleteBtn = document.createElement("button");
+        // deleteBtn.className =
+        //   "text-gray-900 border-gray-300 bg-white bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px]";
+        // deleteBtn.innerHTML = `
+        //       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
+        //           <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.26 51.26 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.227a49.18 49.18 0 00-6 0v-.227c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd" />
+        //       </svg>
+        //   `;
+        // deleteBtn.addEventListener("click", () => {
+        //   if (confirm("Are you sure you want to delete this component?")) {
+        //     this.model.remove();
+        //   }
+        // });
+        // row.appendChild(deleteBtn);
+
+        // Duplicate Button
+        // const duplicateBtn = document.createElement("button");
+        // duplicateBtn.className =
+        //   "text-gray-900 border-gray-300 bg-white bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px]";
+        // duplicateBtn.innerHTML = `
+        //       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
+        //           <path d="M7.5 3.375c0-1.036.84-1.875 1.875-1.875h.375a3.75 3.75 0 013.75 3.75v1.875C13.5 8.161 14.34 9 15.375 9h1.875A3.75 3.75 0 0121 12.75v3.375C21 17.16 20.16 18 19.125 18h-9.75A1.875 1.875 0 017.5 16.125V3.375z" />
+        //           <path d="M15 5.25a5.23 5.23 0 00-1.279-3.434 9.768 9.768 0 016.963 6.963A5.23 5.23 0 0017.25 7.5h-1.875A.375.375 0 0115 7.125V5.25zM4.875 6H6.75a.75.75 0 00.75-.75V3.375c0-1.036-.84-1.875-1.875-1.875h-1.5A1.875 1.875 0 000 3.375v9.75C0 14.16.84 15 1.875 15H3v-3.75a3.75 3.75 0 013.75-3.75h4.125A3.75 3.75 0 0114.625 9h3.375v-.375A1.875 1.875 0 0016.125 6h-1.5a.75.75 0 01-.75-.75V3.375C13.875 2.025 12.85 1 11.5 1h-1.875a.75.75 0 01-.75-.75V1c0-1.036-.84-1.875-1.875-1.875H4.875C3.839 0 3 .84 3 1.875V4.5a.75.75 0 00.75.75z" />
+        //       </svg>
+        //   `;
+        // duplicateBtn.addEventListener("click", () => {
+        //   const newComponent = this.model.clone();
+        //   this.model.parent.add(newComponent);
+        // });
+        // row.appendChild(duplicateBtn);
+
+        this.buttonRow = row;
+        return row;
+      },
+
+      handleSelect(selectedComponent) {
+        if (selectedComponent !== this.model) {
+          this.removeButtonRow();
+          return;
+        }
+
+        const buttonRow = this.createButtonRow();
+        this.el.appendChild(buttonRow);
+      },
+
+      handleDeselect() {
+        this.removeButtonRow();
+      },
+
+      removeButtonRow() {
+        if (this.buttonRow) {
+          this.buttonRow.remove();
+          this.buttonRow = null;
+        }
+      },
+
+      createAiButton() {
+        if (this.aiButton) return this.aiButton;
+
+        const btn = document.createElement("button");
+
+        btn.className =
+          "relative overflow-hidden text-rose-400 flex z-100 items-center group flex-row relative rounded-full py-1 px-3 text-md leading-6 text-gray-600 bg-white ring-1 ring-gray-900/10 hover:ring-gray-900/20";
+
+        btn.innerHTML = `
+        
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+      </svg>
+      
+
+      <div class="lg:absolute lg:group-hover:relative lg:left-10  lg:group-hover:left-1 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out hidden lg:block opacity-0 lg:group-hover:opacity-100">
+        Regenerate Section
+      </div>
+          `;
+
+        this.aiButton = btn;
+        return btn;
+      },
+
+      updateEditButton() {
+        const editor = this.em.get("Editor");
+        editor.on("component:select", this.handleSelect.bind(this));
+        editor.on("component:deselect", this.handleDeselect.bind(this));
       },
     },
   });
@@ -1220,7 +3128,7 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "max-w-sm text-left card", // Default class for scrolling list
+          class: "max-w-xs w-full text-left card", // Default class for scrolling list
           sectiontype: "normal",
         },
         traits: [],
@@ -1247,23 +3155,169 @@ export default (editor, options) => {
       onAttributesChange() {},
     },
   });
-  // Corrected JavaScript function to toggle the mobile menu
-  function toggleMobileMenu(event) {
-    // Fetch the button's closest nav element and then find the menu within it
-    const button = event.target.closest("button");
-    const menu = button.closest("nav").querySelector("#mobile-menu");
-    if (menu) {
-      menu.classList.toggle("hidden");
-    }
-  }
 
-  // JavaScript function to toggle the mobile menu
-  function toggleMobileMenu(button) {
-    const menu = button.closest("nav").querySelector("#mobile-menu");
-    if (menu) {
-      menu.classList.toggle("hidden");
-    }
-  }
+  editor.DomComponents.addType("navbar", {
+    model: {
+      defaults: {
+        tagName: "nav",
+        attributes: {
+          class: "navbar fixed w-full top-0 z-[99999] transition-all duration-300",
+        },
+        droppable: true,
+        traits: [],
+        script: function () {
+          const nav = this;
+          window.addEventListener("scroll", function () {
+            if (window.scrollY > 50) {
+              nav.classList.add("navbar-bg", "shadow-md");
+              nav.classList.remove("bg-transparent");
+            } else {
+              nav.classList.remove("navbar-bg", "shadow-md");
+              nav.classList.add("bg-transparent");
+            }
+          });
+        },
+        styles: `
+        .navbar img{
+          height: 1.75rem !important;
+          width: auto;
+        }
+        .navbar-bg{
+          background-color: var(--color-section-light) !important;
+        }
+        `,
+      },
+    },
+  });
 
-  // Modify the edit-navbar-links command
+  editor.DomComponents.addType("navbar-container", {
+    model: {
+      defaults: {
+        tagName: "div",
+        attributes: {
+          class: "relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16",
+        },
+      },
+    },
+  });
+
+  editor.DomComponents.addType("logo", {
+    model: {
+      defaults: {
+        tagName: "div",
+        attributes: { class: "flex items-center" },
+        content: `<span class="text-2xl font-bold text-blue-600">Brand</span>`,
+        droppable: false,
+      },
+    },
+  });
+
+  editor.DomComponents.addType("nav-list", {
+    model: {
+      defaults: {
+        tagName: "div",
+        attributes: {
+          class: "hidden md:flex md:items-center md:space-x-4 ",
+        },
+        droppable: true,
+      },
+    },
+  });
+
+  editor.DomComponents.addType("nav-link", {
+    model: {
+      defaults: {
+        tagName: "a",
+        attributes: {
+          class:
+            "nav-link text-sm px-4 py-2 text-white transition-colors duration-200 mix-blend-difference filter contrast-200 hover:mix-blend-normal hover:filter-none hover:contrast-50",
+          href: "#",
+        },
+        content: "Link",
+        droppable: false,
+        traits: [
+          {
+            type: "text",
+            name: "href",
+            label: "Link URL",
+          },
+          {
+            type: "text",
+            name: "innerHTML",
+            label: "Text",
+          },
+        ],
+        styles: `
+        .nav-link:hover{
+          color: var(--color-primary-light) !important
+        }
+        `,
+      },
+    },
+  });
+
+  // Mobile menu button component
+  editor.DomComponents.addType("mobile-menu-button", {
+    model: {
+      defaults: {
+        tagName: "button",
+        attributes: {
+          class:
+            "md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 focus:outline-none",
+        },
+        content: `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        `,
+        script: function () {
+          const btn = this;
+          const navbar = btn.closest("nav");
+          const mobileMenu = navbar.querySelector(".mobile-menu");
+
+          btn.addEventListener("click", () => {
+            mobileMenu.classList.toggle("hidden");
+          });
+        },
+      },
+    },
+  });
+
+  editor.DomComponents.addType("footer", {
+    model: {
+      defaults: {
+        tagName: "footer",
+        attributes: {
+          class: "bg-gray-100 border-t border-gray-300 py-6 px-8",
+        },
+        droppable: true,
+      },
+    },
+  })
+
+  editor.DomComponents.addType("footer-container", {
+    model: {
+      defaults: {
+        tagName: "footer",
+        attributes: {
+          class: "flex flex-col lg:flex-row lg:justify-between items-center",
+        },
+        droppable: true,
+      },
+    },
+  })
+
+  // Mobile menu container
+  editor.DomComponents.addType("mobile-menu", {
+    model: {
+      defaults: {
+        tagName: "div",
+        attributes: {
+          class:
+            "mobile-menu hidden md:hidden transition-all duration-300 ease-in-out",
+        },
+        droppable: true,
+      },
+    },
+  });
 };

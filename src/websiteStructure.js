@@ -100,7 +100,64 @@ function loadWebsiteStructure(editor, websiteStructure) {
   // Create a body wrapper component
   const bodyWrapper = {
     type: "body",
-    components: websiteStructure.components, 
+    components: [
+      {
+        type: "navbar",
+        components: [
+          {
+            type: "navbar-container",
+            components: [
+              {
+                type: "logo",
+                content: "YourLogoHere",
+              },
+              {
+                type: "nav-list",
+                components: [
+                  {
+                    type: "nav-link",
+                    content: "Nav-Link-1",
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      websiteStructure.components,
+      {
+        type: "footer",
+        components: [
+          {
+            type: "footer-container",
+            components: [
+              {
+                type: "stack",
+                components: [
+                  {
+                    type: "logo",
+                    content: "YourLogoHere",
+                  },
+                  {
+                    type: "nav-list",
+                    components: [
+                      {
+                        type: "nav-link",
+                        content: "Nav-Link-1",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "paragraph",
+                content: `Made using <img class="block h-8 sm:h-8 w-auto" src="https://www.bytesites.ai/bytesites.png" alt="ByteSites">`,
+              },
+            ],
+          },
+        ],
+      },
+    ],
   };
 
   // Apply CSS styles from websiteStructure

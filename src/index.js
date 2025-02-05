@@ -11,7 +11,333 @@ export default (editor, opts = {}) => {
     i18n: {},
     ...opts,
   };
-
+  // const websiteData = {
+  //   themeoptions: {
+  //     fonts: {
+  //       primary: "Arial",
+  //       secondary: "Helvetica",
+  //       scale: "1.2",
+  //     },
+  //     colors: {
+  //       primary: "#A67C52", // Warm, luxurious tone for primary elements like buttons and highlights.
+  //       primaryLight: "#C2986E", // Lighter, warm shade for interactive elements (hover effects).
+  //       primaryDark: "#8C643F", // Rich, deeper tone for contrast in interactive elements.
+  //       textLight: "#EDE3D9", // Light, refined text for dark backgrounds, soft for elegance.
+  //       textPrimary: "#2B2B2B", // Dark, classic tone for headings and main text.
+  //       textSecondary: "#5D5D5D", // Softer grey for body text on light backgrounds.
+  //       sectionLight: "#FAF8F5", // Elegant off-white for clean, welcoming sections.
+  //       sectionAccent1: "#E4D7C7", // Subtle, warm beige for a gentle contrast on light sections.
+  //       sectionAccent2: "#F1E9DC", // Very light, soft neutral for depth without overpowering.
+  //       sectionDark: "#1F1A17", // Deep, almost black shade with warm undertones for luxurious dark sections.
+  //     },
+  //   },
+  //   "components": [
+  //     {
+  //       "type": "hero-section",
+  //       "attributes": {
+  //         "bg-image": "restaurant-interior-with-tables",
+  //         "center-layout": "true"
+  //       },
+  //       "components": [
+  //         {
+  //           "type": "hero-section-container",
+  //           "components": [
+  //             {
+  //               "type": "hero-text-subtitle",
+  //               "content": "Welcome to"
+  //             },
+  //             {
+  //               "type": "hero-text-title",
+  //               "content": "Green Bites"
+  //             },
+  //             {
+  //               "type": "row-container",
+  //               "components": [
+  //                 {
+  //                   "type": "button-primary",
+  //                   "attributes": {
+  //                     "link": "#menu"
+  //                   },
+  //                   "content": "Explore Menu"
+  //                 },
+  //                 {
+  //                   "type": "button-secondary",
+  //                   "attributes": {
+  //                     "link": "#reservation"
+  //                   },
+  //                   "content": "Book a Table"
+  //                 }
+  //               ]
+  //             }
+  //           ]
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       "type": "section",
+  //       "attributes": {
+  //         "sectiontype": "normal"
+  //       },
+  //       "components": [
+  //         {
+  //           "type": "container",
+  //           "components": [
+  //             {
+  //               "type": "content-subtitle",
+  //               "content": "Our Story"
+  //             },
+  //             {
+  //               "type": "content-title",
+  //               "content": "About Green Bites"
+  //             },
+  //             {
+  //               "type": "two-columns",
+  //               "attributes": {
+  //                 "offset": "none"
+  //               },
+  //               "components": [
+  //                 {
+  //                   "type": "blank-container",
+  //                   "components": [
+  //                     {
+  //                       "type": "text-content",
+  //                       "content": "At Green Bites, we believe in serving fresh, organic, and locally sourced ingredients. Our passion for sustainability and delicious food has made us a favorite among food lovers. Join us for a culinary experience that’s good for you and the planet."
+  //                     }
+  //                   ]
+  //                 },
+  //                 {
+  //                   "type": "blank-container",
+  //                   "components": [
+  //                     {
+  //                       "type": "custom-image",
+  //                       "attributes": {
+  //                         "src": "chef-preparing-dish",
+  //                         "alt-text": "Chef preparing a dish"
+  //                       }
+  //                     }
+  //                   ]
+  //                 }
+  //               ]
+  //             }
+  //           ]
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       "type": "section",
+  //       "attributes": {
+  //         "sectiontype": "accent-1"
+  //       },
+  //       "components": [
+  //         {
+  //           "type": "container",
+  //           "components": [
+  //             {
+  //               "type": "content-subtitle",
+  //               "content": "Our Menu"
+  //             },
+  //             {
+  //               "type": "content-title",
+  //               "content": "Delicious & Fresh"
+  //             },
+  //             {
+  //               "type": "card-list",
+  //               "components": [
+  //                 {
+  //                   "type": "card",
+  //                   "components": [
+  //                     {
+  //                       "type": "custom-image",
+  //                       "attributes": {
+  //                         "src": "vegetarian-pasta-dish",
+  //                         "alt-text": "non Pasta"
+  //                       }
+  //                     },
+  //                     {
+  //                       "type": "content-heading",
+  //                       "content": "Vegetarian Pasta"
+  //                     },
+  //                     {
+  //                       "type": "text-content",
+  //                       "content": "A delightful mix of fresh vegetables and homemade pasta, tossed in a rich tomato sauce."
+  //                     },
+  //                     {
+  //                       "type": "blank-container",
+  //                       "components": [
+  //                         {
+  //                           "type": "button-tertiary",
+  //                           "attributes": {
+  //                             "link": "#order-now"
+  //                           },
+  //                           "content": "Order Now"
+  //                         }
+  //                       ]
+  //                     }
+  //                   ]
+  //                 },
+  //                 {
+  //                   "type": "card",
+  //                   "components": [
+  //                     {
+  //                       "type": "custom-image",
+  //                       "attributes": {
+  //                         "src": "vegetarian-pasta-dish",
+  //                         "alt-text": "Vegetarian Pasta"
+  //                       }
+  //                     },
+  //                     {
+  //                       "type": "content-heading",
+  //                       "content": "Vegetarian Pasta"
+  //                     },
+  //                     {
+  //                       "type": "text-content",
+  //                       "content": "A delightful mix of fresh vegetables and homemade pasta, tossed in a rich tomato sauce."
+  //                     },
+  //                     {
+  //                       "type": "blank-container",
+  //                       "components": [
+  //                         {
+  //                           "type": "button-tertiary",
+  //                           "attributes": {
+  //                             "link": "#order-now"
+  //                           },
+  //                           "content": "Order Now"
+  //                         }
+  //                       ]
+  //                     }
+  //                   ]
+  //                 },
+  //                 {
+  //                   "type": "card",
+  //                   "components": [
+  //                     {
+  //                       "type": "custom-image",
+  //                       "attributes": {
+  //                         "src": "grilled-salmon-dish",
+  //                         "alt-text": "Grilled Salmon"
+  //                       }
+  //                     },
+  //                     {
+  //                       "type": "content-heading",
+  //                       "content": "Grilled Salmon"
+  //                     },
+  //                     {
+  //                       "type": "text-content",
+  //                       "content": "Freshly caught salmon grilled to perfection, served with a side of seasonal vegetables."
+  //                     },
+  //                     {
+  //                       "type": "blank-container",
+  //                       "components": [
+  //                         {
+  //                           "type": "button-tertiary",
+  //                           "attributes": {
+  //                             "link": "#order-now"
+  //                           },
+  //                           "content": "Order Now"
+  //                         }
+  //                       ]
+  //                     }
+  //                   ]
+  //                 },
+  //                 {
+  //                   "type": "card",
+  //                   "components": [
+  //                     {
+  //                       "type": "custom-image",
+  //                       "attributes": {
+  //                         "src": "vegan-burger-dish",
+  //                         "alt-text": "Vegan Burger"
+  //                       }
+  //                     },
+  //                     {
+  //                       "type": "content-heading",
+  //                       "content": "Vegan Burger"
+  //                     },
+  //                     {
+  //                       "type": "text-content",
+  //                       "content": "A plant-based patty with avocado, lettuce, and vegan mayo, served with sweet potato fries."
+  //                     },
+  //                     {
+  //                       "type": "blank-container",
+  //                       "components": [
+  //                         {
+  //                           "type": "button-tertiary",
+  //                           "attributes": {
+  //                             "link": "#order-now"
+  //                           },
+  //                           "content": "Order Now"
+  //                         }
+  //                       ]
+  //                     }
+  //                   ]
+  //                 }
+  //               ]
+  //             }
+  //           ]
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       "type": "section",
+  //       "attributes": {
+  //         "sectiontype": "normal"
+  //       },
+  //       "components": [
+  //         {
+  //           "type": "container",
+  //           "components": [
+  //             {
+  //               "type": "content-subtitle",
+  //               "content": "Reserve a Table"
+  //             },
+  //             {
+  //               "type": "content-title",
+  //               "content": "Book Your Experience"
+  //             },
+  //             {
+  //               "type": "text-content",
+  //               "content": "Join us for a memorable dining experience. Reserve your table today and let us take care of the rest."
+  //             },
+  //             {
+  //               "type": "button-primary",
+  //               "attributes": {
+  //                 "link": "#reservation"
+  //               },
+  //               "content": "Make a Reservation"
+  //             }
+  //           ]
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       "type": "section",
+  //       "attributes": {
+  //         "sectiontype": "dark"
+  //       },
+  //       "components": [
+  //         {
+  //           "type": "container",
+  //           "components": [
+  //             {
+  //               "type": "content-subtitle",
+  //               "content": "Follow Us"
+  //             },
+  //             {
+  //               "type": "content-title",
+  //               "content": "Stay Connected"
+  //             },
+  //             {
+  //               "type": "social-media-icons",
+  //               "attributes": {
+  //                 "platforms": ["facebook", "instagram", "twitter"]
+  //               }
+  //             }
+  //           ]
+  //         }
+  //       ]
+  //     }],
+  // };
+  const websiteData1 = options.websiteData;
   // Register components
   loadComponents(editor);
 
@@ -33,20 +359,21 @@ export default (editor, opts = {}) => {
         secondary: "Helvetica",
         scale: "1.2",
       },
-      "colors": {
-        "primary": "#A67C52",  // Warm, luxurious tone for primary elements like buttons and highlights.
-        "primaryLight": "#C2986E",  // Lighter, warm shade for interactive elements (hover effects).
-        "primaryDark": "#8C643F",  // Rich, deeper tone for contrast in interactive elements.
-        "textLight": "#EDE3D9",  // Light, refined text for dark backgrounds, soft for elegance.
-        "textPrimary": "#2B2B2B",  // Dark, classic tone for headings and main text.
-        "textSecondary": "#5D5D5D",  // Softer grey for body text on light backgrounds.
-        "sectionLight": "#FAF8F5",  // Elegant off-white for clean, welcoming sections.
-        "sectionAccent1": "#E4D7C7",  // Subtle, warm beige for a gentle contrast on light sections.
-        "sectionAccent2": "#F1E9DC",  // Very light, soft neutral for depth without overpowering.
-        "sectionDark": "#1F1A17"  // Deep, almost black shade with warm undertones for luxurious dark sections.
+      colors: {
+        primary: "#A67C52", // Warm, luxurious tone for primary elements like buttons and highlights.
+        primaryLight: "#C2986E", // Lighter, warm shade for interactive elements (hover effects).
+        primaryDark: "#8C643F", // Rich, deeper tone for contrast in interactive elements.
+        textLight: "#EDE3D9", // Light, refined text for dark backgrounds, soft for elegance.
+        textPrimary: "#2B2B2B", // Dark, classic tone for headings and main text.
+        textSecondary: "#5D5D5D", // Softer grey for body text on light backgrounds.
+        sectionLight: "#FAF8F5", // Elegant off-white for clean, welcoming sections.
+        sectionAccent1: "#E4D7C7", // Subtle, warm beige for a gentle contrast on light sections.
+        sectionAccent2: "#F1E9DC", // Very light, soft neutral for depth without overpowering.
+        sectionDark: "#1F1A17", // Deep, almost black shade with warm undertones for luxurious dark sections.
       },
     },
     components: [
+      
       {
         type: "hero-section",
         attributes: {
@@ -108,10 +435,10 @@ export default (editor, opts = {}) => {
                 },
                 components: [
                   {
-                    type: "blank-container",
+                    type: "stack",
                     components: [
                       {
-                        type: "paragraph",
+                        type: "text-content",
                         content: `<p>This attractive new neighbourhood for young families and active people delivers fresh contemporary living with numerous free-time opportunities.<br>Ovocne sady’s high- quality and practical apartments with functional architecture, public spaces, and excellent options for sport and relaxation – all just steps from your new home.
                           <ul class="list-disc mt-2 pl-5">
   <li>Open floor plan for spaciousness</li>
@@ -127,7 +454,7 @@ export default (editor, opts = {}) => {
                   },
 
                   {
-                    type: "blank-container",
+                    type: "stack",
                     components: [
                       {
                         type: "visuals-full-image",
@@ -156,7 +483,7 @@ export default (editor, opts = {}) => {
             },
           },
           {
-            type: "blank-container",
+            type: "stack",
             components: [
               {
                 type: "content-subtitle",
@@ -167,7 +494,7 @@ export default (editor, opts = {}) => {
                 content: "What makes a home?",
               },
               {
-                type: "paragraph",
+                type: "text-content",
                 content: `<p>This attractive new neighbourhood for young families and active people delivers fresh contemporary living with numerous free-time opportunities.<br>Ovocne sady’s high- quality and practical apartments with functional architecture, public spaces, and excellent options for sport and relaxation – all just steps from your new home.
 
                 </p>`,
@@ -191,7 +518,7 @@ export default (editor, opts = {}) => {
             },
           },
           {
-            type: "blank-container",
+            type: "stack",
             components: [
               {
                 type: "content-subtitle",
@@ -202,7 +529,7 @@ export default (editor, opts = {}) => {
                 content: "Our Services are the best in the world",
               },
               {
-                type: "paragraph",
+                type: "text-content",
                 content: `<p>This attractive new neighbourhood for young families and active people delivers fresh contemporary living with numerous free-time opportunities.<br>Ovocne sady’s high- quality and practical apartments with functional architecture, public spaces, and excellent options for sport and relaxation – all just steps from your new home.
 
                 </p>`,
@@ -242,19 +569,108 @@ export default (editor, opts = {}) => {
                     },
                     components: [
                       {
-                        type: "custom-image",
-                        attributes: {
-                          src: "https://statusneo.com/wp-content/uploads/2023/02/MicrosoftTeams-image551ad57e01403f080a9df51975ac40b6efba82553c323a742b42b1c71c1e45f1.jpg",
-                        },
+                        type: "stack", // Add stack component
+                        components: [
+                          {
+                            type: "custom-image",
+                            attributes: {
+                              src: "https://statusneo.com/wp-content/uploads/2023/02/MicrosoftTeams-image551ad57e01403f080a9df51975ac40b6efba82553c323a742b42b1c71c1e45f1.jpg",
+                            },
+                          },
+                          {
+                            type: "content-heading",
+                            content: "mark C. Turner Prize for Innovation",
+                          },
+                          {
+                            type: "text-content",
+                            content:
+                              "The sun collectors, shall provide the electricity of the social areas of the site and shall do its part for protecting the environment.",
+                          },
+                        ],
                       },
+                    ],
+                  },
+                  {
+                    type: "card",
+                    attributes: {
+                      sectiontype: "",
+                    },
+                    components: [
                       {
-                        type: "content-heading",
-                        content: "Henry C. Turner Prize for Innovation",
+                        type: "stack", // Add stack component
+                        components: [
+                          {
+                            type: "custom-image",
+                            attributes: {
+                              src: "https://statusneo.com/wp-content/uploads/2023/02/MicrosoftTeams-image551ad57e01403f080a9df51975ac40b6efba82553c323a742b42b1c71c1e45f1.jpg",
+                            },
+                          },
+                          {
+                            type: "content-heading",
+                            content: "Henry C. Turner Prize for Innovation",
+                          },
+                          {
+                            type: "text-content",
+                            content:
+                              "The sun collectors, shall provide the electricity of the social areas of the site and shall do its part for protecting the environment.",
+                          },
+                        ],
                       },
+                    ],
+                  },
+                  {
+                    type: "card",
+                    attributes: {
+                      sectiontype: "",
+                    },
+                    components: [
                       {
-                        type: "paragraph",
-                        content:
-                          "The sun collectors, shall provide the electricity of the social areas of the site and shall do its part for protecting the environment.",
+                        type: "stack", // Add stack component
+                        components: [
+                          {
+                            type: "custom-image",
+                            attributes: {
+                              src: "https://statusneo.com/wp-content/uploads/2023/02/MicrosoftTeams-image551ad57e01403f080a9df51975ac40b6efba82553c323a742b42b1c71c1e45f1.jpg",
+                            },
+                          },
+                          {
+                            type: "content-heading",
+                            content: "Henry C. Turner Prize for Innovation",
+                          },
+                          {
+                            type: "text-content",
+                            content:
+                              "The sun collectors, shall provide the electricity of the social areas of the site and shall do its part for protecting the environment.",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    type: "card",
+                    attributes: {
+                      sectiontype: "",
+                    },
+                    components: [
+                      {
+                        type: "stack", // Add stack component
+                        components: [
+                          {
+                            type: "custom-image",
+                            attributes: {
+                              src: "https://statusneo.com/wp-content/uploads/2023/02/MicrosoftTeams-image551ad57e01403f080a9df51975ac40b6efba82553c323a742b42b1c71c1e45f1.jpg",
+                            },
+                          },
+                          {
+                            type: "content-heading",
+                            content: "Henry C. Turner Prize for Innovation",
+                          },
+                          {
+                            type: "text-content",
+                            content:
+                              "The sun collectors, shall provide the electricity of the social areas of the site and shall do its part for protecting the environment.",
+                          },
+                        ],
                       },
                     ],
                   },
@@ -265,7 +681,7 @@ export default (editor, opts = {}) => {
         ],
       },
     ],
-  };  
+  };
   // const websiteData = {
   //   themeoptions: {
   //     fonts: {
@@ -376,7 +792,7 @@ export default (editor, opts = {}) => {
   //                         "Heading text that will be used in content sections like cards, feature cards, services sections, etc.",
   //                     },
   //                     {
-  //                       type: "paragraph",
+  //                       type: "text-content",
   //                       attributes: {
   //                         color: "primary",
   //                       },
@@ -409,7 +825,7 @@ export default (editor, opts = {}) => {
   //                         "Heading text that will be used in content sections like cards, feature cards, services sections, etc.",
   //                     },
   //                     {
-  //                       type: "paragraph",
+  //                       type: "text-content",
   //                       attributes: {
   //                         color: "primary",
   //                       },
@@ -442,7 +858,7 @@ export default (editor, opts = {}) => {
   //                         "Heading text that will be used in content sections like cards, feature cards, services sections, etc.",
   //                     },
   //                     {
-  //                       type: "paragraph",
+  //                       type: "text-content",
   //                       attributes: {
   //                         color: "primary",
   //                       },
@@ -532,6 +948,69 @@ export default (editor, opts = {}) => {
   //   ],
   // };
   console.log("Components and blocks loaded");
+
+  editor.Commands.add("update-theme-options", {
+    run(editor, sender, { themeoptions }) {
+      console.log(themeoptions);
+      // Function to update CSS variables
+      const updateCSSVariables = (options) => {
+        const rootStyle = document.documentElement;
+
+        // Update font variables
+        rootStyle.style.setProperty("--font-primary", options.fonts.primary);
+        rootStyle.style.setProperty(
+          "--font-secondary",
+          options.fonts.secondary
+        );
+        rootStyle.style.setProperty("--font-scale", options.fonts.scale);
+
+        // Update color variables
+        rootStyle.style.setProperty("--color-primary", options.colors.primary);
+        rootStyle.style.setProperty(
+          "--color-primary-light",
+          options.colors.primaryLight
+        );
+        rootStyle.style.setProperty(
+          "--color-primary-dark",
+          options.colors.primaryDark
+        );
+        rootStyle.style.setProperty(
+          "--color-text-light",
+          options.colors.textLight
+        );
+        rootStyle.style.setProperty(
+          "--color-section-light",
+          options.colors.sectionLight
+        );
+        rootStyle.style.setProperty(
+          "--color-section-accent1",
+          options.colors.sectionAccent1
+        );
+        rootStyle.style.setProperty(
+          "--color-section-accent2",
+          options.colors.sectionAccent2
+        );
+        rootStyle.style.setProperty(
+          "--color-section-dark",
+          options.colors.sectionDark
+        );
+        rootStyle.style.setProperty(
+          "--color-text-primary",
+          options.colors.textPrimary
+        );
+        rootStyle.style.setProperty(
+          "--color-text-secondary",
+          options.colors.textSecondary
+        );
+      };
+
+      // Update CSS variables
+      updateCSSVariables(themeoptions);
+
+      // Optional: Trigger a re-render or update in the editor
+      editor.refresh();
+    },
+  });
 
   // Generate the website structure
   const websiteStructure = generateWebsiteStructure(editor, websiteData);
