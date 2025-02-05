@@ -213,8 +213,36 @@ function showAddComponentModal(targetComponent) {
 }
 
 export default (editor, options) => {
-  // Add this to your GrapesJS editor initialization
+  editor.DomComponents.addType("navbar", {
+    isComponent: el => el.tagName === 'NAV',
+    model: {
+      defaults: {
+        tagName: 'nav',
+        draggable: true,
+        droppable: true,
+        traits: [],
+        attributes: {
+          class: 'bg-gray-900 shadow-lg fixed top-0 left-0 right-0 z-50 py-4'
+        },
+        content: `
+          <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <span class="text-2xl font-bold text-white">BytePlexure</span>
+              </div>
+              <div class="flex items-center space-x-8">
+                <a href="#" class="text-white hover:text-gray-300 px-3 py-2 text-base font-medium">Test Nav 1</a>
+                <a href="#" class="text-white hover:text-gray-300 px-3 py-2 text-base font-medium">Test Nav 2</a>
+                <a href="#" class="text-white hover:text-gray-300 px-3 py-2 text-base font-medium">Test Nav 3</a>
+              </div>
+            </div>
+          </div>
+        `
+      }
+    }
+  });
 
+  // Add this to your GrapesJS editor initialization
   const withEditButton3 = {
     init() {
       this.componentEditHandlers = {
@@ -227,16 +255,12 @@ export default (editor, options) => {
                 <div>
                   <label class="block mb-2">Component Type</label>
                   <input type="text" value="${component.get(
-                    "type"
-                  )}" class="w-full border p-2 rounded" disabled>
+              "type"
+            )}" class="w-full border p-2 rounded" disabled>
                 </div>
                 <div>
-                  <label class="block mb-2">Attributes</label>
-                  <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                    component.getAttributes(),
-                    null,
-                    2
-                  )}</textarea>
+                  <label class="block mb-2">Content</label>
+                  <textarea class="w-full border p-2 rounded component-content" rows="4">${component.get('content') || ''}</textarea>
                 </div>
               </div>
             `;
@@ -288,11 +312,14 @@ export default (editor, options) => {
                     alt: container.querySelector(".image-alt").value,
                   },
                 };
+                const content = container.querySelector(".component-content").value;
+                return { content };
               },
             };
           },
         },
 
+        // Text components handler
         text: {
           createModalContent(component) {
             const container = document.createElement("div");
@@ -313,6 +340,164 @@ export default (editor, options) => {
                 return {
                   content: container.querySelector(".text-content").value,
                 };
+              },
+            };
+          },
+        },
+
+        // Button handler
+        button: {
+          createModalContent(component) {
+            const container = document.createElement("div");
+            container.innerHTML = `
+              <div class="space-y-4">
+                <div>
+                  <label class="block mb-2">Button Text</label>
+                  <input type="text" class="w-full border p-2 rounded button-text" value="${component.get('content') || ''}">
+                </div>
+              </div>
+            `;
+
+            return {
+              container,
+              getData() {
+                return {
+                  content: container.querySelector(".button-text").value,
+                };
+              },
+            };
+          },
+        },
+
+        // Specific handlers for different component types
+        image: {
+          createModalContent(component) {
+            const container = document.createElement("div");
+            const currentImage = component.getAttributes().src || "";
+
+            container.innerHTML = `
+              <div class="space-y-4">
+                <div>
+                  <label class="block mb-2">Image Preview</label>
+                  <img src="${currentImage}" alt="Preview" class="w-full h-48 object-cover rounded-lg shadow-sm mb-4">
+                  <div class="absolute inset-0 bg-black bg-opacity-50 hidden items-center justify-center" id="upload-loading">
+                    <svg class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </div>
+                </div>
+               
+                <div class="flex items-center justify-center w-full">
+                  <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-rose-300 border-dashed rounded-lg cursor-pointer bg-rose-50 hover:bg-rose-100">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                      <svg class="w-8 h-8 mb-4 text-rose-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2"/>
+                      </svg>
+                      <p class="mb-2 text-sm text-rose-500"><span class="font-semibold">Click to upload</span></p>
+                      <p class="text-xs text-rose-500">PNG, JPG or JPEG</p>
+                    </div>
+                    <input id="image-upload" type="file" class="hidden" accept="image/*" />
+                  </label>
+                </div>
+ 
+                <div>
+                  <label class="block mb-2">Alt Text</label>
+                  <input type="text" class="w-full border p-2 rounded image-alt" value="${component.getAttributes().alt || ""
+              }">
+                </div>
+              </div>
+            `;
+
+            let selectedFile = null;
+            const previewImg = container.querySelector("img");
+            const loadingEl = container.querySelector("#upload-loading");
+            const fileInput = container.querySelector("#image-upload");
+
+            fileInput.addEventListener("change", (e) => {
+              const file = e.target.files[0];
+              if (!file) return;
+
+              const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+              if (!allowedTypes.includes(file.type)) {
+                alert("Please select a valid image file (JPG, JPEG or PNG)");
+                return;
+              }
+
+              selectedFile = file;
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                previewImg.src = e.target.result;
+              };
+              reader.readAsDataURL(file);
+            });
+
+            return {
+              container,
+              async getData() {
+                const altText = container.querySelector(".image-alt").value;
+
+                if (!selectedFile) {
+                  return {
+                    attributes: {
+                      src: component.getAttributes().src,
+                      alt: altText,
+                    },
+                  };
+                }
+
+                try {
+                  loadingEl.classList.remove("hidden");
+                  loadingEl.classList.add("flex");
+
+                  const fileExt = selectedFile.name
+                    .split(".")
+                    .pop()
+                    .toLowerCase();
+                  const uniqueFileName = `${crypto.randomUUID()}.${fileExt}`;
+
+                  const presignedResponse = await fetch(
+                    "https://dev.byteai.bytesuite.io/api/get-presigned-url",
+                    {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: "Bearer YOUR_TOKEN",
+                      },
+                      body: JSON.stringify({
+                        file_name: uniqueFileName,
+                        file_type: selectedFile.type,
+                      }),
+                    }
+                  );
+
+                  const { file_url, presigned_url } =
+                    await presignedResponse.json();
+
+                  await fetch(presigned_url, {
+                    method: "PUT",
+                    body: selectedFile,
+                    headers: {
+                      "Content-Type": selectedFile.type,
+                    },
+                  });
+
+                  const imageUrl = file_url.split("?")[0];
+
+                  return {
+                    attributes: {
+                      src: imageUrl,
+                      alt: altText,
+                    },
+                  };
+                } catch (error) {
+                  console.error("Error uploading image:", error);
+                  alert("Failed to upload image. Please try again.");
+                  return null;
+                } finally {
+                  loadingEl.classList.add("hidden");
+                  loadingEl.classList.remove("flex");
+                }
               },
             };
           },
@@ -406,6 +591,26 @@ export default (editor, options) => {
         const btn = editor.getContainer().querySelector(".gjs-edit-btn");
         if (btn) btn.remove();
       }
+      const btn = this.createEditButton();
+      const rect = component.view.el.getBoundingClientRect();
+
+      btn.style.position = "fixed";
+      btn.style.top = `${rect.top + rect.height / 2 - 15}px`;
+      btn.style.left = `${rect.right - 35}px`;
+
+      btn.addEventListener("click", () => {
+        const modal = this.createModal(component);
+        document.body.appendChild(modal);
+      });
+
+      const editor = this.em.get("Editor");
+      editor.getContainer().appendChild(btn);
+    },
+
+    handleDeselect(component) {
+      const editor = this.em.get("Editor");
+      const btn = editor.getContainer().querySelector(".gjs-edit-btn");
+      if (btn) btn.remove();
     },
 
     createEditButton() {
@@ -442,18 +647,18 @@ export default (editor, options) => {
         content: `
           <div id="navbar-links-container">
             ${linksList
-              .components()
-              .map(
-                (link, index) => `
+            .components()
+            .map(
+              (link, index) => `
               <div class="mb-2">
                 <input type="text" class="navbar-link-input border rounded px-2 py-1" data-index="${index}" value="${link.get(
-                  "content"
-                )}">
+                "content"
+              )}">
                 <button class="remove-link bg-red-500 text-white px-2 py-1 rounded" data-index="${index}">Remove</button>
               </div>
             `
-              )
-              .join("")}
+            )
+            .join("")}
           </div>
           <button id="add-navbar-link" class="bg-blue-500 text-white px-3 py-2 rounded mt-4">Add Link</button>
         `,
@@ -499,6 +704,8 @@ export default (editor, options) => {
       modal.onceClose(updateLinks);
     },
   });
+
+  // Add component types
   editor.DomComponents.addType("body", {
     model: {
       defaults: {
@@ -518,6 +725,7 @@ export default (editor, options) => {
       },
     },
   });
+
   editor.DomComponents.addType("generic-text", {
     extend: "text",
     model: {
@@ -530,6 +738,7 @@ export default (editor, options) => {
       },
     },
   });
+
   editor.Components.addType("custom-image", {
     model: {
       defaults: {
@@ -615,11 +824,6 @@ export default (editor, options) => {
           min-height: 360px;
           max-height: 768px;
         }
-
-        
-        
-
-
         `,
       },
       init() {
@@ -988,12 +1192,12 @@ export default (editor, options) => {
           },
         ],
         styles: `
-        
+       
           .light-text h1,
-          .light-text h2, 
-          .light-text h3, 
-          .light-text h4, 
-          .light-text h5, 
+          .light-text h2,
+          .light-text h3,
+          .light-text h4,
+          .light-text h5,
           .light-text h6 {
             color: white;
         }
@@ -1005,13 +1209,11 @@ export default (editor, options) => {
         .bg-section-light {
           background-color: var(--color-section-light);
       }
-      
+     
       .bg-accent-1 {
           background-color: var(--color-section-accent1);
       }
 
-     
-      
       .bg-accent-2 {
           background-color: var(--color-section-accent2);
       }
@@ -1141,6 +1343,8 @@ export default (editor, options) => {
         tagName: "h2",
         draggable: true,
         droppable: false,
+        traits: [withEditButton3],
+        handlerType: 'text', // Specify handler type
         attributes: {
           class:
             "text-3xl max-w-xl lg:text-5xl font-bold font-primary mb-10 capitalize",
@@ -1150,6 +1354,7 @@ export default (editor, options) => {
       },
     },
   });
+
   editor.DomComponents.addType("content-subtitle", {
     extend: "text",
     model: {
@@ -1157,6 +1362,7 @@ export default (editor, options) => {
         tagName: "h5",
         draggable: true,
         droppable: false,
+        traits: [withEditButton3],
         attributes: {
           class: "text-lg lg:text-xl font-secondary content-subtitle",
         },
@@ -1170,6 +1376,7 @@ export default (editor, options) => {
       },
     },
   });
+
   editor.DomComponents.addType("content-heading", {
     extend: "text",
     model: {
@@ -1177,6 +1384,7 @@ export default (editor, options) => {
         tagName: "h5",
         draggable: true,
         droppable: false,
+        traits: [withEditButton3],
         attributes: {
           class: "text-xl lg:text-2xl font-bold font-primary pt-1 mb-2",
         },
@@ -1185,6 +1393,7 @@ export default (editor, options) => {
       },
     },
   });
+
   editor.DomComponents.addType("hero-text-title", {
     extend: "text",
     model: {
@@ -1192,6 +1401,7 @@ export default (editor, options) => {
         tagName: "h1",
         draggable: false,
         droppable: false,
+        traits: [withEditButton3],
         attributes: {
           class:
             "hero-text-title pb-10 md:max-w-2xl text-5xl lg:text-6xl font-primary",
@@ -1217,6 +1427,7 @@ export default (editor, options) => {
         tagName: "h3",
         draggable: false,
         droppable: false,
+        traits: [withEditButton3],
         attributes: {
           class:
             "hero-text-subtitle md:max-w-2xl text-md lg:text-lg leading-relaxed pb-4 font-primary",
@@ -1517,11 +1728,10 @@ export default (editor, options) => {
       },
     },
   });
-
   editor.Components.addType("button-primary", {
     model: {
       defaults: {
-        tagName: "button",
+        tagName: "a", // Changed to anchor tag for proper linking
         droppable: false,
         attributes: {
           class:
@@ -1535,12 +1745,31 @@ export default (editor, options) => {
           letter-spacing: 2px;
           background-color:var(--color-primary);
           color: white !important;
+          text-decoration: none;
+          cursor: pointer;
         }
         .button-primary:hover{
           background-color:var(--color-primary-dark);
         }
         `,
+        traits: [
+          {
+            type: "text",
+            label: "Button Text",
+            name: "content",
+            changeProp: 1
+          },
+          {
+            type: "text",
+            label: "Link URL",
+            name: "href",
+            changeProp: 1
+          }
+        ],
+        propagate: ["content", "href"],
       },
+
+    
     },
     view: {
       init() {
@@ -1585,6 +1814,15 @@ export default (editor, options) => {
             },
           },
         };
+        this.listenTo(this.model, "active", this.onActive);
+        this.listenTo(this.model, "change:content", this.updateContent);
+      },
+
+      updateContent() {
+        const content = this.model.get("content");
+        if (content) {
+          this.el.innerHTML = content;
+        }
       },
 
       onRender() {
@@ -1828,11 +2066,13 @@ export default (editor, options) => {
     },
   });
 
+
   editor.Components.addType("button-secondary", {
     model: {
       defaults: {
         tagName: "button",
         droppable: false,
+        traits: [withEditButton3],
         attributes: {
           class:
             "button-secondary transition flex flex-row justify-center items-center px-8 py-4 mx-2 my-2",
@@ -1854,6 +2094,7 @@ export default (editor, options) => {
       },
     },
   });
+
 
   editor.Components.addType("two-columns", {
     model: {
@@ -1895,6 +2136,7 @@ export default (editor, options) => {
       updateOffset() {
         const offset = this.get("attributes").offset || "none"; // Get the current attribute for offset
 
+
         let classes = [
           "grid",
           "gap-5",
@@ -1906,6 +2148,7 @@ export default (editor, options) => {
           "space-y-8",
           "sm:space-y-0",
         ];
+
 
         // Modify class list based on offset value
         if (offset === "left") {
@@ -1924,10 +2167,12 @@ export default (editor, options) => {
           classes.push("md:grid-cols-2");
         }
 
+
         this.setClass(classes); // Set the classes dynamically
       },
     },
   });
+
 
   editor.Components.addType("visuals-full-image", {
     model: {
@@ -1948,12 +2193,14 @@ export default (editor, options) => {
     model: {
       defaults: {
         tagName: "div",
+        traits: [withEditButton3],
         attributes: {
           class: "mb-3 para",
         },
       },
     },
   });
+
 
   editor.Components.addType("hero-section", {
     model: {
@@ -1985,7 +2232,7 @@ export default (editor, options) => {
           z-index:2
           width: 100%,
           height: 100vh,
-          
+         
           color: white,
           position: relative,
           background-size: cover;
@@ -2024,6 +2271,7 @@ export default (editor, options) => {
         propagate: ["bg-image", "center-layout"],
       },
 
+
       init() {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
         this.listenTo(this, "change:bg-image", this.updateBackgroundImage);
@@ -2032,6 +2280,7 @@ export default (editor, options) => {
         this.updateBackgroundImage();
         this.updateLayout();
       },
+
 
       onAttributesChange() {
         const bgImage = this.get("attributes")["bg-image"];
@@ -2044,30 +2293,38 @@ export default (editor, options) => {
         }
       },
 
+
       updateBackgroundImage() {
         const url = this.get("attributes")["bg-image"] || "";
         const style = { ...this.get("style") };
 
+
         style.background = `linear-gradient(to bottom right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3)), url('${url}') no-repeat center center/cover`;
+
 
         this.set({ style });
       },
 
+
       updateLayout() {
         const layout = this.get("attributes").centerLayout;
+
 
         // Get the child component (hero-section-container)
         const container = this.components().find(
           (comp) => comp.get("type") === "hero-section-container"
         );
 
+
         if (!container) {
           console.warn("hero-section-container not found");
           return;
         }
 
+
         // Get current classes
         const currentClasses = container.getClasses();
+
 
         // Function to toggle a class
         const toggleClass = (className, add) => {
@@ -2081,12 +2338,15 @@ export default (editor, options) => {
           }
         };
 
+
         // Toggle classes based on layout
         toggleClass("text-center", layout);
         toggleClass("items-center", layout);
 
+
         // Set the updated classes
         container.setClass(currentClasses);
+
 
         // Trigger a change event to update the view
         container.trigger("change:classes");
@@ -2725,79 +2985,508 @@ export default (editor, options) => {
       },
 
       init() {
-        this.on("change:attributes", this.handleAttrChange);
+        this.componentEditHandlers = {
+          // Default handler for generic components
+          default: {
+            createModalContent(component) {
+              const container = document.createElement("div");
+              const currentBgImage =
+                component.get("attributes")["bg-image"] || "";
+
+
+              container.innerHTML = `
+                <div class="space-y-4">
+                  <div class="flex flex-col gap-4">
+                    <div class="relative">
+                      <img src="${currentBgImage}" alt="Current background"
+                        class="w-full h-48 object-cover rounded-lg shadow-sm" />
+                      <div class="absolute inset-0 bg-black bg-opacity-50 hidden items-center justify-center" id="upload-loading">
+                        <svg class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      </div>
+                    </div>
+                   
+                    <div class="flex items-center justify-center w-full">
+                      <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-rose-300 border-dashed rounded-lg cursor-pointer bg-rose-50 hover:bg-rose-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                          <svg class="w-8 h-8 mb-4 text-rose-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2"/>
+                          </svg>
+                          <p class="mb-2 text-sm text-rose-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                          <p class="text-xs text-rose-500">PNG, JPG or JPEG</p>
+                        </div>
+                        <input id="bg-image-upload" type="file" class="hidden" accept="image/*" />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              `;
+
+
+              let selectedFile = null;
+              const previewImg = container.querySelector("img");
+              const loadingEl = container.querySelector("#upload-loading");
+
+
+              // Handle file selection for preview
+              const fileInput = container.querySelector("#bg-image-upload");
+              fileInput.addEventListener("change", (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+
+                // Validate file type
+                const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+                if (!allowedTypes.includes(file.type)) {
+                  alert("Please select a valid image file (JPG, JPEG or PNG)");
+                  return;
+                }
+
+
+                selectedFile = file;
+                const reader = new FileReader();
+
+
+                reader.onload = (e) => {
+                  previewImg.src = e.target.result;
+                };
+
+
+                reader.readAsDataURL(file);
+              });
+
+
+              return {
+                container,
+                async getData() {
+                  if (!selectedFile) {
+                    return {
+                      attributes: {
+                        "bg-image": component.get("attributes")["bg-image"],
+                      },
+                    };
+                  }
+
+
+                  try {
+                    loadingEl.classList.remove("hidden");
+                    loadingEl.classList.add("flex");
+
+                    // Generate unique filename with proper extension
+                    const fileExt = selectedFile.name
+                      .split(".")
+                      .pop()
+                      .toLowerCase();
+                    const uniqueFileName = `${crypto.randomUUID()}.${fileExt}`;
+
+                    // Get presigned URL with correct content type
+                    const presignedResponse = await fetch(
+                      "https://dev.byteai.bytesuite.io/api/get-presigned-url",
+                      {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                          Authorization:
+                            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMWMwZWMzMS0wZDIzLTRiMDQtYTdkOS04OTRiOWE0NTNjYWIiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzMzMzg2MTUzLCJpYXQiOjE3MzI3ODEzNTMsImVtYWlsIjoic2lkZGhhcnRoLnNhYmxlNDYxOEBnbWFpbC5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIiwiZ29vZ2xlIl19LCJ1c2VyX21ldGFkYXRhIjp7ImF2YXRhcl91cmwiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NMU3BETjlQbS1DaDdGazl2RnJrVkhVWXRHRGV3NVJqSTJUbWMweFg5WnpDZGxoNjBNMj1zOTYtYyIsImVtYWlsIjoic2lkZGhhcnRoLnNhYmxlNDYxOEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZnVsbF9uYW1lIjoiU2lkZGhhcnRoIFNhYmFsZSIsImlzcyI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbSIsIm5hbWUiOiJTaWRkaGFydGggU2FiYWxlIiwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jTFNwRE45UG0tQ2g3Rms5dkZya1ZIVVl0R0RldzVSakkyVG1jMHhYOVp6Q2RsaDYwTTI9czk2LWMiLCJwcm92aWRlcl9pZCI6IjEwNzcyMjEyMzY4ODM1OTAxNzA2NyIsInN1YiI6IjEwNzcyMjEyMzY4ODM1OTAxNzA2NyJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzMyNzgxMzUzfV0sInNlc3Npb25faWQiOiJiOGFhODJhNi1mOGJlLTQ1ZGEtYTMzOC1jODdkOGRiZWRjMjMiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.wT4ONOL3peUJwIHXyJpR4znAFXwcSAW6zFe5pE6YmFQ",
+                        },
+                        body: JSON.stringify({
+                          file_name: uniqueFileName,
+                          file_type: selectedFile.type,
+                        }),
+                      }
+                    );
+
+                    const { file_url, presigned_url } = await presignedResponse.json();
+
+                    // Upload to S3 using PUT request with correct headers
+                    const uploadResponse = await fetch(presigned_url, {
+                      method: "PUT",
+                      headers: {
+                        "Content-Type": selectedFile.type,
+                      },
+                      body: selectedFile,
+                    });
+
+                    if (!uploadResponse.ok) {
+                      throw new Error(`Upload failed with status: ${uploadResponse.status}`);
+                    }
+
+                    // Get clean URL without query params
+                    const imageUrl = file_url.split("?")[0];
+
+                    // First set the new bg-image attribute
+                    component.setAttributes({ "bg-image": imageUrl });
+
+                    // Then call updateBackgroundImage to refresh the view
+                    component.updateBackgroundImage();
+
+                    // Return the new attributes
+                    return {
+                      attributes: {
+                        "bg-image": imageUrl,
+                      },
+                    };
+                  } catch (error) {
+                    console.error("Error uploading image:", error);
+                    // Log more detailed error information
+                    if (error.response) {
+                      console.error("Response status:", error.response.status);
+                      console.error("Response data:", await error.response.text());
+                    }
+                    // Show more specific error message to user
+                    let errorMessage = "Failed to upload image. ";
+                    if (error.message) {
+                      errorMessage += error.message;
+                    }
+                    if (error.response && error.response.status) {
+                      errorMessage += ` (Status: ${error.response.status})`;
+                    }
+                    alert(errorMessage);
+                    return null;
+                  } finally {
+                    loadingEl.classList.add("hidden");
+                    loadingEl.classList.remove("flex");
+                  }
+                },
+              };
+            },
+          },
+        };
       },
 
-      handleAttrChange() {
-        const attrs = this.getAttributes();
-        this.updateNavbarPosition(attrs.navbarPosition);
-        this.updateLogoPosition(attrs.logoPosition);
-        this.updateLogo(attrs.logoSrc);
-      },
-
-      updateNavbarPosition(positionClass) {
-        this.removeClass("fixed top-0 left-0 right-0 z-50 sticky top-0 z-50");
-        this.addClass(positionClass);
-      },
-
-      updateLogoPosition(positionClass) {
-        const flexContainer = this.components().at(0).components().at(0);
-        flexContainer.removeClass("justify-start justify-center justify-end");
-        flexContainer.addClass(positionClass);
-      },
-
-      updateLogo(src) {
-        const logoImg = this.find("img")[0];
-        if (logoImg) {
-          logoImg.set("attributes", { ...logoImg.get("attributes"), src });
-        }
-      },
-    },
-
-    view: {
-      events: {
-        mouseenter: "onMouseEnter",
-        mouseleave: "onMouseLeave",
-      },
 
       onRender() {
-        const linksList = this.model.find(".ml-10.flex")[0];
-        if (linksList) {
-          linksList.set("droppable", true);
-          linksList.set("draggable", ".text-gray-800");
-        }
-        this.renderEditButton();
+        this.updateEditButton();
       },
 
-      renderEditButton() {
-        const button = document.createElement("button");
-        button.innerHTML = "Edit Links";
-        button.className =
-          "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-500 text-white px-4 py-2 rounded shadow hidden";
-        button.onclick = this.onEditButtonClick.bind(this);
-        this.editButton = button;
-        this.el.style.position = "relative";
-        this.el.appendChild(button);
+      createModal(component) {
+        const componentType = component.get("type") || "default";
+        const handler =
+          this.componentEditHandlers[componentType] ||
+          this.componentEditHandlers.default;
+
+
+        const modal = document.createElement("div");
+        modal.className =
+          "fixed inset-0 bg-black bg-opacity-50 z-[1000] flex items-center justify-center";
+
+
+        const modalContent = handler.createModalContent(component);
+
+
+
+        modal.innerHTML = `
+          <div class="bg-white p-6 rounded-lg max-w-md w-full relative">
+            <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-gray-900">
+              &times;
+            </button>
+            <h2 class="text-xl font-semibold mb-4">Edit ${componentType} Component</h2>
+            <div class="modal-body"></div>
+            <div class="mt-4 flex justify-end space-x-2">
+              <button class="cancel-modal px-4 py-2 bg-gray-200 rounded">Cancel</button>
+              <button class="save-modal px-4 py-2 bg-blue-500 border border-rose-500 text-white rounded bg-rose-500">Save</button>
+            </div>
+          </div>
+        `;
+
+
+        const modalBody = modal.querySelector(".modal-body");
+        modalBody.appendChild(modalContent.container);
+
+
+        // Event Listeners
+        const closeBtn = modal.querySelector(".close-modal");
+        const cancelBtn = modal.querySelector(".cancel-modal");
+        const saveBtn = modal.querySelector(".save-modal");
+
+
+        const closeModal = () => modal.remove();
+        closeBtn.addEventListener("click", closeModal);
+        cancelBtn.addEventListener("click", closeModal);
+
+
+
+        saveBtn.addEventListener("click", () => {
+          const editData = modalContent.getData();
+          if (editData) {
+            // Apply changes to the component
+            if (editData.attributes) {
+              component.setAttributes(editData.attributes);
+            }
+            if (editData.content) {
+              component.set("content", editData.content);
+            }
+            closeModal();
+          }
+        });
+
+
+        return modal;
       },
 
-      onMouseEnter() {
-        if (this.editButton) {
-          this.editButton.classList.remove("hidden");
-        }
-      },
-
-      onMouseLeave() {
-        if (this.editButton) {
-          this.editButton.classList.add("hidden");
-        }
-      },
 
       onEditButtonClick() {
-        const editor = this.model.em;
-        editor.Commands.run("edit-navbar-links", { model: this.model });
+        const modal = this.createModal(this.model);
+
+
+        // Add save button handler
+        const saveBtn = modal.querySelector(".save-modal");
+        saveBtn.addEventListener("click", () => {
+          // Implement save logic here
+          if (typeof this.onEditSave === "function") {
+            this.onEditSave(this.el);
+          }
+          modal.remove();
+        });
+
+
+
+        document.body.appendChild(modal);
+      },
+
+
+      updateEditButton() {
+        const editor = this.em.get("Editor");
+        editor.on("component:select", this.handleSelect.bind(this));
+        editor.on("component:deselect", this.handleDeselect.bind(this));
+      },
+
+
+      handleSelect(selectedComponent) {
+        if (selectedComponent !== this.model) {
+          this.removeEditButton();
+          return;
+        }
+
+
+        const btn = this.createEditButton();
+        const rect = this.el.getBoundingClientRect();
+
+
+        btn.style.position = "absolute";
+        btn.style.top = `${rect.top + rect.height / 2 - 15}px`;
+        btn.style.right = `${rect.right - 35}px`;
+
+
+
+        this.el.appendChild(btn);
+      },
+
+
+      handleDeselect() {
+        this.removeEditButton();
+      },
+
+
+      createEditButton() {
+        if (this.editButton) return this.editButton;
+
+
+        const btn = document.createElement("button");
+        btn.className =
+          "gjs-edit-btn text-gray-900 border-gray-300 bg-white absolute bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px] z-50";
+        btn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
+            <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z"></path>
+          </svg>
+        `;
+
+
+        btn.addEventListener("click", this.onEditButtonClick.bind(this));
+
+
+        this.editButton = btn;
+        return btn;
+      },
+
+
+      removeEditButton() {
+        if (this.editButton) {
+          this.editButton.remove();
+          this.editButton = null;
+        }
       },
     },
   });
+
+
+  editor.DomComponents.addType("navbar", {
+    isComponent: el => el.tagName === 'NAV',
+    model: {
+      defaults: {
+        tagName: 'nav',
+        draggable: true,
+        droppable: true,
+        traits: [withEditButton3],
+        attributes: {
+          class: 'bg-gray-900 shadow-lg fixed top-0 left-0 right-0 z-50 py-4'
+        },
+        components: [
+          {
+            type: "container",
+            components: [
+              {
+                type: "blank-container",
+                components: [
+                  {
+                    type: "navbar-brand",
+                    content: "BytePlexure",
+                    attributes: {
+                      class: "text-2xl font-bold text-white"
+                    }
+                  }
+                ],
+                attributes: {
+                  class: "flex items-center"
+                }
+              },
+              {
+                type: "blank-container",
+                components: [
+                  {
+                    type: "navbar-link",
+                    content: "Test Nav 1",
+                    attributes: {
+                      href: "#",
+                      class: "text-white hover:text-gray-300 px-3 py-2 text-base font-medium"
+                    }
+                  },
+                  {
+                    type: "navbar-link",
+                    content: "Test Nav 2",
+                    attributes: {
+                      href: "#",
+                      class: "text-white hover:text-gray-300 px-3 py-2 text-base font-medium"
+                    }
+                  },
+                  {
+                    type: "navbar-link",
+                    content: "Test Nav 3",
+                    attributes: {
+                      href: "#",
+                      class: "text-white hover:text-gray-300 px-3 py-2 text-base font-medium"
+                    }
+                  }
+                ],
+                attributes: {
+                  class: "flex items-center space-x-8"
+                }
+              }
+            ],
+            attributes: {
+              class: "container mx-auto px-6 flex items-center justify-between"
+            }
+          }
+        ]
+      }
+    }
+  });
+
+  editor.DomComponents.addType("footer", {
+    isComponent: el => el.tagName === 'FOOTER',
+    model: {
+      defaults: {
+        tagName: 'footer',
+        draggable: true,
+        droppable: true,
+        traits: [withEditButton3],
+        attributes: {
+          class: 'bg-gray-900 text-white py-12'
+        },
+        components: [
+          {
+            type: "container",
+            components: [
+              {
+                type: "blank-container",
+                components: [
+                  {
+                    type: "footer-brand",
+                    content: "BytePlexure",
+                    attributes: {
+                      class: "text-2xl font-bold mb-6"
+                    }
+                  },
+                  {
+                    type: "paragraph",
+                    content: "Creating digital experiences that inspire.",
+                    attributes: {
+                      class: "text-gray-400 mb-8"
+                    }
+                  }
+                ],
+                attributes: {
+                  class: "grid grid-cols-1 md:grid-cols-4 gap-8"
+                }
+              },
+              {
+                type: "blank-container",
+                components: [
+                  {
+                    type: "footer-links",
+                    content: `
+                      <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                      <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Services</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Portfolio</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact</a></li>
+                      </ul>
+                    `
+                  }
+                ]
+              },
+              {
+                type: "blank-container",
+                components: [
+                  {
+                    type: "footer-contact",
+                    content: `
+                      <h3 class="text-lg font-semibold mb-4">Contact Us</h3>
+                      <ul class="space-y-2 text-gray-400">
+                        <li>123 Business Street</li>
+                        <li>City, State 12345</li>
+                        <li>contact@byteplexure.com</li>
+                        <li>(555) 123-4567</li>
+                      </ul>
+                    `
+                  }
+                ]
+              },
+              {
+                type: "blank-container",
+                components: [
+                  {
+                    type: "footer-social",
+                    content: `
+                      <h3 class="text-lg font-semibold mb-4">Follow Us</h3>
+                      <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white">
+                          <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                          <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                          <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
+                        </a>
+                      </div>
+                    `
+                  }
+                ]
+              }
+            ],
+            attributes: {
+              class: "container mx-auto px-6"
+            }
+          }
+        ]
+      }
+    }
+  });
+
   editor.Components.addType("card-list", {
     model: {
       defaults: {
@@ -2821,14 +3510,17 @@ export default (editor, options) => {
         ],
       },
 
+
       init() {
         this.on("change:layout", this.updateLayout);
         this.updateLayout(); // Initial layout update
       },
 
+
       updateLayout() {
         const layout = this.get("attributes")["layout"] || "grid"; // Default to scroll layout
         let classes;
+
 
         if (layout === "grid") {
           // Update classes for grid layout
@@ -2837,6 +3529,7 @@ export default (editor, options) => {
           // Default to horizontal scrolling
           classes = "flex flex-wrap justify-center space-x-4 p-4";
         }
+
 
         this.set({ attributes: { class: classes } }); // Set the updated classes
       },
@@ -3121,6 +3814,7 @@ export default (editor, options) => {
     },
   });
 
+
   editor.Components.addType("card", {
     model: {
       defaults: {
@@ -3143,16 +3837,19 @@ export default (editor, options) => {
           .card .para{
             padding-bottom: 2rem;
           }
-
-          
+ 
+ 
+         
         `,
       },
+
 
       init() {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() {},
+
+      onAttributesChange() { },
     },
   });
 
@@ -3161,7 +3858,7 @@ export default (editor, options) => {
       defaults: {
         tagName: "nav",
         attributes: {
-          class: "navbar fixed w-full top-0 z-[99999] transition-all duration-300",
+          class: "navbar backdrop-blur-sm  fixed w-full top-0 z-[99999] transition-all duration-300",
         },
         droppable: true,
         traits: [],
@@ -3321,3 +4018,6 @@ export default (editor, options) => {
     },
   });
 };
+
+
+
