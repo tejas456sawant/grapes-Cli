@@ -96,68 +96,74 @@ function loadWebsiteStructure(editor, websiteStructure) {
 
   // Log the generated structure for debugging
   console.log("Generated Website Structure:", websiteStructure);
+  
 
   // Create a body wrapper component
   const bodyWrapper = {
     type: "body",
-    components: [
-      {
-        type: "navbar",
-        components: [
-          {
-            type: "navbar-container",
-            components: [
-              {
-                type: "logo",
-                content: "YourLogoHere",
-              },
-              {
-                type: "nav-list",
-                components: [
-                  {
-                    type: "nav-link",
-                    content: "Nav-Link-1",
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-      websiteStructure.components,
-      {
-        type: "footer",
-        components: [
-          {
-            type: "footer-container",
-            components: [
-              {
-                type: "stack",
-                components: [
-                  {
-                    type: "logo",
-                    content: "YourLogoHere",
-                  },
-                  {
-                    type: "nav-list",
-                    components: [
-                      {
-                        type: "nav-link",
-                        content: "Nav-Link-1",
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                type: "paragraph",
-                content: `Made using <img class="block h-8 sm:h-8 w-auto" src="https://www.bytesites.ai/bytesites.png" alt="ByteSites">`,
-              },
-            ],
-          },
-        ],
-      },
-    ],
+    components: websiteStructure.components,
+    // [
+      // {
+      //   type: "navbar",
+      //   components: [
+      //     {
+      //       type: "navbar-container",
+      //       components: [
+      //         {
+      //           type: "logo",
+      //           content: "YourLogoHere",
+      //         },
+      //         {
+      //           type: "text",
+      //           content: ""
+      //         },
+      //         {
+      //           type: "nav-list",
+      //           components: [
+      //             {
+      //               type: "nav-link",
+      //               content: "Nav-Link-1",
+      //             },
+      //           ],
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // },
+      // websiteStructure.components,
+      // {
+      //   type: "footer",
+      //   components: [
+      //     {
+      //       type: "footer-container",
+      //       components: [
+      //         {
+      //           type: "stack",
+      //           components: [
+      //             {
+      //               type: "logo",
+      //               content: "YourLogoHere",
+      //             },
+      //             {
+      //               type: "nav-list",
+      //               components: [
+      //                 {
+      //                   type: "nav-link",
+      //                   content: "Nav-Link-1",
+      //                 },
+      //               ],
+      //             },
+      //           ],
+      //         },
+      //         {
+      //           type: "paragraph",
+      //           content: `Made using <img class="block h-8 sm:h-8 w-auto" src="https://www.bytesites.ai/bytesites.png" alt="ByteSites">`,
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // },
+    // ],
   };
 
   // Apply CSS styles from websiteStructure
@@ -165,6 +171,7 @@ function loadWebsiteStructure(editor, websiteStructure) {
 
   // Load the new body wrapper with the website structure inside it
   editor.setComponents(bodyWrapper);
+
 }
 
 // Export functions for use in other files

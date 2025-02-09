@@ -34,7 +34,7 @@ function showAddComponentModal(targetComponent) {
 
   const modal = document.createElement("div");
   modal.className =
-    "fixed inset-0 bg-black bg-opacity-50 z-[1000] flex items-center justify-center";
+    "fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center";
 
   function updateModalContent() {
     modal.innerHTML = `
@@ -125,7 +125,7 @@ function showAddComponentModal(targetComponent) {
                 Cancel
               </button>
               <button 
-                class="next-btn px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" 
+                class="next-btn px-4 py-2 bg-rose-500 text-white rounded-md hover:bg-rose-600 disabled:opacity-50 disabled:cursor-not-allowed" 
                 ${currentStep === 1 || isLoading ? "disabled" : ""}
               >
                 ${currentStep === 1 ? "Next" : "Add Block"}
@@ -3858,7 +3858,7 @@ export default (editor, options) => {
       defaults: {
         tagName: "nav",
         attributes: {
-          class: "navbar backdrop-blur-sm  fixed w-full top-0 z-[99999] transition-all duration-300",
+          class: "navbar fixed w-full top-0 transition-all duration-300 mx-10",
         },
         droppable: true,
         traits: [],
@@ -3882,6 +3882,10 @@ export default (editor, options) => {
         .navbar-bg{
           background-color: var(--color-section-light) !important;
         }
+        .navbar{
+          z-index : 700
+        } 
+        
         `,
       },
     },
