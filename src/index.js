@@ -1242,29 +1242,30 @@ export default (editor, opts = {}) => {
   editor.on("load", () => {
     console.log("Loading website structure:", websiteStructure);
 
-    // Load the website structure from the JSON object
     editor.DomComponents.clear();
     loadWebsiteStructure(editor, websiteStructure);
 
-    // Ensure the first page is rendered correctly
-    const pages = editor.Pages.getPages();
-    if (pages.length > 0) {
-      console.log("page0")
-      // Select the first page and force a re-render
-      editor.Pages.select(pages.at(0));
+    if (editor.Pages) {
+      const pages = editor.Pages.getAll();
+      console.log("Pages:", pages);
 
-      // Optional: Add a small delay to ensure the DOM is fully ready
-      setTimeout(() => {
+      if (pages.length > 0) {
+        console.log("Selecting first page...");
         editor.Pages.select(pages.at(0));
-      }, 100); // Adjust the delay if needed
-    }
 
-    // Optional: Add a listener for page switches to debug or handle rendering
-    editor.on('page:select', (page) => {
-      console.log('Page selected:', page.getName());
-      // Add any additional logic for page rendering here
-    });
+        setTimeout(() => {
+          editor.Pages.select(pages.at(0));
+        }, 100);
+      }
+
+      editor.on('page:select', (page) => {
+        console.log('Page selected:', page.getName());
+      });
+    } else {
+      console.error("Editor Pages module is not available.");
+    }
   });
+
 
   // Add the Edit button to the toolbar when a component with the flag is selected
   editor.on('component:add', (component) => {
