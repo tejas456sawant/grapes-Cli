@@ -25,7 +25,7 @@ function buildComponentStructure(editor, componentData) {
   // Log all registered component types in the GrapesJS editor
   const componentManager = editor.DomComponents; // Access the component manager
   const allRegisteredComponents = componentManager.getComponents(); // Get all registered components
-  console.log("Registered Components:", allRegisteredComponents);
+  // console.log("Registered Components:", allRegisteredComponents);
 
   // Check if the component type is registered in the editor's components
   const componentModel = componentManager.getType(type); // Try to get the component model by type
@@ -56,8 +56,8 @@ function buildComponentStructure(editor, componentData) {
 
 // Main function to generate the website structure
 function generateWebsiteStructure(editor, websiteData) {
-  const { themeoptions, components } = websiteData;
-
+  const { themeoptions, components, links } = websiteData;
+  console.log("Theme")
   // Apply theme options
   const themeStyles = `
     :root {
@@ -77,7 +77,7 @@ function generateWebsiteStructure(editor, websiteData) {
     }
     
   `;
-
+  console.log(themeStyles);
   // Build the component structure, allowing unknown types to be handled
   const websiteStructure = components.map((component) =>
     buildComponentStructure(editor, component)
@@ -89,19 +89,48 @@ function generateWebsiteStructure(editor, websiteData) {
   };
 }
 
+function createDynamicNavbar(pages) {
+  return {
+    type: "navbar",
+    components: [
+      {
+        type: "navbar-container",
+        components: [
+          {
+            type: "logo",
+            content: "YourLogoHere",
+          },
+          {
+            type: "nav-list",
+            components: pages.map(page => ({
+              type: "nav-link",
+              components: [{
+                type: 'link',
+                attributes: { href: page.url },
+                content: page.page_name
+              }]
+            }))
+          }
+        ]
+      }
+    ]
+  };
+}
+
+
+
 // Function to load the website structure into GrapeJS
 function loadWebsiteStructure(editor, websiteStructure) {
   // Clear existing components
   editor.setComponents([]);
 
   // Log the generated structure for debugging
-  console.log("Generated Website Structure:", websiteStructure);
-  
+  // console.log("Generated Website Structure:", websiteStructure);
 
   // Create a body wrapper component
   const bodyWrapper = {
     type: "body",
-    components: websiteStructure.components,
+    components: websiteStructure.components || []
     // [
       // {
       //   type: "navbar",

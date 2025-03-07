@@ -12,332 +12,283 @@ export default (editor, opts = {}) => {
     i18n: {},
     ...opts,
   };
-  // const websiteData = {
-  //   themeoptions: {
-  //     fonts: {
-  //       primary: "Arial",
-  //       secondary: "Helvetica",
-  //       scale: "1.2",
-  //     },
-  //     colors: {
-  //       primary: "#A67C52", // Warm, luxurious tone for primary elements like buttons and highlights.
-  //       primaryLight: "#C2986E", // Lighter, warm shade for interactive elements (hover effects).
-  //       primaryDark: "#8C643F", // Rich, deeper tone for contrast in interactive elements.
-  //       textLight: "#EDE3D9", // Light, refined text for dark backgrounds, soft for elegance.
-  //       textPrimary: "#2B2B2B", // Dark, classic tone for headings and main text.
-  //       textSecondary: "#5D5D5D", // Softer grey for body text on light backgrounds.
-  //       sectionLight: "#FAF8F5", // Elegant off-white for clean, welcoming sections.
-  //       sectionAccent1: "#E4D7C7", // Subtle, warm beige for a gentle contrast on light sections.
-  //       sectionAccent2: "#F1E9DC", // Very light, soft neutral for depth without overpowering.
-  //       sectionDark: "#1F1A17", // Deep, almost black shade with warm undertones for luxurious dark sections.
-  //     },
-  //   },
-  //   "components": [
-  //     {
-  //       "type": "hero-section",
-  //       "attributes": {
-  //         "bg-image": "restaurant-interior-with-tables",
-  //         "center-layout": "true"
-  //       },
-  //       "components": [
-  //         {
-  //           "type": "hero-section-container",
-  //           "components": [
-  //             {
-  //               "type": "hero-text-subtitle",
-  //               "content": "Welcome to"
-  //             },
-  //             {
-  //               "type": "hero-text-title",
-  //               "content": "Green Bites"
-  //             },
-  //             {
-  //               "type": "row-container",
-  //               "components": [
-  //                 {
-  //                   "type": "button-primary",
-  //                   "attributes": {
-  //                     "link": "#menu"
-  //                   },
-  //                   "content": "Explore Menu"
-  //                 },
-  //                 {
-  //                   "type": "button-secondary",
-  //                   "attributes": {
-  //                     "link": "#reservation"
-  //                   },
-  //                   "content": "Book a Table"
-  //                 }
-  //               ]
-  //             }
-  //           ]
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "type": "section",
-  //       "attributes": {
-  //         "sectiontype": "normal"
-  //       },
-  //       "components": [
-  //         {
-  //           "type": "container",
-  //           "components": [
-  //             {
-  //               "type": "content-subtitle",
-  //               "content": "Our Story"
-  //             },
-  //             {
-  //               "type": "content-title",
-  //               "content": "About Green Bites"
-  //             },
-  //             {
-  //               "type": "two-columns",
-  //               "attributes": {
-  //                 "offset": "none"
-  //               },
-  //               "components": [
-  //                 {
-  //                   "type": "blank-container",
-  //                   "components": [
-  //                     {
-  //                       "type": "text-content",
-  //                       "content": "At Green Bites, we believe in serving fresh, organic, and locally sourced ingredients. Our passion for sustainability and delicious food has made us a favorite among food lovers. Join us for a culinary experience that’s good for you and the planet."
-  //                     }
-  //                   ]
-  //                 },
-  //                 {
-  //                   "type": "blank-container",
-  //                   "components": [
-  //                     {
-  //                       "type": "custom-image",
-  //                       "attributes": {
-  //                         "src": "chef-preparing-dish",
-  //                         "alt-text": "Chef preparing a dish"
-  //                       }
-  //                     }
-  //                   ]
-  //                 }
-  //               ]
-  //             }
-  //           ]
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "type": "section",
-  //       "attributes": {
-  //         "sectiontype": "accent-1"
-  //       },
-  //       "components": [
-  //         {
-  //           "type": "container",
-  //           "components": [
-  //             {
-  //               "type": "content-subtitle",
-  //               "content": "Our Menu"
-  //             },
-  //             {
-  //               "type": "content-title",
-  //               "content": "Delicious & Fresh"
-  //             },
-  //             {
-  //               "type": "card-list",
-  //               "components": [
-  //                 {
-  //                   "type": "card",
-  //                   "components": [
-  //                     {
-  //                       "type": "custom-image",
-  //                       "attributes": {
-  //                         "src": "vegetarian-pasta-dish",
-  //                         "alt-text": "non Pasta"
-  //                       }
-  //                     },
-  //                     {
-  //                       "type": "content-heading",
-  //                       "content": "Vegetarian Pasta"
-  //                     },
-  //                     {
-  //                       "type": "text-content",
-  //                       "content": "A delightful mix of fresh vegetables and homemade pasta, tossed in a rich tomato sauce."
-  //                     },
-  //                     {
-  //                       "type": "blank-container",
-  //                       "components": [
-  //                         {
-  //                           "type": "button-tertiary",
-  //                           "attributes": {
-  //                             "link": "#order-now"
-  //                           },
-  //                           "content": "Order Now"
-  //                         }
-  //                       ]
-  //                     }
-  //                   ]
-  //                 },
-  //                 {
-  //                   "type": "card",
-  //                   "components": [
-  //                     {
-  //                       "type": "custom-image",
-  //                       "attributes": {
-  //                         "src": "vegetarian-pasta-dish",
-  //                         "alt-text": "Vegetarian Pasta"
-  //                       }
-  //                     },
-  //                     {
-  //                       "type": "content-heading",
-  //                       "content": "Vegetarian Pasta"
-  //                     },
-  //                     {
-  //                       "type": "text-content",
-  //                       "content": "A delightful mix of fresh vegetables and homemade pasta, tossed in a rich tomato sauce."
-  //                     },
-  //                     {
-  //                       "type": "blank-container",
-  //                       "components": [
-  //                         {
-  //                           "type": "button-tertiary",
-  //                           "attributes": {
-  //                             "link": "#order-now"
-  //                           },
-  //                           "content": "Order Now"
-  //                         }
-  //                       ]
-  //                     }
-  //                   ]
-  //                 },
-  //                 {
-  //                   "type": "card",
-  //                   "components": [
-  //                     {
-  //                       "type": "custom-image",
-  //                       "attributes": {
-  //                         "src": "grilled-salmon-dish",
-  //                         "alt-text": "Grilled Salmon"
-  //                       }
-  //                     },
-  //                     {
-  //                       "type": "content-heading",
-  //                       "content": "Grilled Salmon"
-  //                     },
-  //                     {
-  //                       "type": "text-content",
-  //                       "content": "Freshly caught salmon grilled to perfection, served with a side of seasonal vegetables."
-  //                     },
-  //                     {
-  //                       "type": "blank-container",
-  //                       "components": [
-  //                         {
-  //                           "type": "button-tertiary",
-  //                           "attributes": {
-  //                             "link": "#order-now"
-  //                           },
-  //                           "content": "Order Now"
-  //                         }
-  //                       ]
-  //                     }
-  //                   ]
-  //                 },
-  //                 {
-  //                   "type": "card",
-  //                   "components": [
-  //                     {
-  //                       "type": "custom-image",
-  //                       "attributes": {
-  //                         "src": "vegan-burger-dish",
-  //                         "alt-text": "Vegan Burger"
-  //                       }
-  //                     },
-  //                     {
-  //                       "type": "content-heading",
-  //                       "content": "Vegan Burger"
-  //                     },
-  //                     {
-  //                       "type": "text-content",
-  //                       "content": "A plant-based patty with avocado, lettuce, and vegan mayo, served with sweet potato fries."
-  //                     },
-  //                     {
-  //                       "type": "blank-container",
-  //                       "components": [
-  //                         {
-  //                           "type": "button-tertiary",
-  //                           "attributes": {
-  //                             "link": "#order-now"
-  //                           },
-  //                           "content": "Order Now"
-  //                         }
-  //                       ]
-  //                     }
-  //                   ]
-  //                 }
-  //               ]
-  //             }
-  //           ]
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "type": "section",
-  //       "attributes": {
-  //         "sectiontype": "normal"
-  //       },
-  //       "components": [
-  //         {
-  //           "type": "container",
-  //           "components": [
-  //             {
-  //               "type": "content-subtitle",
-  //               "content": "Reserve a Table"
-  //             },
-  //             {
-  //               "type": "content-title",
-  //               "content": "Book Your Experience"
-  //             },
-  //             {
-  //               "type": "text-content",
-  //               "content": "Join us for a memorable dining experience. Reserve your table today and let us take care of the rest."
-  //             },
-  //             {
-  //               "type": "button-primary",
-  //               "attributes": {
-  //                 "link": "#reservation"
-  //               },
-  //               "content": "Make a Reservation"
-  //             }
-  //           ]
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "type": "section",
-  //       "attributes": {
-  //         "sectiontype": "dark"
-  //       },
-  //       "components": [
-  //         {
-  //           "type": "container",
-  //           "components": [
-  //             {
-  //               "type": "content-subtitle",
-  //               "content": "Follow Us"
-  //             },
-  //             {
-  //               "type": "content-title",
-  //               "content": "Stay Connected"
-  //             },
-  //             {
-  //               "type": "social-media-icons",
-  //               "attributes": {
-  //                 "platforms": ["facebook", "instagram", "twitter"]
-  //               }
-  //             }
-  //           ]
-  //         }
-  //       ]
-  //     }],
-  // };
+  if (!document.querySelector('link[href*="font-awesome"]')) {
+    const link = document.createElement('link');
+    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+  }
+
+  const websiteData1 = {
+    themeoptions: {
+      fonts: {
+        primary: "Arial",
+        secondary: "Helvetica",
+        scale: "1.2",
+      },
+      colors: {
+        primary: "#A67C52", // Warm, luxurious tone for primary elements like buttons and highlights.
+        primaryLight: "#C2986E", // Lighter, warm shade for interactive elements (hover effects).
+        primaryDark: "#8C643F", // Rich, deeper tone for contrast in interactive elements.
+        textLight: "#EDE3D9", // Light, refined text for dark backgrounds, soft for elegance.
+        textPrimary: "#2B2B2B", // Dark, classic tone for headings and main text.
+        textSecondary: "#5D5D5D", // Softer grey for body text on light backgrounds.
+        sectionLight: "#FAF8F5", // Elegant off-white for clean, welcoming sections.
+        sectionAccent1: "#E4D7C7", // Subtle, warm beige for a gentle contrast on light sections.
+        sectionAccent2: "#F1E9DC", // Very light, soft neutral for depth without overpowering.
+        sectionDark: "#1F1A17", // Deep, almost black shade with warm undertones for luxurious dark sections.
+      },
+    },
+    "components": [
+      {
+        "type": "hero-section",
+        "attributes": {
+          "bg-image": "restaurant-interior-with-tables",
+          "center-layout": "true"
+        },
+        "components": [
+          {
+            "type": "hero-section-container",
+            "components": [
+              {
+                "type": "icon",
+                "content": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="currentColor"><path d="M280.4 8.2c8.9-7.2 21.3-7.2 30.2 0l264 216c10.3 8.4 11.8 23.6 3.4 33.9s-23.6 11.8-33.9 3.4L512 230.6V448c0 35.3-28.7 64-64 64H384V352c0-17.7-14.3-32-32-32H224c-17.7 0-32 14.3-32 32V512H128c-35.3 0-64-28.7-64-64V230.6l-31.6 26c-10.3 8.4-25.5 7-33.9-3.4s-7-25.5 3.4-33.9l264-216z"/></svg>'
+              },
+              {
+                "type": "hero-text-title",
+                "content": "Green Bites"
+              },
+              {
+                "type": "row-container",
+                "components": [
+                  {
+                    "type": "button-primary",
+                    "attributes": {
+                      "link": "#menu"
+                    },
+                    "content": "Explore Menu"
+                  },
+                  {
+                    "type": "button-secondary",
+                    "attributes": {
+                      "link": "#reservation"
+                    },
+                    "content": "Book a Table"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "attributes": {
+          "sectiontype": "normal"
+        },
+        "components": [
+          {
+            "type": "container",
+            "components": [
+              {
+                "type": "content-subtitle",
+                "content": "Our Story"
+              },
+              {
+                "type": "content-title",
+                "content": "About Green Bites"
+              },
+              {
+                "type": "two-columns",
+                "attributes": {
+                  "offset": "none"
+                },
+                "components": [
+                  {
+                    "type": "blank-container",
+                    "components": [
+                      {
+                        "type": "text-content",
+                        "content": "At Green Bites, we believe in serving fresh, organic, and locally sourced ingredients. Our passion for sustainability and delicious food has made us a favorite among food lovers. Join us for a culinary experience that’s good for you and the planet."
+                      }
+                    ]
+                  },
+                  {
+                    "type": "blank-container",
+                    "components": [
+                      {
+                        "type": "custom-image",
+                        "attributes": {
+                          "src": "chef-preparing-dish",
+                          "alt-text": "Chef preparing a dish"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "attributes": {
+          "sectiontype": "normal"
+        },
+        "components": [
+          {
+            "type": "container",
+            "components": [
+
+              {
+                "type": "card-list",
+                "layout": "auto",
+                "components": [
+                  {
+                    "type": "stack",
+                    "components": [
+                      {
+                        "type": "content-subtitle",
+                        "content": "Our Menu"
+                      },
+                      {
+                        "type": "content-title",
+                        "content": "Delicious & Fresh"
+                      },
+                    ]
+                  },
+                  {
+                    "type": "card",
+                    "components": [
+                      {
+                        "type": "icon",
+                        "content": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="currentColor"><path d="M280.4 8.2c8.9-7.2 21.3-7.2 30.2 0l264 216c10.3 8.4 11.8 23.6 3.4 33.9s-23.6 11.8-33.9 3.4L512 230.6V448c0 35.3-28.7 64-64 64H384V352c0-17.7-14.3-32-32-32H224c-17.7 0-32 14.3-32 32V512H128c-35.3 0-64-28.7-64-64V230.6l-31.6 26c-10.3 8.4-25.5 7-33.9-3.4s-7-25.5 3.4-33.9l264-216z"/></svg>'
+                      },
+                      {
+                        "type": "content-heading",
+                        "content": "Vegetarian Pasta"
+                      },
+                      {
+                        "type": "text-content",
+                        "content": "A delightful mix of fresh vegetables and homemade pasta, tossed in a rich tomato sauce."
+                      },
+                      {
+                        "type": "blank-container",
+                        "components": [
+                          {
+                            "type": "button-tertiary",
+                            "attributes": {
+                              "link": "#order-now"
+                            },
+                            "content": "Order Now"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "card-horizontal",
+                    "components": [
+                      {
+                        "type": "icon",
+                        "content": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="currentColor"><path d="M280.4 8.2c8.9-7.2 21.3-7.2 30.2 0l264 216c10.3 8.4 11.8 23.6 3.4 33.9s-23.6 11.8-33.9 3.4L512 230.6V448c0 35.3-28.7 64-64 64H384V352c0-17.7-14.3-32-32-32H224c-17.7 0-32 14.3-32 32V512H128c-35.3 0-64-28.7-64-64V230.6l-31.6 26c-10.3 8.4-25.5 7-33.9-3.4s-7-25.5 3.4-33.9l264-216z"/></svg>'
+                      },
+                      {
+                        "type": "card-body",
+                        "components": [
+
+                          {
+                            "type": "content-heading",
+                            "content": "Vegetarian Pasta"
+                          },
+                          {
+                            "type": "text-content",
+                            "content": "A delightful mix of fresh vegetables and homemade pasta, tossed in a rich tomato sauce."
+                          },
+                          {
+                            "type": "blank-container",
+                            "components": [
+                              {
+                                "type": "button-tertiary",
+                                "attributes": {
+                                  "link": "#order-now"
+                                },
+                                "content": "Order Now"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "attributes": {
+          "sectiontype": "normal"
+        },
+        "components": [
+          {
+            "type": "container",
+            "components": [
+              {
+                "type": "content-subtitle",
+                "content": "Reserve a Table"
+              },
+              {
+                "type": "content-title",
+                "content": "Book Your Experience"
+              },
+              {
+                "type": "text-content",
+                "content": "Join us for a memorable dining experience. Reserve your table today and let us take care of the rest."
+              },
+              {
+                "type": "button-primary",
+                "attributes": {
+                  "link": "#reservation"
+                },
+                "content": "Make a Reservation"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "attributes": {
+          "sectiontype": "dark"
+        },
+        "components": [
+          {
+            "type": "container",
+            "components": [
+              {
+                "type": "content-subtitle",
+                "content": "Follow Us"
+              },
+              {
+                "type": "content-title",
+                "content": "Stay Connected"
+              },
+              {
+                "type": "social-media-icons",
+                "attributes": {
+                  "platforms": ["facebook", "instagram", "twitter"]
+                }
+              }
+            ]
+          }
+        ]
+      }],
+  };
+  // const websiteData = websiteData1;
   const websiteData = options.websiteData;
   // Register components
   loadComponents(editor);
@@ -376,7 +327,7 @@ export default (editor, opts = {}) => {
   //     },
   //   },
   //   components: [
-      
+
   //     // {
   //     //   type: "navbar",
   //     //   content: `
@@ -1219,10 +1170,13 @@ export default (editor, opts = {}) => {
   console.log("Components and blocks loaded");
 
   editor.Commands.add("update-theme-options", {
+
     run(editor, sender, { themeoptions }) {
+
       console.log(themeoptions);
       // Function to update CSS variables
       const updateCSSVariables = (options) => {
+        console.log("THEME1");
         const rootStyle = document.documentElement;
 
         // Update font variables
@@ -1234,43 +1188,43 @@ export default (editor, opts = {}) => {
         rootStyle.style.setProperty("--font-scale", options.fonts.scale);
 
         // Update color variables
-        rootStyle.style.setProperty("--color-primary", options.colors.primary);
-        rootStyle.style.setProperty(
-          "--color-primary-light",
-          options.colors.primaryLight
-        );
-        rootStyle.style.setProperty(
-          "--color-primary-dark",
-          options.colors.primaryDark
-        );
-        rootStyle.style.setProperty(
-          "--color-text-light",
-          options.colors.textLight
-        );
-        rootStyle.style.setProperty(
-          "--color-section-light",
-          options.colors.sectionLight
-        );
-        rootStyle.style.setProperty(
-          "--color-section-accent1",
-          options.colors.sectionAccent1
-        );
-        rootStyle.style.setProperty(
-          "--color-section-accent2",
-          options.colors.sectionAccent2
-        );
-        rootStyle.style.setProperty(
-          "--color-section-dark",
-          options.colors.sectionDark
-        );
-        rootStyle.style.setProperty(
-          "--color-text-primary",
-          options.colors.textPrimary
-        );
-        rootStyle.style.setProperty(
-          "--color-text-secondary",
-          options.colors.textSecondary
-        );
+        // rootStyle.style.setProperty("--color-primary", options.colors.primary);
+        // rootStyle.style.setProperty(
+        //   "--color-primary-light",
+        //   options.colors.primaryLight
+        // );
+        // rootStyle.style.setProperty(
+        //   "--color-primary-dark",
+        //   options.colors.primaryDark
+        // );
+        // rootStyle.style.setProperty(
+        //   "--color-text-light",
+        //   options.colors.textLight
+        // );
+        // rootStyle.style.setProperty(
+        //   "--color-section-light",
+        //   options.colors.sectionLight
+        // );
+        // rootStyle.style.setProperty(
+        //   "--color-section-accent1",
+        //   options.colors.sectionAccent1
+        // );
+        // rootStyle.style.setProperty(
+        //   "--color-section-accent2",
+        //   options.colors.sectionAccent2
+        // );
+        // rootStyle.style.setProperty(
+        //   "--color-section-dark",
+        //   options.colors.sectionDark
+        // );
+        // rootStyle.style.setProperty(
+        //   "--color-text-primary",
+        //   options.colors.textPrimary
+        // );
+        // rootStyle.style.setProperty(
+        //   "--color-text-secondary",
+        //   options.colors.textSecondary
+        // );
       };
 
       // Update CSS variables
@@ -1287,39 +1241,111 @@ export default (editor, opts = {}) => {
   // Load the website structure into GrapeJS
   editor.on("load", () => {
     console.log("Loading website structure:", websiteStructure);
+
+    // Load the website structure from the JSON object
+    editor.DomComponents.clear();
     loadWebsiteStructure(editor, websiteStructure);
+
+    // Ensure the first page is rendered correctly
+    const pages = editor.Pages.getPages();
+    if (pages.length > 0) {
+      console.log("page0")
+      // Select the first page and force a re-render
+      editor.Pages.select(pages.at(0));
+
+      // Optional: Add a small delay to ensure the DOM is fully ready
+      setTimeout(() => {
+        editor.Pages.select(pages.at(0));
+      }, 100); // Adjust the delay if needed
+    }
+
+    // Optional: Add a listener for page switches to debug or handle rendering
+    editor.on('page:select', (page) => {
+      console.log('Page selected:', page.getName());
+      // Add any additional logic for page rendering here
+    });
   });
 
-  editor.on('component:update', (model) => {
-    // Check if the updated component is the navbar or any of its children
-    if (model.get('type') === 'navbar' || model.closest('[data-gjs-type="navbar"]')) {
-      console.log("Navbar Updated")
-      const navbarComponent = editor.Components.getWrapper().find('[data-gjs-type="navbar"]')[0];
-      if (navbarComponent) {
-        console.log("Navbar Updated")
-        localStorage.setItem('globalNavbar', JSON.stringify(navbarComponent.toJSON()));
+  // Add the Edit button to the toolbar when a component with the flag is selected
+  editor.on('component:add', (component) => {
+    if (component.get('disableToolbar')) {
+      component.set({ toolbar: [] });
+      return;
+    }
+
+    let toolbar = [...(component.get('toolbar') || [])];
+
+    // Keep only the last button (if any exist)
+    toolbar = toolbar.length > 0 ? [toolbar[toolbar.length - 1]] : [];
+
+    const parent = component.parent();
+    const siblings = parent ? parent.components().models : [];
+    const index = siblings.indexOf(component);
+    const isFirst = index === 0;
+    const isLast = index === siblings.length - 1;
+    const isOnlyChild = siblings.length === 1;
+
+    // Add movement buttons if allowed and it's not the only child
+    if (component.get('movement') && !isOnlyChild) {
+      if (!isFirst) {
+        console.log("first child" + component.get("type"));
+        toolbar.push({
+          id: 'move-up',
+          label: `<svg viewBox="0 0 24 24" width="16" height="16" style="fill: currentColor;">
+                <path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path>
+            </svg>`,
+          attributes: { title: 'Move Up' },
+        });
+      }
+
+      if (!isLast) {
+        console.log("last child" + component.get("type"));
+        toolbar.push({
+          id: 'move-down',
+          label: `<svg viewBox="0 0 24 24" width="16" height="16" style="fill: currentColor;">
+                <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"></path>
+            </svg>`,
+          attributes: { title: 'Move Down' },
+        });
+      }
+    }
+
+    // Add edit button if enabled
+    if (component.get('showEditButton')) {
+      toolbar.push({
+        id: 'edit-button',
+        label: `
+          <svg viewBox="0 0 24 24" width="16" height="16" style="fill: currentColor;">
+            <path fill="currentColor" d="M14.06,9L15,9.94L5.92,19H5V18.08L14.06,9M17.66,3C17.41,3 17.15,3.1 16.96,3.29L15.13,5.12L18.88,8.87L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18.17,3.09 17.92,3 17.66,3M14.06,6.19L3,17.25V21H6.75L17.81,9.94L14.06,6.19Z"></path>
+          </svg>
+        `,
+        command: 'edit-component',
+        attributes: { title: 'Edit Component' },
+      });
+    }
+
+    component.set({ toolbar }); // Apply the updated toolbar
+  });
+
+
+
+  // Define the command for the Edit button
+  editor.Commands.add('edit-component', {
+    run(editor, sender) {
+      const selectedComponent = editor.getSelected();
+      if (selectedComponent) {
+        const componentView = selectedComponent.view;
+
+        if (componentView && typeof componentView.onEditButtonClick === 'function') {
+          console.log('Edit button clicked');
+          componentView.onEditButtonClick(); // Call method when clicked
+        } else {
+          console.warn('onEditButtonClick method not found on component view');
+        }
       }
     }
   });
-  
-  editor.on('load', () => {
-    const savedNavbar = localStorage.getItem('globalNavbar');
-  
-    if (savedNavbar) {
 
-      const navbar = JSON.parse(savedNavbar);
-      let navbarComponent = editor.Components.getWrapper().find('[data-gjs-type="navbar"]')[0];
 
-    if (navbarComponent) {
-      // Remove existing navbar and add the saved one
-      navbarComponent.remove();
-    }
-
-    // Append the saved navbar at the top
-    editor.Components.getWrapper().append(navbar, { at: 0 });
-    console.log("APPENDED")
-    }
-  });
-  
 };
 

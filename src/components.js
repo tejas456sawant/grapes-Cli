@@ -1,3 +1,10 @@
+
+import IconPicker from "./IconPicker.js";
+import React, { useState, useCallback, useMemo, } from "react";
+import ReactDOM from 'react-dom/client'; // For React 18+
+
+
+
 const getRegisteredBlocks = () => [
   { id: "text", name: "Custom Block", icon: "📝" },
   { id: "image", name: "Image Section", icon: "🖼️" },
@@ -5,6 +12,12 @@ const getRegisteredBlocks = () => [
   { id: "video", name: "Video Section", icon: "🎥" },
   { id: "form", name: "Contact Form", icon: "📋" },
 ];
+
+
+
+
+
+
 
 // Simulate API call with 3 second delay
 async function fetchComponentConfig(type, description) {
@@ -39,9 +52,8 @@ function showAddComponentModal(targetComponent) {
   function updateModalContent() {
     modal.innerHTML = `
       <div class="bg-white rounded-lg max-w-2xl w-full mx-4 relative">
-        ${
-          isLoading
-            ? `
+        ${isLoading
+        ? `
           <div class="absolute inset-0 bg-white bg-opacity-75 z-10 flex items-center justify-center rounded-lg">
             <div class="flex flex-col items-center space-y-3">
               <div class="animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-blue-500"></div>
@@ -49,16 +61,15 @@ function showAddComponentModal(targetComponent) {
             </div>
           </div>
         `
-            : ""
-        }
+        : ""
+      }
         <div class="p-6">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-semibold">
               ${currentStep === 1 ? "Choose Block Type" : "Block Details"}
             </h2>
-            <button class="close-modal text-gray-400 hover:text-gray-600" ${
-              isLoading ? "disabled" : ""
-            }>
+            <button class="close-modal text-gray-400 hover:text-gray-600" ${isLoading ? "disabled" : ""
+      }>
               <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -66,13 +77,12 @@ function showAddComponentModal(targetComponent) {
           </div>
           
           <div class="modal-body mb-6">
-            ${
-              currentStep === 1
-                ? `
+            ${currentStep === 1
+        ? `
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 ${registeredBlocks
-                  .map(
-                    (block) => `
+          .map(
+            (block) => `
                   <button 
                     class="component-type-btn flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                     data-type="${block.id}"
@@ -82,17 +92,16 @@ function showAddComponentModal(targetComponent) {
                     <span class="text-left font-medium">${block.name}</span>
                   </button>
                 `
-                  )
-                  .join("")}
+          )
+          .join("")}
               </div>
             `
-                : `
+        : `
               <div class="space-y-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Selected Block: ${
-                      registeredBlocks.find((t) => t.id === selectedType)?.name
-                    }
+                    Selected Block: ${registeredBlocks.find((t) => t.id === selectedType)?.name
+        }
                   </label>
                 </div>
                 <div>
@@ -109,19 +118,17 @@ function showAddComponentModal(targetComponent) {
                 </div>
               </div>
             `
-            }
+      }
           </div>
 
           <div class="flex justify-between">
-            <button class="back-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium ${
-              currentStep === 1 ? "invisible" : ""
-            }" ${isLoading ? "disabled" : ""}>
+            <button class="back-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium ${currentStep === 1 ? "invisible" : ""
+      }" ${isLoading ? "disabled" : ""}>
               Back
             </button>
             <div class="space-x-3">
-              <button class="cancel-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium" ${
-                isLoading ? "disabled" : ""
-              }>
+              <button class="cancel-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium" ${isLoading ? "disabled" : ""
+      }>
                 Cancel
               </button>
               <button 
@@ -290,15 +297,13 @@ export default (editor, options) => {
               <div class="space-y-4">
                 <div>
                   <label class="block mb-2">Image Source</label>
-                  <input type="text" class="w-full border p-2 rounded image-src" value="${
-                    component.getAttributes().src || ""
-                  }">
+                  <input type="text" class="w-full border p-2 rounded image-src" value="${component.getAttributes().src || ""
+              }">
                 </div>
                 <div>
                   <label class="block mb-2">Alt Text</label>
-                  <input type="text" class="w-full border p-2 rounded image-alt" value="${
-                    component.getAttributes().alt || ""
-                  }">
+                  <input type="text" class="w-full border p-2 rounded image-alt" value="${component.getAttributes().alt || ""
+              }">
                 </div>
               </div>
             `;
@@ -327,9 +332,8 @@ export default (editor, options) => {
               <div class="space-y-4">
                 <div>
                   <label class="block mb-2">Content</label>
-                  <textarea class="w-full border p-2 rounded text-content" rows="4">${
-                    component.getContent() || ""
-                  }</textarea>
+                  <textarea class="w-full border p-2 rounded text-content" rows="4">${component.getContent() || ""
+              }</textarea>
                 </div>
               </div>
             `;
@@ -519,7 +523,7 @@ export default (editor, options) => {
 
       const modal = document.createElement("div");
       modal.className =
-        "fixed inset-0 bg-black bg-opacity-50 z-[1000] flex items-center justify-center";
+        "fixed inset-0 bg-black bg-opacity-50 z-[50] flex items-center justify-center";
 
       const modalContent = handler.createModalContent(component);
 
@@ -635,6 +639,50 @@ export default (editor, options) => {
     },
   };
 
+  editor.Commands.add('open-icon-picker', {
+    run(editor) {
+      const modal = editor.Modal;
+      modal.open({
+        title: "Select Icon",
+        content: '<div id="icon-picker-root"></div>',
+      });
+
+      const handleSelectIcon = ({ html, className }) => {
+        const selectedComponent = editor.getSelected();
+        if (selectedComponent) {
+          selectedComponent.set({ content: '', className });
+        }
+        modal.close();
+      };
+
+      // Mount React component using createRoot
+      const container = document.getElementById("icon-picker-root");
+      const root = createRoot(container);
+      root.render(<IconPicker onSelectIcon={handleSelectIcon} />);
+
+      // Cleanup on modal close
+      const handleModalClose = () => {
+        root.unmount();
+        modal.getModel().off('change:open', handleModalClose);
+      };
+      modal.getModel().on('change:open', handleModalClose);
+    }
+  });
+
+  editor.BlockManager.add("icon-block", {
+    label: "Icon",
+    category: "Basic",
+    content: {
+      type: "icon",
+      content: '<i class="fas fa-star"></i>',
+    },
+    render: ({ model, className }) => {
+      return `<div class="${className}">
+      <i class="fas fa-star"></i>
+    </div>`;
+    },
+  });
+
   editor.Commands.add("edit-navbar-links", {
     run(editor, sender, options = {}) {
       const { model } = options;
@@ -720,7 +768,11 @@ export default (editor, options) => {
         }
         h1, h2, h3, h4, h5, h6 {
           color: var(--color-text-primary);
+         
         }
+          .font-primary{
+           font-family: var(--font-primary) !important;
+          }
         `,
       },
     },
@@ -779,6 +831,7 @@ export default (editor, options) => {
     model: {
       defaults: {
         tagName: "section",
+        movement: true,
         draggable: false,
         droppable: false,
         attributes: {
@@ -909,16 +962,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                                    "type"
-                                  )}" class="w-full border p-2 rounded" disabled>
+                "type"
+              )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                                    component.getAttributes(),
-                                    null,
-                                    2
-                                  )}</textarea>
+                component.getAttributes(),
+                null,
+                2
+              )}</textarea>
                               </div>
                           </div>
                       `;
@@ -1172,6 +1225,7 @@ export default (editor, options) => {
       defaults: {
         tagName: "section",
         draggable: false,
+        movement: true,
         droppable: false,
         attributes: {
           class: "flex flex-col py-24 bg-slate-600 light-text px-8 relative",
@@ -1399,6 +1453,7 @@ export default (editor, options) => {
     model: {
       defaults: {
         tagName: "h1",
+        movement: true,
         draggable: false,
         droppable: false,
         traits: [withEditButton3],
@@ -1430,7 +1485,7 @@ export default (editor, options) => {
         traits: [withEditButton3],
         attributes: {
           class:
-            "hero-text-subtitle md:max-w-2xl text-md lg:text-lg leading-relaxed pb-4 font-primary",
+            "hero-text-subtitle md:max-w-2xl text-md lg:text-lg leading-relaxed pb-4",
         },
         styles: `
         .hero-text-subtitle{
@@ -1482,16 +1537,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                                    "type"
-                                  )}" class="w-full border p-2 rounded" disabled>
+                "type"
+              )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                                    component.getAttributes(),
-                                    null,
-                                    2
-                                  )}</textarea>
+                component.getAttributes(),
+                null,
+                2
+              )}</textarea>
                               </div>
                           </div>
                       `;
@@ -1608,7 +1663,7 @@ export default (editor, options) => {
       </div>
           `;
 
-        btn.addEventListener("click", () => {});
+        btn.addEventListener("click", () => { });
 
         this.swapButton = btn;
         console.log("Y. Button created:", btn);
@@ -1769,7 +1824,7 @@ export default (editor, options) => {
         propagate: ["content", "href"],
       },
 
-    
+
     },
     view: {
       init() {
@@ -1783,16 +1838,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                                    "type"
-                                  )}" class="w-full border p-2 rounded" disabled>
+                "type"
+              )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                                    component.getAttributes(),
-                                    null,
-                                    2
-                                  )}</textarea>
+                component.getAttributes(),
+                null,
+                2
+              )}</textarea>
                               </div>
                           </div>
                       `;
@@ -2095,7 +2150,196 @@ export default (editor, options) => {
     },
   });
 
+  editor.DomComponents.addType("icon", {
+    model: {
+      defaults: {
+        showEditButton: true,
+        tagName: 'span',
+        attributes: {
+          class:
+            "relative transition isolate icon-box",
+        },
+        styles: `
+        
+          .icon-box svg{
+            height: 1rem;
+            width: 1rem;
+          margin: 4px;
+          }
+            .card>.icon-box>svg{
+          width: 3.5rem;
+          height: 3.5rem;
+          }
 
+          .card:hover>.icon-box>svg{
+          color:var(--color-primary);
+          }
+
+          .icon-box{
+          display: inline-block;
+          aspect-ratio: '1/1';
+          width: auto;
+          height: auto;
+          }
+
+          .card .icon-box>svg{
+          width: 3.5rem;
+          height: 3.5rem;
+        }
+           .card-horizontal>.icon-box>svg{
+          width: 2.5rem;
+          height: 2.5rem;
+        }
+        `
+      },
+    },
+    view: {
+      init() {
+        this.componentEditHandlers = {
+          // Default handler for generic components
+          default: {
+            createModalContent(component) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+                          <div class="space-y-4">
+                              <div>
+                                  <label class="block mb-2">Component Type</label>
+                                  <input type="text" value="${component.get(
+                "type"
+              )}" class="w-full border p-2 rounded" disabled>
+                              </div>
+                              <div>
+                                  <label class="block mb-2">Attributes</label>
+                                  <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
+                component.getAttributes(),
+                null,
+                2
+              )}</textarea>
+                              </div>
+                          </div>
+                      `;
+
+              return {
+                container,
+                getData() {
+                  try {
+                    const attrs = JSON.parse(
+                      container.querySelector(".component-attributes").value
+                    );
+                    return { attributes: attrs };
+                  } catch (e) {
+                    alert("Invalid JSON for attributes");
+                    return null;
+                  }
+                },
+              };
+            },
+          },
+        };
+        this.listenTo(this.model, "active", this.onActive);
+        this.listenTo(this.model, "change:content", this.updateContent);
+      },
+
+      onRender() {
+        this.updateEditButton();
+      },
+
+      createModal(component) {
+        const modal = document.createElement("div");
+        modal.className =
+          "fixed inset-0 bg-black bg-opacity-50 z-[1000] flex items-center justify-center";
+
+        // Create modal content
+        modal.innerHTML = `
+          <div class="bg-white p-6 rounded-lg max-w-md w-full relative">
+            <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-gray-900">
+              &times;
+            </button>
+            <h2 class="text-xl font-semibold mb-4">Select an Icon</h2>
+            <div class="modal-body"></div>
+            <div class="mt-4 flex justify-end space-x-2">
+              <button class="cancel-modal px-4 py-2 bg-gray-200 rounded">Cancel</button>
+            </div>
+          </div>
+        `;
+
+        const modalBody = modal.querySelector(".modal-body");
+
+        const handleIconSelect = (icon) => {
+          console.log("Selected Icon:", icon);
+
+          if (component) {
+            // Get the component's element
+            const componentEl = component.getEl();
+
+            if (componentEl) {
+              // Remove any existing SVG inside the component
+              componentEl.querySelector("svg")?.remove();
+
+              // Create a new DOM element for the icon SVG
+              const tempContainer = document.createElement("div");
+              tempContainer.innerHTML = icon.svg;
+              const newSvg = tempContainer.firstChild;
+
+              if (newSvg) {
+                // Append the new SVG to the component
+                componentEl.appendChild(newSvg);
+              }
+            }
+          }
+
+          modal.remove(); // Close the modal after selection
+        };
+
+
+        // Render the IconPicker inside the modal body
+        const iconPicker = React.createElement(IconPicker, {
+          onSelectIcon: handleIconSelect,
+        });
+        ReactDOM.createRoot(modalBody).render(iconPicker);
+
+        // Event Listeners for closing the modal
+        const closeBtn = modal.querySelector(".close-modal");
+        const cancelBtn = modal.querySelector(".cancel-modal");
+
+        if (closeBtn && cancelBtn) {
+          const closeModal = () => modal.remove();
+          closeBtn.addEventListener("click", closeModal);
+          cancelBtn.addEventListener("click", closeModal);
+        } else {
+          console.error("Missing modal close buttons");
+        }
+
+        // Append the modal to the body
+        document.body.appendChild(modal);
+
+        return modal;
+      },
+
+      onEditButtonClick() {
+        console.log("Edit button clicked, model:", this.model);
+
+        const modal = this.createModal(this.model);
+      },
+
+      handleSelect(selectedComponent) {
+        if (selectedComponent !== this.model) {
+          return;
+        }
+      },
+
+      handleDeselect() {
+      },
+
+
+
+      updateEditButton() {
+        const editor = this.em.get("Editor");
+        editor.on("component:select", this.handleSelect.bind(this));
+        editor.on("component:deselect", this.handleDeselect.bind(this));
+      },
+    },
+  });
   editor.Components.addType("two-columns", {
     model: {
       defaults: {
@@ -2206,6 +2450,7 @@ export default (editor, options) => {
     model: {
       defaults: {
         tagName: "div",
+        disableToolbar: true,
         draggable: false,
         droppable: false,
         attributes: {
@@ -3524,7 +3769,7 @@ export default (editor, options) => {
 
         if (layout === "grid") {
           // Update classes for grid layout
-          classes = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4";
+          classes = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center justify-around gap-6 p-4";
         } else {
           // Default to horizontal scrolling
           classes = "flex flex-wrap justify-center space-x-4 p-4";
@@ -3546,16 +3791,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                                    "type"
-                                  )}" class="w-full border p-2 rounded" disabled>
+                "type"
+              )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                                    component.getAttributes(),
-                                    null,
-                                    2
-                                  )}</textarea>
+                component.getAttributes(),
+                null,
+                2
+              )}</textarea>
                               </div>
                           </div>
                       `;
@@ -3685,29 +3930,29 @@ export default (editor, options) => {
       </div>
           `;
 
-          btn.addEventListener("click", () => {
-            // Get the current component
-            const currentComponent = this.model;
-      
-            // Get the children of the current component
-            const children = currentComponent.components();
-      
-            // Check if there are any children
-            if (children.length > 0) {
-              // Get the first child component
-              const firstChild = children.at(0);
-      
-              // Clone the first child component
-              const clonedChild = firstChild.clone();
-      
-              // Append the cloned child to the end of the current component's children
-              currentComponent.append(clonedChild);
-      
-              console.log("First child component duplicated and appended to the end.");
-            } else {
-              console.log("No children to duplicate.");
-            }
-          });
+        btn.addEventListener("click", () => {
+          // Get the current component
+          const currentComponent = this.model;
+
+          // Get the children of the current component
+          const children = currentComponent.components();
+
+          // Check if there are any children
+          if (children.length > 0) {
+            // Get the first child component
+            const firstChild = children.at(0);
+
+            // Clone the first child component
+            const clonedChild = firstChild.clone();
+
+            // Append the cloned child to the end of the current component's children
+            currentComponent.append(clonedChild);
+
+            console.log("First child component duplicated and appended to the end.");
+          } else {
+            console.log("No children to duplicate.");
+          }
+        });
 
         this.swapButton = btn;
         console.log("Y. Button created:", btn);
@@ -3822,25 +4067,80 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "max-w-xs w-full text-left card", // Default class for scrolling list
+          class: "max-w-xs w-full mx-auto text-left card", // Default class for scrolling list
           sectiontype: "normal",
         },
         traits: [],
         styles: `
+          .card .card-body{
+            padding-bottom: 2rem;
+             padding-top: 2rem;
+          }
           .card h5{
-            margin-top: 12px;
-            font-weight: 600
+          font-weight: 600
           }
           .card img{
             height: 260px !important;
-          }
-          .card .para{
-            padding-bottom: 2rem;
           }
  
  
          
         `,
+      },
+
+
+      init() {
+        this.listenTo(this, "change:attributes", this.onAttributesChange);
+      },
+
+
+      onAttributesChange() { },
+    },
+  });
+
+  editor.Components.addType("card-horizontal", {
+    model: {
+      defaults: {
+        tagName: "div",
+        draggable: false,
+        droppable: false,
+        attributes: {
+          class: "card-horizontal gap-4 flex flex-row w-full text-left card", // Default class for scrolling list
+          sectiontype: "normal",
+        },
+        traits: [],
+        styles: `
+          .card-horizontal .card-body{
+            padding-bottom: 2rem ;
+             padding-top: 0rem !important;
+          }
+          .card img{
+            height: 260px !important;
+          }
+        `,
+      },
+
+
+      init() {
+        this.listenTo(this, "change:attributes", this.onAttributesChange);
+      },
+
+
+      onAttributesChange() { },
+    },
+  });
+
+
+  editor.Components.addType("card-body", {
+    model: {
+      defaults: {
+        tagName: "div",
+        draggable: false,
+        droppable: false,
+        attributes: {
+          class: "card-body flex flex-col w-full text-left",
+        },
+        traits: [],
       },
 
 
