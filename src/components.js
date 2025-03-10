@@ -1953,7 +1953,7 @@ export default (editor, options) => {
 
         const modal = document.createElement("div");
         modal.className =
-          "fixed inset-0 bg-black bg-opacity-50 z-[1000] flex items-center justify-center";
+          "fixed inset-0 bg-black bg-opacity-50 z-[50] flex items-center justify-center";
 
         try {
           const modalContent = handler.createModalContent(component);
@@ -2166,13 +2166,9 @@ export default (editor, options) => {
             width: 1rem;
           margin: 4px;
           }
-            .card>.icon-box>svg{
-          width: 3.5rem;
-          height: 3.5rem;
-          }
 
           .card:hover>.icon-box>svg{
-          color:var(--color-primary);
+          color:var(--color-primary) !important;
           }
 
           .icon-box{
@@ -2183,12 +2179,12 @@ export default (editor, options) => {
           }
 
           .card .icon-box>svg{
-          width: 3.5rem;
-          height: 3.5rem;
+          width: 3.5rem !important;
+          height: 3.5rem !important;
         }
            .card-horizontal>.icon-box>svg{
-          width: 2.5rem;
-          height: 2.5rem;
+          width: 2.5rem !important;
+          height: 2.5rem !important;
         }
         `
       },
@@ -2247,7 +2243,7 @@ export default (editor, options) => {
       createModal(component) {
         const modal = document.createElement("div");
         modal.className =
-          "fixed inset-0 bg-black bg-opacity-50 z-[1000] flex items-center justify-center";
+          "fixed inset-0 bg-black bg-opacity-50 z-[50] flex items-center justify-center";
 
         // Create modal content
         modal.innerHTML = `
@@ -2837,7 +2833,7 @@ export default (editor, options) => {
 
         const modal = document.createElement("div");
         modal.className =
-          "fixed inset-0 bg-black bg-opacity-50 z-[1000] flex items-center justify-center";
+          "fixed inset-0 bg-black bg-opacity-50 z-[50] flex items-center justify-center";
 
         const modalContent = handler.createModalContent(component);
 
@@ -3415,7 +3411,7 @@ export default (editor, options) => {
 
         const modal = document.createElement("div");
         modal.className =
-          "fixed inset-0 bg-black bg-opacity-50 z-[1000] flex items-center justify-center";
+          "fixed inset-0 bg-black bg-opacity-50 z-[50] flex items-center justify-center";
 
 
         const modalContent = handler.createModalContent(component);
@@ -4067,14 +4063,14 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "max-w-xs w-full mx-auto text-left card", // Default class for scrolling list
+          class: "max-w-xs w-full text-left card", // Default class for scrolling list
           sectiontype: "normal",
         },
         traits: [],
         styles: `
           .card .card-body{
             padding-bottom: 2rem;
-             padding-top: 2rem;
+             padding-top: 0.5rem;
           }
           .card h5{
           font-weight: 600
