@@ -1,6 +1,6 @@
 {
   "name": "cli",
-  "version": "1.0.34",
+  "version": "1.0.35",
   "description": "cli",
   "main": "dist/index.js",
   "repository": {
@@ -32,7 +32,6 @@
     "@react-google-maps/api": "^2.19.2",
     "babel-loader": "^9.2.1",
     "cli": "file:",
-    "grapesjs-navbar": "^1.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^4.12.0",

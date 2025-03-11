@@ -1,9 +1,6 @@
-
 import IconPicker from "./IconPicker.js";
-import React, { useState, useCallback, useMemo, } from "react";
-import ReactDOM from 'react-dom/client'; // For React 18+
-
-
+import React, { useState, useCallback, useMemo } from "react";
+import ReactDOM from "react-dom/client"; // For React 18+
 
 const getRegisteredBlocks = () => [
   { id: "text", name: "Custom Block", icon: "📝" },
@@ -12,12 +9,6 @@ const getRegisteredBlocks = () => [
   { id: "video", name: "Video Section", icon: "🎥" },
   { id: "form", name: "Contact Form", icon: "📋" },
 ];
-
-
-
-
-
-
 
 // Simulate API call with 3 second delay
 async function fetchComponentConfig(type, description) {
@@ -52,8 +43,9 @@ function showAddComponentModal(targetComponent) {
   function updateModalContent() {
     modal.innerHTML = `
       <div class="bg-white rounded-lg max-w-2xl w-full mx-4 relative">
-        ${isLoading
-        ? `
+        ${
+          isLoading
+            ? `
           <div class="absolute inset-0 bg-white bg-opacity-75 z-10 flex items-center justify-center rounded-lg">
             <div class="flex flex-col items-center space-y-3">
               <div class="animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-blue-500"></div>
@@ -61,15 +53,16 @@ function showAddComponentModal(targetComponent) {
             </div>
           </div>
         `
-        : ""
-      }
+            : ""
+        }
         <div class="p-6">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-semibold">
               ${currentStep === 1 ? "Choose Block Type" : "Block Details"}
             </h2>
-            <button class="close-modal text-gray-400 hover:text-gray-600" ${isLoading ? "disabled" : ""
-      }>
+            <button class="close-modal text-gray-400 hover:text-gray-600" ${
+              isLoading ? "disabled" : ""
+            }>
               <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -77,12 +70,13 @@ function showAddComponentModal(targetComponent) {
           </div>
           
           <div class="modal-body mb-6">
-            ${currentStep === 1
-        ? `
+            ${
+              currentStep === 1
+                ? `
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 ${registeredBlocks
-          .map(
-            (block) => `
+                  .map(
+                    (block) => `
                   <button 
                     class="component-type-btn flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                     data-type="${block.id}"
@@ -91,17 +85,18 @@ function showAddComponentModal(targetComponent) {
                     <span class="text-2xl">${block.icon}</span>
                     <span class="text-left font-medium">${block.name}</span>
                   </button>
-                `
-          )
-          .join("")}
+                `,
+                  )
+                  .join("")}
               </div>
             `
-        : `
+                : `
               <div class="space-y-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Selected Block: ${registeredBlocks.find((t) => t.id === selectedType)?.name
-        }
+                    Selected Block: ${
+                      registeredBlocks.find((t) => t.id === selectedType)?.name
+                    }
                   </label>
                 </div>
                 <div>
@@ -118,17 +113,19 @@ function showAddComponentModal(targetComponent) {
                 </div>
               </div>
             `
-      }
+            }
           </div>
 
           <div class="flex justify-between">
-            <button class="back-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium ${currentStep === 1 ? "invisible" : ""
-      }" ${isLoading ? "disabled" : ""}>
+            <button class="back-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium ${
+              currentStep === 1 ? "invisible" : ""
+            }" ${isLoading ? "disabled" : ""}>
               Back
             </button>
             <div class="space-x-3">
-              <button class="cancel-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium" ${isLoading ? "disabled" : ""
-      }>
+              <button class="cancel-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium" ${
+                isLoading ? "disabled" : ""
+              }>
                 Cancel
               </button>
               <button 
@@ -163,7 +160,7 @@ function showAddComponentModal(targetComponent) {
             modal
               .querySelectorAll(".component-type-btn")
               .forEach((b) =>
-                b.classList.remove("ring-2", "ring-blue-500", "bg-blue-50")
+                b.classList.remove("ring-2", "ring-blue-500", "bg-blue-50"),
               );
 
             btn.classList.add("ring-2", "ring-blue-500", "bg-blue-50");
@@ -190,7 +187,7 @@ function showAddComponentModal(targetComponent) {
         try {
           const blockConfig = await fetchComponentConfig(
             selectedType,
-            description
+            description,
           );
           addComponentAfter(targetComponent, blockConfig);
           closeModal();
@@ -221,15 +218,15 @@ function showAddComponentModal(targetComponent) {
 
 export default (editor, options) => {
   editor.DomComponents.addType("navbar", {
-    isComponent: el => el.tagName === 'NAV',
+    isComponent: (el) => el.tagName === "NAV",
     model: {
       defaults: {
-        tagName: 'nav',
+        tagName: "nav",
         draggable: true,
         droppable: true,
         traits: [],
         attributes: {
-          class: 'bg-gray-900 shadow-lg fixed top-0 left-0 right-0 z-50 py-4'
+          class: "bg-gray-900 shadow-lg fixed top-0 left-0 right-0 z-50 py-4",
         },
         content: `
           <div class="container mx-auto px-6">
@@ -244,9 +241,9 @@ export default (editor, options) => {
               </div>
             </div>
           </div>
-        `
-      }
-    }
+        `,
+      },
+    },
   });
 
   // Add this to your GrapesJS editor initialization
@@ -262,12 +259,14 @@ export default (editor, options) => {
                 <div>
                   <label class="block mb-2">Component Type</label>
                   <input type="text" value="${component.get(
-              "type"
-            )}" class="w-full border p-2 rounded" disabled>
+                    "type",
+                  )}" class="w-full border p-2 rounded" disabled>
                 </div>
                 <div>
                   <label class="block mb-2">Content</label>
-                  <textarea class="w-full border p-2 rounded component-content" rows="4">${component.get('content') || ''}</textarea>
+                  <textarea class="w-full border p-2 rounded component-content" rows="4">${
+                    component.get("content") || ""
+                  }</textarea>
                 </div>
               </div>
             `;
@@ -277,7 +276,7 @@ export default (editor, options) => {
               getData() {
                 try {
                   const attrs = JSON.parse(
-                    container.querySelector(".component-attributes").value
+                    container.querySelector(".component-attributes").value,
                   );
                   return { attributes: attrs };
                 } catch (e) {
@@ -297,13 +296,15 @@ export default (editor, options) => {
               <div class="space-y-4">
                 <div>
                   <label class="block mb-2">Image Source</label>
-                  <input type="text" class="w-full border p-2 rounded image-src" value="${component.getAttributes().src || ""
-              }">
+                  <input type="text" class="w-full border p-2 rounded image-src" value="${
+                    component.getAttributes().src || ""
+                  }">
                 </div>
                 <div>
                   <label class="block mb-2">Alt Text</label>
-                  <input type="text" class="w-full border p-2 rounded image-alt" value="${component.getAttributes().alt || ""
-              }">
+                  <input type="text" class="w-full border p-2 rounded image-alt" value="${
+                    component.getAttributes().alt || ""
+                  }">
                 </div>
               </div>
             `;
@@ -317,7 +318,8 @@ export default (editor, options) => {
                     alt: container.querySelector(".image-alt").value,
                   },
                 };
-                const content = container.querySelector(".component-content").value;
+                const content =
+                  container.querySelector(".component-content").value;
                 return { content };
               },
             };
@@ -332,8 +334,9 @@ export default (editor, options) => {
               <div class="space-y-4">
                 <div>
                   <label class="block mb-2">Content</label>
-                  <textarea class="w-full border p-2 rounded text-content" rows="4">${component.getContent() || ""
-              }</textarea>
+                  <textarea class="w-full border p-2 rounded text-content" rows="4">${
+                    component.getContent() || ""
+                  }</textarea>
                 </div>
               </div>
             `;
@@ -357,7 +360,9 @@ export default (editor, options) => {
               <div class="space-y-4">
                 <div>
                   <label class="block mb-2">Button Text</label>
-                  <input type="text" class="w-full border p-2 rounded button-text" value="${component.get('content') || ''}">
+                  <input type="text" class="w-full border p-2 rounded button-text" value="${
+                    component.get("content") || ""
+                  }">
                 </div>
               </div>
             `;
@@ -407,8 +412,9 @@ export default (editor, options) => {
  
                 <div>
                   <label class="block mb-2">Alt Text</label>
-                  <input type="text" class="w-full border p-2 rounded image-alt" value="${component.getAttributes().alt || ""
-              }">
+                  <input type="text" class="w-full border p-2 rounded image-alt" value="${
+                    component.getAttributes().alt || ""
+                  }">
                 </div>
               </div>
             `;
@@ -472,7 +478,7 @@ export default (editor, options) => {
                         file_name: uniqueFileName,
                         file_type: selectedFile.type,
                       }),
-                    }
+                    },
                   );
 
                   const { file_url, presigned_url } =
@@ -639,7 +645,7 @@ export default (editor, options) => {
     },
   };
 
-  editor.Commands.add('open-icon-picker', {
+  editor.Commands.add("open-icon-picker", {
     run(editor) {
       const modal = editor.Modal;
       modal.open({
@@ -650,7 +656,7 @@ export default (editor, options) => {
       const handleSelectIcon = ({ html, className }) => {
         const selectedComponent = editor.getSelected();
         if (selectedComponent) {
-          selectedComponent.set({ content: '', className });
+          selectedComponent.set({ content: "", className });
         }
         modal.close();
       };
@@ -663,10 +669,10 @@ export default (editor, options) => {
       // Cleanup on modal close
       const handleModalClose = () => {
         root.unmount();
-        modal.getModel().off('change:open', handleModalClose);
+        modal.getModel().off("change:open", handleModalClose);
       };
-      modal.getModel().on('change:open', handleModalClose);
-    }
+      modal.getModel().on("change:open", handleModalClose);
+    },
   });
 
   editor.BlockManager.add("icon-block", {
@@ -695,18 +701,18 @@ export default (editor, options) => {
         content: `
           <div id="navbar-links-container">
             ${linksList
-            .components()
-            .map(
-              (link, index) => `
+              .components()
+              .map(
+                (link, index) => `
               <div class="mb-2">
                 <input type="text" class="navbar-link-input border rounded px-2 py-1" data-index="${index}" value="${link.get(
-                "content"
-              )}">
+                  "content",
+                )}">
                 <button class="remove-link bg-red-500 text-white px-2 py-1 rounded" data-index="${index}">Remove</button>
               </div>
-            `
-            )
-            .join("")}
+            `,
+              )
+              .join("")}
           </div>
           <button id="add-navbar-link" class="bg-blue-500 text-white px-3 py-2 rounded mt-4">Add Link</button>
         `,
@@ -962,16 +968,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type"
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -981,7 +987,7 @@ export default (editor, options) => {
                 getData() {
                   try {
                     const attrs = JSON.parse(
-                      container.querySelector(".component-attributes").value
+                      container.querySelector(".component-attributes").value,
                     );
                     return { attributes: attrs };
                   } catch (e) {
@@ -1398,7 +1404,7 @@ export default (editor, options) => {
         draggable: true,
         droppable: false,
         traits: [withEditButton3],
-        handlerType: 'text', // Specify handler type
+        handlerType: "text", // Specify handler type
         attributes: {
           class:
             "text-3xl max-w-xl lg:text-5xl font-bold font-primary mb-10 capitalize",
@@ -1537,16 +1543,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type"
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -1556,7 +1562,7 @@ export default (editor, options) => {
                 getData() {
                   try {
                     const attrs = JSON.parse(
-                      container.querySelector(".component-attributes").value
+                      container.querySelector(".component-attributes").value,
                     );
                     return { attributes: attrs };
                   } catch (e) {
@@ -1663,7 +1669,7 @@ export default (editor, options) => {
       </div>
           `;
 
-        btn.addEventListener("click", () => { });
+        btn.addEventListener("click", () => {});
 
         this.swapButton = btn;
         console.log("Y. Button created:", btn);
@@ -1812,19 +1818,17 @@ export default (editor, options) => {
             type: "text",
             label: "Button Text",
             name: "content",
-            changeProp: 1
+            changeProp: 1,
           },
           {
             type: "text",
             label: "Link URL",
             name: "href",
-            changeProp: 1
-          }
+            changeProp: 1,
+          },
         ],
         propagate: ["content", "href"],
       },
-
-
     },
     view: {
       init() {
@@ -1838,16 +1842,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type"
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -1857,7 +1861,7 @@ export default (editor, options) => {
                 getData() {
                   try {
                     const attrs = JSON.parse(
-                      container.querySelector(".component-attributes").value
+                      container.querySelector(".component-attributes").value,
                     );
                     return { attributes: attrs };
                   } catch (e) {
@@ -2121,7 +2125,6 @@ export default (editor, options) => {
     },
   });
 
-
   editor.Components.addType("button-secondary", {
     model: {
       defaults: {
@@ -2154,10 +2157,9 @@ export default (editor, options) => {
     model: {
       defaults: {
         showEditButton: true,
-        tagName: 'span',
+        tagName: "span",
         attributes: {
-          class:
-            "relative transition isolate icon-box",
+          class: "relative transition isolate icon-box",
         },
         styles: `
         
@@ -2186,7 +2188,7 @@ export default (editor, options) => {
           width: 2.5rem !important;
           height: 2.5rem !important;
         }
-        `
+        `,
       },
     },
     view: {
@@ -2201,16 +2203,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type"
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -2220,7 +2222,7 @@ export default (editor, options) => {
                 getData() {
                   try {
                     const attrs = JSON.parse(
-                      container.querySelector(".component-attributes").value
+                      container.querySelector(".component-attributes").value,
                     );
                     return { attributes: attrs };
                   } catch (e) {
@@ -2287,7 +2289,6 @@ export default (editor, options) => {
           modal.remove(); // Close the modal after selection
         };
 
-
         // Render the IconPicker inside the modal body
         const iconPicker = React.createElement(IconPicker, {
           onSelectIcon: handleIconSelect,
@@ -2324,10 +2325,7 @@ export default (editor, options) => {
         }
       },
 
-      handleDeselect() {
-      },
-
-
+      handleDeselect() {},
 
       updateEditButton() {
         const editor = this.em.get("Editor");
@@ -2376,7 +2374,6 @@ export default (editor, options) => {
       updateOffset() {
         const offset = this.get("attributes").offset || "none"; // Get the current attribute for offset
 
-
         let classes = [
           "grid",
           "gap-5",
@@ -2389,30 +2386,27 @@ export default (editor, options) => {
           "sm:space-y-0",
         ];
 
-
         // Modify class list based on offset value
         if (offset === "left") {
           classes.push("md:grid-cols-12");
           classes.push(
             "md:[&>*:first-child]:col-span-7",
-            "md:[&>*:last-child]:col-span-5"
+            "md:[&>*:last-child]:col-span-5",
           );
         } else if (offset === "right") {
           classes.push("md:grid-cols-12");
           classes.push(
             "md:[&>*:first-child]:col-span-5",
-            "md:[&>*:last-child]:col-span-7"
+            "md:[&>*:last-child]:col-span-7",
           );
         } else {
           classes.push("md:grid-cols-2");
         }
 
-
         this.setClass(classes); // Set the classes dynamically
       },
     },
   });
-
 
   editor.Components.addType("visuals-full-image", {
     model: {
@@ -2440,7 +2434,6 @@ export default (editor, options) => {
       },
     },
   });
-
 
   editor.Components.addType("hero-section", {
     model: {
@@ -2512,7 +2505,6 @@ export default (editor, options) => {
         propagate: ["bg-image", "center-layout"],
       },
 
-
       init() {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
         this.listenTo(this, "change:bg-image", this.updateBackgroundImage);
@@ -2521,7 +2513,6 @@ export default (editor, options) => {
         this.updateBackgroundImage();
         this.updateLayout();
       },
-
 
       onAttributesChange() {
         const bgImage = this.get("attributes")["bg-image"];
@@ -2534,38 +2525,30 @@ export default (editor, options) => {
         }
       },
 
-
       updateBackgroundImage() {
         const url = this.get("attributes")["bg-image"] || "";
         const style = { ...this.get("style") };
 
-
         style.background = `linear-gradient(to bottom right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3)), url('${url}') no-repeat center center/cover`;
-
 
         this.set({ style });
       },
 
-
       updateLayout() {
         const layout = this.get("attributes").centerLayout;
 
-
         // Get the child component (hero-section-container)
         const container = this.components().find(
-          (comp) => comp.get("type") === "hero-section-container"
+          (comp) => comp.get("type") === "hero-section-container",
         );
-
 
         if (!container) {
           console.warn("hero-section-container not found");
           return;
         }
 
-
         // Get current classes
         const currentClasses = container.getClasses();
-
 
         // Function to toggle a class
         const toggleClass = (className, add) => {
@@ -2579,15 +2562,12 @@ export default (editor, options) => {
           }
         };
 
-
         // Toggle classes based on layout
         toggleClass("text-center", layout);
         toggleClass("items-center", layout);
 
-
         // Set the updated classes
         container.setClass(currentClasses);
-
 
         // Trigger a change event to update the view
         container.trigger("change:classes");
@@ -2696,7 +2676,7 @@ export default (editor, options) => {
                           file_name: uniqueFileName,
                           file_type: selectedFile.type,
                         }),
-                      }
+                      },
                     );
 
                     const { file_url, presigned_url } =
@@ -2713,7 +2693,7 @@ export default (editor, options) => {
 
                     if (!uploadResponse.ok) {
                       throw new Error(
-                        `Upload failed with status: ${uploadResponse.status}`
+                        `Upload failed with status: ${uploadResponse.status}`,
                       );
                     }
 
@@ -2739,7 +2719,7 @@ export default (editor, options) => {
                       console.error("Response status:", error.response.status);
                       console.error(
                         "Response data:",
-                        await error.response.text()
+                        await error.response.text(),
                       );
                     }
                     // Show more specific error message to user
@@ -3234,8 +3214,7 @@ export default (editor, options) => {
               const currentBgImage =
                 component.get("attributes")["bg-image"] || "";
 
-
-                container.innerHTML = `
+              container.innerHTML = `
                 <div class="space-y-4">
                   <div class="flex flex-col gap-4">
                     <div class="relative">
@@ -3265,18 +3244,15 @@ export default (editor, options) => {
                 </div>
               `;
 
-
               let selectedFile = null;
               const previewImg = container.querySelector("img");
               const loadingEl = container.querySelector("#upload-loading");
-
 
               // Handle file selection for preview
               const fileInput = container.querySelector("#bg-image-upload");
               fileInput.addEventListener("change", (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
-
 
                 // Validate file type
                 const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
@@ -3285,19 +3261,15 @@ export default (editor, options) => {
                   return;
                 }
 
-
                 selectedFile = file;
                 const reader = new FileReader();
-
 
                 reader.onload = (e) => {
                   previewImg.src = e.target.result;
                 };
 
-
                 reader.readAsDataURL(file);
               });
-
 
               return {
                 container,
@@ -3309,7 +3281,6 @@ export default (editor, options) => {
                       },
                     };
                   }
-
 
                   try {
                     loadingEl.classList.remove("hidden");
@@ -3336,10 +3307,11 @@ export default (editor, options) => {
                           file_name: uniqueFileName,
                           file_type: selectedFile.type,
                         }),
-                      }
+                      },
                     );
 
-                    const { file_url, presigned_url } = await presignedResponse.json();
+                    const { file_url, presigned_url } =
+                      await presignedResponse.json();
 
                     // Upload to S3 using PUT request with correct headers
                     const uploadResponse = await fetch(presigned_url, {
@@ -3351,7 +3323,9 @@ export default (editor, options) => {
                     });
 
                     if (!uploadResponse.ok) {
-                      throw new Error(`Upload failed with status: ${uploadResponse.status}`);
+                      throw new Error(
+                        `Upload failed with status: ${uploadResponse.status}`,
+                      );
                     }
 
                     // Get clean URL without query params
@@ -3374,7 +3348,10 @@ export default (editor, options) => {
                     // Log more detailed error information
                     if (error.response) {
                       console.error("Response status:", error.response.status);
-                      console.error("Response data:", await error.response.text());
+                      console.error(
+                        "Response data:",
+                        await error.response.text(),
+                      );
                     }
                     // Show more specific error message to user
                     let errorMessage = "Failed to upload image. ";
@@ -3397,7 +3374,6 @@ export default (editor, options) => {
         };
       },
 
-
       onRender() {
         this.updateEditButton();
       },
@@ -3408,15 +3384,11 @@ export default (editor, options) => {
           this.componentEditHandlers[componentType] ||
           this.componentEditHandlers.default;
 
-
         const modal = document.createElement("div");
         modal.className =
           "fixed inset-0 bg-black bg-opacity-50 z-[50] flex items-center justify-center";
 
-
         const modalContent = handler.createModalContent(component);
-
-
 
         modal.innerHTML = `
           <div class="bg-white p-6 rounded-lg max-w-md w-full relative">
@@ -3432,22 +3404,17 @@ export default (editor, options) => {
           </div>
         `;
 
-
         const modalBody = modal.querySelector(".modal-body");
         modalBody.appendChild(modalContent.container);
-
 
         // Event Listeners
         const closeBtn = modal.querySelector(".close-modal");
         const cancelBtn = modal.querySelector(".cancel-modal");
         const saveBtn = modal.querySelector(".save-modal");
 
-
         const closeModal = () => modal.remove();
         closeBtn.addEventListener("click", closeModal);
         cancelBtn.addEventListener("click", closeModal);
-
-
 
         saveBtn.addEventListener("click", () => {
           const editData = modalContent.getData();
@@ -3463,14 +3430,11 @@ export default (editor, options) => {
           }
         });
 
-
         return modal;
       },
 
-
       onEditButtonClick() {
         const modal = this.createModal(this.model);
-
 
         // Add save button handler
         const saveBtn = modal.querySelector(".save-modal");
@@ -3482,11 +3446,8 @@ export default (editor, options) => {
           modal.remove();
         });
 
-
-
         document.body.appendChild(modal);
       },
-
 
       updateEditButton() {
         const editor = this.em.get("Editor");
@@ -3494,36 +3455,28 @@ export default (editor, options) => {
         editor.on("component:deselect", this.handleDeselect.bind(this));
       },
 
-
       handleSelect(selectedComponent) {
         if (selectedComponent !== this.model) {
           this.removeEditButton();
           return;
         }
 
-
         const btn = this.createEditButton();
         const rect = this.el.getBoundingClientRect();
-
 
         btn.style.position = "absolute";
         btn.style.top = `${rect.top + rect.height / 2 - 15}px`;
         btn.style.right = `${rect.right - 35}px`;
 
-
-
         this.el.appendChild(btn);
       },
-
 
       handleDeselect() {
         this.removeEditButton();
       },
 
-
       createEditButton() {
         if (this.editButton) return this.editButton;
-
 
         const btn = document.createElement("button");
         btn.className =
@@ -3534,14 +3487,11 @@ export default (editor, options) => {
           </svg>
         `;
 
-
         btn.addEventListener("click", this.onEditButtonClick.bind(this));
-
 
         this.editButton = btn;
         return btn;
       },
-
 
       removeEditButton() {
         if (this.editButton) {
@@ -3552,17 +3502,16 @@ export default (editor, options) => {
     },
   });
 
-
   editor.DomComponents.addType("navbar", {
-    isComponent: el => el.tagName === 'NAV',
+    isComponent: (el) => el.tagName === "NAV",
     model: {
       defaults: {
-        tagName: 'nav',
+        tagName: "nav",
         draggable: true,
         droppable: true,
         traits: [withEditButton3],
         attributes: {
-          class: 'bg-gray-900 shadow-lg fixed top-0 left-0 right-0 z-50 py-4'
+          class: "bg-gray-900 shadow-lg fixed top-0 left-0 right-0 z-50 py-4",
         },
         components: [
           {
@@ -3575,13 +3524,13 @@ export default (editor, options) => {
                     type: "navbar-brand",
                     content: "BytePlexure",
                     attributes: {
-                      class: "text-2xl font-bold text-white"
-                    }
-                  }
+                      class: "text-2xl font-bold text-white",
+                    },
+                  },
                 ],
                 attributes: {
-                  class: "flex items-center"
-                }
+                  class: "flex items-center",
+                },
               },
               {
                 type: "blank-container",
@@ -3591,50 +3540,53 @@ export default (editor, options) => {
                     content: "Test Nav 1",
                     attributes: {
                       href: "#",
-                      class: "text-white hover:text-gray-300 px-3 py-2 text-base font-medium"
-                    }
+                      class:
+                        "text-white hover:text-gray-300 px-3 py-2 text-base font-medium",
+                    },
                   },
                   {
                     type: "navbar-link",
                     content: "Test Nav 2",
                     attributes: {
                       href: "#",
-                      class: "text-white hover:text-gray-300 px-3 py-2 text-base font-medium"
-                    }
+                      class:
+                        "text-white hover:text-gray-300 px-3 py-2 text-base font-medium",
+                    },
                   },
                   {
                     type: "navbar-link",
                     content: "Test Nav 3",
                     attributes: {
                       href: "#",
-                      class: "text-white hover:text-gray-300 px-3 py-2 text-base font-medium"
-                    }
-                  }
+                      class:
+                        "text-white hover:text-gray-300 px-3 py-2 text-base font-medium",
+                    },
+                  },
                 ],
                 attributes: {
-                  class: "flex items-center space-x-8"
-                }
-              }
+                  class: "flex items-center space-x-8",
+                },
+              },
             ],
             attributes: {
-              class: "container mx-auto px-6 flex items-center justify-between"
-            }
-          }
-        ]
-      }
-    }
+              class: "container mx-auto px-6 flex items-center justify-between",
+            },
+          },
+        ],
+      },
+    },
   });
 
   editor.DomComponents.addType("footer", {
-    isComponent: el => el.tagName === 'FOOTER',
+    isComponent: (el) => el.tagName === "FOOTER",
     model: {
       defaults: {
-        tagName: 'footer',
+        tagName: "footer",
         draggable: true,
         droppable: true,
         traits: [withEditButton3],
         attributes: {
-          class: 'bg-gray-900 text-white py-12'
+          class: "bg-gray-900 text-white py-12",
         },
         components: [
           {
@@ -3647,20 +3599,20 @@ export default (editor, options) => {
                     type: "footer-brand",
                     content: "BytePlexure",
                     attributes: {
-                      class: "text-2xl font-bold mb-6"
-                    }
+                      class: "text-2xl font-bold mb-6",
+                    },
                   },
                   {
                     type: "paragraph",
                     content: "Creating digital experiences that inspire.",
                     attributes: {
-                      class: "text-gray-400 mb-8"
-                    }
-                  }
+                      class: "text-gray-400 mb-8",
+                    },
+                  },
                 ],
                 attributes: {
-                  class: "grid grid-cols-1 md:grid-cols-4 gap-8"
-                }
+                  class: "grid grid-cols-1 md:grid-cols-4 gap-8",
+                },
               },
               {
                 type: "blank-container",
@@ -3675,9 +3627,9 @@ export default (editor, options) => {
                         <li><a href="#" class="text-gray-400 hover:text-white">Portfolio</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white">Contact</a></li>
                       </ul>
-                    `
-                  }
-                ]
+                    `,
+                  },
+                ],
               },
               {
                 type: "blank-container",
@@ -3692,9 +3644,9 @@ export default (editor, options) => {
                         <li>contact@byteplexure.com</li>
                         <li>(555) 123-4567</li>
                       </ul>
-                    `
-                  }
-                ]
+                    `,
+                  },
+                ],
               },
               {
                 type: "blank-container",
@@ -3714,18 +3666,18 @@ export default (editor, options) => {
                           <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
                         </a>
                       </div>
-                    `
-                  }
-                ]
-              }
+                    `,
+                  },
+                ],
+              },
             ],
             attributes: {
-              class: "container mx-auto px-6"
-            }
-          }
-        ]
-      }
-    }
+              class: "container mx-auto px-6",
+            },
+          },
+        ],
+      },
+    },
   });
 
   editor.Components.addType("card-list", {
@@ -3751,26 +3703,23 @@ export default (editor, options) => {
         ],
       },
 
-
       init() {
         this.on("change:layout", this.updateLayout);
         this.updateLayout(); // Initial layout update
       },
 
-
       updateLayout() {
         const layout = this.get("attributes")["layout"] || "grid"; // Default to scroll layout
         let classes;
 
-
         if (layout === "grid") {
           // Update classes for grid layout
-          classes = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center justify-around gap-6 p-4";
+          classes =
+            "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center justify-around gap-6 p-4";
         } else {
           // Default to horizontal scrolling
           classes = "flex flex-wrap justify-center space-x-4 p-4";
         }
-
 
         this.set({ attributes: { class: classes } }); // Set the updated classes
       },
@@ -3787,16 +3736,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type"
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -3806,7 +3755,7 @@ export default (editor, options) => {
                 getData() {
                   try {
                     const attrs = JSON.parse(
-                      container.querySelector(".component-attributes").value
+                      container.querySelector(".component-attributes").value,
                     );
                     return { attributes: attrs };
                   } catch (e) {
@@ -3944,7 +3893,9 @@ export default (editor, options) => {
             // Append the cloned child to the end of the current component's children
             currentComponent.append(clonedChild);
 
-            console.log("First child component duplicated and appended to the end.");
+            console.log(
+              "First child component duplicated and appended to the end.",
+            );
           } else {
             console.log("No children to duplicate.");
           }
@@ -4055,7 +4006,6 @@ export default (editor, options) => {
     },
   });
 
-
   editor.Components.addType("card", {
     model: {
       defaults: {
@@ -4084,13 +4034,11 @@ export default (editor, options) => {
         `,
       },
 
-
       init() {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-
-      onAttributesChange() { },
+      onAttributesChange() {},
     },
   });
 
@@ -4116,16 +4064,13 @@ export default (editor, options) => {
         `,
       },
 
-
       init() {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-
-      onAttributesChange() { },
+      onAttributesChange() {},
     },
   });
-
 
   editor.Components.addType("card-body", {
     model: {
@@ -4139,13 +4084,11 @@ export default (editor, options) => {
         traits: [],
       },
 
-
       init() {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-
-      onAttributesChange() { },
+      onAttributesChange() {},
     },
   });
 
@@ -4192,7 +4135,8 @@ export default (editor, options) => {
       defaults: {
         tagName: "div",
         attributes: {
-          class: "relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16",
+          class:
+            "relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16",
         },
       },
     },
@@ -4290,7 +4234,7 @@ export default (editor, options) => {
         droppable: true,
       },
     },
-  })
+  });
 
   editor.DomComponents.addType("footer-container", {
     model: {
@@ -4302,7 +4246,7 @@ export default (editor, options) => {
         droppable: true,
       },
     },
-  })
+  });
 
   // Mobile menu container
   editor.DomComponents.addType("mobile-menu", {
@@ -4318,6 +4262,3 @@ export default (editor, options) => {
     },
   });
 };
-
-
-
