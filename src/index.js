@@ -290,6 +290,7 @@ export default (editor, opts = {}) => {
   };
   // const websiteData = websiteData1;
   const websiteData = options.websiteData;
+  const grapejs_data = options.grapejs_data;
   // Register components
   loadComponents(editor);
 
@@ -1241,29 +1242,27 @@ export default (editor, opts = {}) => {
   // Load the website structure into GrapeJS
   editor.on("load", () => {
     console.log("Loading website structure:", websiteStructure);
-
-    editor.DomComponents.clear();
     loadWebsiteStructure(editor, websiteStructure);
 
-    if (editor.Pages) {
-      const pages = editor.Pages.getAll();
-      console.log("Pages:", pages);
+    // if (editor.Pages) {
+    //   const pages = editor.Pages.getAll();
+    //   console.log("Pages:", pages);
 
-      if (pages.length > 0) {
-        console.log("Selecting first page...");
-        editor.Pages.select(pages.at(0));
+    //   if (pages.length > 0) {
+    //     console.log("Selecting first page...");
+    //     editor.Pages.select(pages.at(0));
 
-        setTimeout(() => {
-          editor.Pages.select(pages.at(0));
-        }, 100);
-      }
+    //     setTimeout(() => {
+    //       editor.Pages.select(pages.at(0));
+    //     }, 100);
+    //   }
 
-      editor.on('page:select', (page) => {
-        console.log('Page selected:', page.getName());
-      });
-    } else {
-      console.error("Editor Pages module is not available.");
-    }
+    //   editor.on('page:select', (page) => {
+    //     console.log('Page selected:', page.getName());
+    //   });
+    // } else {
+    //   console.error("Editor Pages module is not available.");
+    // }
   });
 
 
