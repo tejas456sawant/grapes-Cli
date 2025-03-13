@@ -2267,23 +2267,22 @@ export default (editor, options) => {
           console.log("Selected Icon:", icon);
 
           if (component) {
-            // Get the component's element
-            const componentEl = component.getEl();
+            // Update the component's content with the new icon SVG
+            // This is the key change - update the model, not just the DOM
+            component.set("content", icon.svg);
 
-            if (componentEl) {
-              // Remove any existing SVG inside the component
-              componentEl.querySelector("svg")?.remove();
+            // This will trigger a re-render of the component
+            // with the updated content
+            component.trigger("change:content");
 
-              // Create a new DOM element for the icon SVG
-              const tempContainer = document.createElement("div");
-              tempContainer.innerHTML = icon.svg;
-              const newSvg = tempContainer.firstChild;
-
-              if (newSvg) {
-                // Append the new SVG to the component
-                componentEl.appendChild(newSvg);
-              }
-            }
+            // Optional: Store the icon information in component's attributes
+            // for future reference if needed
+            const currentAttrs = component.getAttributes();
+            component.setAttributes({
+              ...currentAttrs,
+              "data-icon-name": icon.name || "",
+              "data-icon-type": icon.type || "",
+            });
           }
 
           modal.remove(); // Close the modal after selection
@@ -2334,6 +2333,7 @@ export default (editor, options) => {
       },
     },
   });
+
   editor.Components.addType("two-columns", {
     model: {
       defaults: {
