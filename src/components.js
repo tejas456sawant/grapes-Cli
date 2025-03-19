@@ -43,9 +43,8 @@ function showAddComponentModal(targetComponent) {
   function updateModalContent() {
     modal.innerHTML = `
       <div class="bg-white rounded-lg max-w-2xl w-full mx-4 relative">
-        ${
-          isLoading
-            ? `
+        ${isLoading
+        ? `
           <div class="absolute inset-0 bg-white bg-opacity-75 z-10 flex items-center justify-center rounded-lg">
             <div class="flex flex-col items-center space-y-3">
               <div class="animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-blue-500"></div>
@@ -53,16 +52,15 @@ function showAddComponentModal(targetComponent) {
             </div>
           </div>
         `
-            : ""
-        }
+        : ""
+      }
         <div class="p-6">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-semibold">
               ${currentStep === 1 ? "Choose Block Type" : "Block Details"}
             </h2>
-            <button class="close-modal text-gray-400 hover:text-gray-600" ${
-              isLoading ? "disabled" : ""
-            }>
+            <button class="close-modal text-gray-400 hover:text-gray-600" ${isLoading ? "disabled" : ""
+      }>
               <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -70,13 +68,12 @@ function showAddComponentModal(targetComponent) {
           </div>
           
           <div class="modal-body mb-6">
-            ${
-              currentStep === 1
-                ? `
+            ${currentStep === 1
+        ? `
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 ${registeredBlocks
-                  .map(
-                    (block) => `
+          .map(
+            (block) => `
                   <button 
                     class="component-type-btn flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                     data-type="${block.id}"
@@ -86,17 +83,16 @@ function showAddComponentModal(targetComponent) {
                     <span class="text-left font-medium">${block.name}</span>
                   </button>
                 `,
-                  )
-                  .join("")}
+          )
+          .join("")}
               </div>
             `
-                : `
+        : `
               <div class="space-y-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Selected Block: ${
-                      registeredBlocks.find((t) => t.id === selectedType)?.name
-                    }
+                    Selected Block: ${registeredBlocks.find((t) => t.id === selectedType)?.name
+        }
                   </label>
                 </div>
                 <div>
@@ -113,19 +109,17 @@ function showAddComponentModal(targetComponent) {
                 </div>
               </div>
             `
-            }
+      }
           </div>
 
           <div class="flex justify-between">
-            <button class="back-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium ${
-              currentStep === 1 ? "invisible" : ""
-            }" ${isLoading ? "disabled" : ""}>
+            <button class="back-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium ${currentStep === 1 ? "invisible" : ""
+      }" ${isLoading ? "disabled" : ""}>
               Back
             </button>
             <div class="space-x-3">
-              <button class="cancel-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium" ${
-                isLoading ? "disabled" : ""
-              }>
+              <button class="cancel-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium" ${isLoading ? "disabled" : ""
+      }>
                 Cancel
               </button>
               <button 
@@ -259,14 +253,13 @@ export default (editor, options) => {
                 <div>
                   <label class="block mb-2">Component Type</label>
                   <input type="text" value="${component.get(
-                    "type",
-                  )}" class="w-full border p-2 rounded" disabled>
+              "type",
+            )}" class="w-full border p-2 rounded" disabled>
                 </div>
                 <div>
                   <label class="block mb-2">Content</label>
-                  <textarea class="w-full border p-2 rounded component-content" rows="4">${
-                    component.get("content") || ""
-                  }</textarea>
+                  <textarea class="w-full border p-2 rounded component-content" rows="4">${component.get("content") || ""
+              }</textarea>
                 </div>
               </div>
             `;
@@ -296,15 +289,13 @@ export default (editor, options) => {
               <div class="space-y-4">
                 <div>
                   <label class="block mb-2">Image Source</label>
-                  <input type="text" class="w-full border p-2 rounded image-src" value="${
-                    component.getAttributes().src || ""
-                  }">
+                  <input type="text" class="w-full border p-2 rounded image-src" value="${component.getAttributes().src || ""
+              }">
                 </div>
                 <div>
                   <label class="block mb-2">Alt Text</label>
-                  <input type="text" class="w-full border p-2 rounded image-alt" value="${
-                    component.getAttributes().alt || ""
-                  }">
+                  <input type="text" class="w-full border p-2 rounded image-alt" value="${component.getAttributes().alt || ""
+              }">
                 </div>
               </div>
             `;
@@ -334,9 +325,8 @@ export default (editor, options) => {
               <div class="space-y-4">
                 <div>
                   <label class="block mb-2">Content</label>
-                  <textarea class="w-full border p-2 rounded text-content" rows="4">${
-                    component.getContent() || ""
-                  }</textarea>
+                  <textarea class="w-full border p-2 rounded text-content" rows="4">${component.getContent() || ""
+              }</textarea>
                 </div>
               </div>
             `;
@@ -360,9 +350,8 @@ export default (editor, options) => {
               <div class="space-y-4">
                 <div>
                   <label class="block mb-2">Button Text</label>
-                  <input type="text" class="w-full border p-2 rounded button-text" value="${
-                    component.get("content") || ""
-                  }">
+                  <input type="text" class="w-full border p-2 rounded button-text" value="${component.get("content") || ""
+              }">
                 </div>
               </div>
             `;
@@ -412,9 +401,8 @@ export default (editor, options) => {
  
                 <div>
                   <label class="block mb-2">Alt Text</label>
-                  <input type="text" class="w-full border p-2 rounded image-alt" value="${
-                    component.getAttributes().alt || ""
-                  }">
+                  <input type="text" class="w-full border p-2 rounded image-alt" value="${component.getAttributes().alt || ""
+              }">
                 </div>
               </div>
             `;
@@ -701,18 +689,18 @@ export default (editor, options) => {
         content: `
           <div id="navbar-links-container">
             ${linksList
-              .components()
-              .map(
-                (link, index) => `
+            .components()
+            .map(
+              (link, index) => `
               <div class="mb-2">
                 <input type="text" class="navbar-link-input border rounded px-2 py-1" data-index="${index}" value="${link.get(
-                  "content",
-                )}">
+                "content",
+              )}">
                 <button class="remove-link bg-red-500 text-white px-2 py-1 rounded" data-index="${index}">Remove</button>
               </div>
             `,
-              )
-              .join("")}
+            )
+            .join("")}
           </div>
           <button id="add-navbar-link" class="bg-blue-500 text-white px-3 py-2 rounded mt-4">Add Link</button>
         `,
@@ -968,16 +956,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                                    "type",
-                                  )}" class="w-full border p-2 rounded" disabled>
+                "type",
+              )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                                    component.getAttributes(),
-                                    null,
-                                    2,
-                                  )}</textarea>
+                component.getAttributes(),
+                null,
+                2,
+              )}</textarea>
                               </div>
                           </div>
                       `;
@@ -1543,16 +1531,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                                    "type",
-                                  )}" class="w-full border p-2 rounded" disabled>
+                "type",
+              )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                                    component.getAttributes(),
-                                    null,
-                                    2,
-                                  )}</textarea>
+                component.getAttributes(),
+                null,
+                2,
+              )}</textarea>
                               </div>
                           </div>
                       `;
@@ -1669,7 +1657,7 @@ export default (editor, options) => {
       </div>
           `;
 
-        btn.addEventListener("click", () => {});
+        btn.addEventListener("click", () => { });
 
         this.swapButton = btn;
         console.log("Y. Button created:", btn);
@@ -1792,6 +1780,7 @@ export default (editor, options) => {
   editor.Components.addType("button-primary", {
     model: {
       defaults: {
+        showEditButton: true,
         tagName: "a", // Changed to anchor tag for proper linking
         droppable: false,
         attributes: {
@@ -1818,14 +1807,14 @@ export default (editor, options) => {
             type: "text",
             label: "Button Text",
             name: "content",
-            changeProp: 1,
+            changeProp: 1
           },
           {
             type: "text",
             label: "Link URL",
             name: "href",
-            changeProp: 1,
-          },
+            changeProp: 1
+          }
         ],
         propagate: ["content", "href"],
       },
@@ -1833,35 +1822,102 @@ export default (editor, options) => {
     view: {
       init() {
         this.componentEditHandlers = {
-          // Default handler for generic components
+          // Handler specifically for button-primary components
+          "button-primary": {
+            createModalContent(component) {
+              const container = document.createElement("div");
+
+              // Get current values
+              const content = component.get("content") || "";
+              const href = component.getAttributes().href || "";
+              const target = component.getAttributes().target || "";
+              const openInNewTab = target === "_blank";
+
+              // Create form elements
+              container.innerHTML = `
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="button-text">Button Text</label>
+                    <input 
+                      id="button-text" 
+                      type="text" 
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-rose-500" 
+                      value="${content}"
+                    >
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="link-url">URL</label>
+                    <input 
+                      id="link-url" 
+                      type="text" 
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-rose-500" 
+                      value="${href}" 
+                      placeholder="https://example.com"
+                    >
+                  </div>
+                  
+                  <div class="flex items-center">
+                    <input 
+                      id="open-new-tab" 
+                      type="checkbox" 
+                      class="h-4 w-4 text-rose-500 border-gray-300 rounded" 
+                      ${openInNewTab ? 'checked' : ''}
+                    >
+                    <label for="open-new-tab" class="ml-2 block text-sm text-gray-700">
+                      Open in new tab
+                    </label>
+                  </div>
+                </div>
+              `;
+
+              return {
+                container,
+                getData() {
+                  const buttonText = container.querySelector("#button-text").value;
+                  const linkUrl = container.querySelector("#link-url").value;
+                  const openInNewTab = container.querySelector("#open-new-tab").checked;
+
+                  return {
+                    content: buttonText,
+                    attributes: {
+                      href: linkUrl,
+                      target: openInNewTab ? "_blank" : "",
+                      rel: openInNewTab ? "noopener noreferrer" : ""
+                    }
+                  };
+                }
+              };
+            }
+          },
+
+          // Default handler for generic components (keeping your existing handler)
           default: {
             createModalContent(component) {
               const container = document.createElement("div");
               container.innerHTML = `
-                          <div class="space-y-4">
-                              <div>
-                                  <label class="block mb-2">Component Type</label>
-                                  <input type="text" value="${component.get(
-                                    "type",
-                                  )}" class="w-full border p-2 rounded" disabled>
-                              </div>
-                              <div>
-                                  <label class="block mb-2">Attributes</label>
-                                  <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                                    component.getAttributes(),
-                                    null,
-                                    2,
-                                  )}</textarea>
-                              </div>
-                          </div>
-                      `;
+                <div class="space-y-4">
+                  <div>
+                    <label class="block mb-2">Component Type</label>
+                    <input type="text" value="${component.get("type")}" class="w-full border p-2 rounded" disabled>
+                  </div>
+                  <div>
+                    <label class="block mb-2">Attributes</label>
+                    <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
+                component.getAttributes(),
+                null,
+                2
+              )}</textarea>
+                  </div>
+                </div>
+              `;
 
               return {
                 container,
                 getData() {
                   try {
                     const attrs = JSON.parse(
-                      container.querySelector(".component-attributes").value,
+                      container.querySelector(".component-attributes").value
                     );
                     return { attributes: attrs };
                   } catch (e) {
@@ -1882,61 +1938,6 @@ export default (editor, options) => {
         if (content) {
           this.el.innerHTML = content;
         }
-      },
-
-      onRender() {
-        this.updateEditButton();
-      },
-
-      createButtonRow() {
-        if (this.buttonRow) return this.buttonRow;
-
-        const row = document.createElement("div");
-        row.className =
-          "gjs-component-buttons absolute bottom-6 left-2 md:left-14 m-2 flex space-x-2 z-50";
-
-        // Edit Button
-        const editBtn = this.createEditButton();
-        row.appendChild(editBtn);
-
-        // Edit Button
-        const aiBtn = this.createAiButton();
-        row.appendChild(aiBtn);
-
-        // Delete Button
-        // const deleteBtn = document.createElement("button");
-        // deleteBtn.className =
-        //   "text-gray-900 border-gray-300 bg-white bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px]";
-        // deleteBtn.innerHTML = `
-        //       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
-        //           <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.26 51.26 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.227a49.18 49.18 0 00-6 0v-.227c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd" />
-        //       </svg>
-        //   `;
-        // deleteBtn.addEventListener("click", () => {
-        //   if (confirm("Are you sure you want to delete this component?")) {
-        //     this.model.remove();
-        //   }
-        // });
-        // row.appendChild(deleteBtn);
-
-        // Duplicate Button
-        // const duplicateBtn = document.createElement("button");
-        // duplicateBtn.className =
-        //   "text-gray-900 border-gray-300 bg-white bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px]";
-        // duplicateBtn.innerHTML = `
-        //       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
-        //           <path d="M7.5 3.375c0-1.036.84-1.875 1.875-1.875h.375a3.75 3.75 0 013.75 3.75v1.875C13.5 8.161 14.34 9 15.375 9h1.875A3.75 3.75 0 0121 12.75v3.375C21 17.16 20.16 18 19.125 18h-9.75A1.875 1.875 0 017.5 16.125V3.375z" />
-        //           <path d="M15 5.25a5.23 5.23 0 00-1.279-3.434 9.768 9.768 0 016.963 6.963A5.23 5.23 0 0017.25 7.5h-1.875A.375.375 0 0115 7.125V5.25zM4.875 6H6.75a.75.75 0 00.75-.75V3.375c0-1.036-.84-1.875-1.875-1.875h-1.5A1.875 1.875 0 000 3.375v9.75C0 14.16.84 15 1.875 15H3v-3.75a3.75 3.75 0 013.75-3.75h4.125A3.75 3.75 0 0114.625 9h3.375v-.375A1.875 1.875 0 0016.125 6h-1.5a.75.75 0 01-.75-.75V3.375C13.875 2.025 12.85 1 11.5 1h-1.875a.75.75 0 01-.75-.75V1c0-1.036-.84-1.875-1.875-1.875H4.875C3.839 0 3 .84 3 1.875V4.5a.75.75 0 00.75.75z" />
-        //       </svg>
-        //   `;
-        // duplicateBtn.addEventListener("click", () => {
-        //   const newComponent = this.model.clone();
-        //   this.model.parent.add(newComponent);
-        // });
-        // row.appendChild(duplicateBtn);
-
-        this.buttonRow = row;
-        return row;
       },
 
       createModal(component) {
@@ -1968,18 +1969,18 @@ export default (editor, options) => {
           }
 
           modal.innerHTML = `
-                  <div class="bg-white p-6 rounded-lg max-w-md w-full relative">
-                      <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-gray-900">
-                          &times;
-                      </button>
-                      <h2 class="text-xl font-semibold mb-4">Edit Component</h2>
-                      <div class="modal-body"></div>
-                      <div class="mt-4 flex justify-end space-x-2">
-                          <button class="cancel-modal px-4 py-2 bg-gray-200 rounded">Cancel</button>
-                          <button class="save-modal px-4 py-2 !bg-rose-500 text-white rounded">Save</button>
-                      </div>
-                  </div>
-              `;
+            <div class="bg-white p-6 rounded-lg max-w-md w-full relative">
+              <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-gray-900">
+                &times;
+              </button>
+              <h2 class="text-xl font-semibold mb-4">Edit Component</h2>
+              <div class="modal-body"></div>
+              <div class="mt-4 flex justify-end space-x-2">
+                <button class="cancel-modal px-4 py-2 bg-gray-200 rounded">Cancel</button>
+                <button class="save-modal px-4 py-2 !bg-rose-500 text-white rounded">Save</button>
+              </div>
+            </div>
+          `;
 
           const modalBody = modal.querySelector(".modal-body");
 
@@ -2044,93 +2045,16 @@ export default (editor, options) => {
           console.error("Invalid modal created", modal);
         }
       },
-
-      handleSelect(selectedComponent) {
-        if (selectedComponent !== this.model) {
-          this.removeButtonRow();
-          return;
-        }
-
-        const buttonRow = this.createButtonRow();
-        this.el.appendChild(buttonRow);
-      },
-
-      handleDeselect() {
-        this.removeButtonRow();
-      },
-
-      removeButtonRow() {
-        if (this.buttonRow) {
-          this.buttonRow.remove();
-          this.buttonRow = null;
-        }
-      },
-
-      createEditButton() {
-        if (this.editButton) return this.editButton;
-
-        const btn = document.createElement("button");
-
-        btn.className =
-          "relative overflow-hidden text-rose-400 flex z-100 items-center group flex-row relative rounded-full py-1 px-3 text-md leading-6 text-gray-600 bg-white ring-1 ring-gray-900/10 hover:ring-gray-900/20";
-
-        btn.innerHTML = `
-        
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 my-1"">
-        <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-      </svg>
-
-      <div class="lg:absolute lg:group-hover:relative lg:left-10  lg:group-hover:left-1 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out hidden lg:block opacity-0 lg:group-hover:opacity-100">
-      Edit Image
-      </div>
-          `;
-
-        btn.addEventListener("click", this.onEditButtonClick.bind(this));
-
-        this.editButton = btn;
-        return btn;
-      },
-
-      createAiButton() {
-        if (this.aiButton) return this.aiButton;
-
-        const btn = document.createElement("button");
-
-        btn.className =
-          "relative overflow-hidden text-rose-400 flex z-100 items-center group flex-row relative rounded-full py-1 px-3 text-md leading-6 text-gray-600 bg-white ring-1 ring-gray-900/10 hover:ring-gray-900/20";
-
-        btn.innerHTML = `
-        
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-      </svg>
-      
-
-      <div class="lg:absolute lg:group-hover:relative lg:left-10  lg:group-hover:left-1 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out hidden lg:block opacity-0 lg:group-hover:opacity-100">
-        Regenerate Section
-      </div>
-          `;
-
-        btn.addEventListener("click", this.onEditButtonClick.bind(this));
-
-        this.aiButton = btn;
-        return btn;
-      },
-
-      updateEditButton() {
-        const editor = this.em.get("Editor");
-        editor.on("component:select", this.handleSelect.bind(this));
-        editor.on("component:deselect", this.handleDeselect.bind(this));
-      },
     },
   });
+
 
   editor.Components.addType("button-secondary", {
     model: {
       defaults: {
+        showEditButton: true,
         tagName: "button",
         droppable: false,
-        traits: [withEditButton3],
         attributes: {
           class:
             "button-secondary transition flex flex-row justify-center items-center px-8 py-4 mx-2 my-2",
@@ -2141,14 +2065,248 @@ export default (editor, options) => {
           font-weight: 400;
           text-transform: uppercase;
           letter-spacing: 2px;
-         box-shadow:inset 0px 0px 0px 1px white;
+         box-shadow:inset 0px 0px 0px 1px var(--color-text-primary);
         }
         .button-secondary:hover{
           border: 0;
           box-shadow:inset 0px 0px 0px 1px var(--color-primary);
           background-color:var(--color-primary);
+          color: white;
+        }
+        .hero-section .button-secondary{
+          box-shadow:inset 0px 0px 0px 1px white !important;
+        }
+           .bg-section-dark .button-secondary{
+          box-shadow:inset 0px 0px 0px 1px white !important;
         }
         `,
+      },
+    },
+    view: {
+      init() {
+        this.componentEditHandlers = {
+          // Handler specifically for button-primary components
+          "button-secondary": {
+            createModalContent(component) {
+              const container = document.createElement("div");
+
+              // Get current values
+              const content = component.get("content") || "";
+              const href = component.getAttributes().href || "";
+              const target = component.getAttributes().target || "";
+              const openInNewTab = target === "_blank";
+
+              // Create form elements
+              container.innerHTML = `
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="button-text">Button Text</label>
+                    <input 
+                      id="button-text" 
+                      type="text" 
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-rose-500" 
+                      value="${content}"
+                    >
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="link-url">URL</label>
+                    <input 
+                      id="link-url" 
+                      type="text" 
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-rose-500" 
+                      value="${href}" 
+                      placeholder="https://example.com"
+                    >
+                  </div>
+                  
+                  <div class="flex items-center">
+                    <input 
+                      id="open-new-tab" 
+                      type="checkbox" 
+                      class="h-4 w-4 text-rose-500 border-gray-300 rounded" 
+                      ${openInNewTab ? 'checked' : ''}
+                    >
+                    <label for="open-new-tab" class="ml-2 block text-sm text-gray-700">
+                      Open in new tab
+                    </label>
+                  </div>
+                </div>
+              `;
+
+              return {
+                container,
+                getData() {
+                  const buttonText = container.querySelector("#button-text").value;
+                  const linkUrl = container.querySelector("#link-url").value;
+                  const openInNewTab = container.querySelector("#open-new-tab").checked;
+
+                  return {
+                    content: buttonText,
+                    attributes: {
+                      href: linkUrl,
+                      target: openInNewTab ? "_blank" : "",
+                      rel: openInNewTab ? "noopener noreferrer" : ""
+                    }
+                  };
+                }
+              };
+            }
+          },
+
+          // Default handler for generic components (keeping your existing handler)
+          default: {
+            createModalContent(component) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+                <div class="space-y-4">
+                  <div>
+                    <label class="block mb-2">Component Type</label>
+                    <input type="text" value="${component.get("type")}" class="w-full border p-2 rounded" disabled>
+                  </div>
+                  <div>
+                    <label class="block mb-2">Attributes</label>
+                    <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
+                component.getAttributes(),
+                null,
+                2
+              )}</textarea>
+                  </div>
+                </div>
+              `;
+
+              return {
+                container,
+                getData() {
+                  try {
+                    const attrs = JSON.parse(
+                      container.querySelector(".component-attributes").value
+                    );
+                    return { attributes: attrs };
+                  } catch (e) {
+                    alert("Invalid JSON for attributes");
+                    return null;
+                  }
+                },
+              };
+            },
+          },
+        };
+        this.listenTo(this.model, "active", this.onActive);
+        this.listenTo(this.model, "change:content", this.updateContent);
+      },
+
+      updateContent() {
+        const content = this.model.get("content");
+        if (content) {
+          this.el.innerHTML = content;
+        }
+      },
+
+      createModal(component) {
+        const componentType = component.get("type") || "default";
+        const handler =
+          this.componentEditHandlers[componentType] ||
+          this.componentEditHandlers.default;
+
+        // Add console logging for debugging
+        console.log("Creating modal for component:", component);
+        console.log("Component type:", componentType);
+        console.log("Handler:", handler);
+
+        if (!handler || typeof handler.createModalContent !== "function") {
+          console.error("Invalid handler or missing createModalContent method");
+          return null;
+        }
+
+        const modal = document.createElement("div");
+        modal.className =
+          "fixed inset-0 bg-black bg-opacity-50 z-[50] flex items-center justify-center";
+
+        try {
+          const modalContent = handler.createModalContent(component);
+
+          if (!modalContent || !modalContent.container) {
+            console.error("Failed to create modal content");
+            return null;
+          }
+
+          modal.innerHTML = `
+            <div class="bg-white p-6 rounded-lg max-w-md w-full relative">
+              <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-gray-900">
+                &times;
+              </button>
+              <h2 class="text-xl font-semibold mb-4">Edit Component</h2>
+              <div class="modal-body"></div>
+              <div class="mt-4 flex justify-end space-x-2">
+                <button class="cancel-modal px-4 py-2 bg-gray-200 rounded">Cancel</button>
+                <button class="save-modal px-4 py-2 !bg-rose-500 text-white rounded">Save</button>
+              </div>
+            </div>
+          `;
+
+          const modalBody = modal.querySelector(".modal-body");
+
+          // Add additional error checking
+          if (!modalBody) {
+            console.error("Could not find modal body");
+            return null;
+          }
+
+          modalBody.appendChild(modalContent.container);
+
+          // Event Listeners
+          const closeBtn = modal.querySelector(".close-modal");
+          const cancelBtn = modal.querySelector(".cancel-modal");
+          const saveBtn = modal.querySelector(".save-modal");
+
+          if (!closeBtn || !cancelBtn || !saveBtn) {
+            console.error("Missing modal buttons");
+            return null;
+          }
+
+          const closeModal = () => modal.remove();
+          closeBtn.addEventListener("click", closeModal);
+          cancelBtn.addEventListener("click", closeModal);
+
+          saveBtn.addEventListener("click", () => {
+            const editData = modalContent.getData();
+            if (editData) {
+              // Apply changes to the component
+              if (editData.attributes) {
+                component.setAttributes(editData.attributes);
+              }
+              if (editData.content) {
+                component.set("content", editData.content);
+              }
+              closeModal();
+            }
+          });
+
+          return modal;
+        } catch (error) {
+          console.error("Error creating modal:", error);
+          return null;
+        }
+      },
+
+      onEditButtonClick() {
+        console.log("Edit button clicked, model:", this.model);
+
+        const modal = this.createModal(this.model);
+
+        // Add additional error checking
+        if (!modal) {
+          console.error("Failed to create modal");
+          return;
+        }
+
+        // Verify modal is a valid Node before appending
+        if (modal instanceof Node) {
+          document.body.appendChild(modal);
+        } else {
+          console.error("Invalid modal created", modal);
+        }
       },
     },
   });
@@ -2203,16 +2361,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                                    "type",
-                                  )}" class="w-full border p-2 rounded" disabled>
+                "type",
+              )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                                    component.getAttributes(),
-                                    null,
-                                    2,
-                                  )}</textarea>
+                component.getAttributes(),
+                null,
+                2,
+              )}</textarea>
                               </div>
                           </div>
                       `;
@@ -2324,7 +2482,7 @@ export default (editor, options) => {
         }
       },
 
-      handleDeselect() {},
+      handleDeselect() { },
 
       updateEditButton() {
         const editor = this.em.get("Editor");
@@ -2438,6 +2596,7 @@ export default (editor, options) => {
   editor.Components.addType("hero-section", {
     model: {
       defaults: {
+        disableMovement: true,
         tagName: "div",
         disableToolbar: true,
         draggable: false,
@@ -3736,16 +3895,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                                    "type",
-                                  )}" class="w-full border p-2 rounded" disabled>
+                "type",
+              )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                                    component.getAttributes(),
-                                    null,
-                                    2,
-                                  )}</textarea>
+                component.getAttributes(),
+                null,
+                2,
+              )}</textarea>
                               </div>
                           </div>
                       `;
@@ -4038,7 +4197,7 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() {},
+      onAttributesChange() { },
     },
   });
 
@@ -4068,13 +4227,14 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() {},
+      onAttributesChange() { },
     },
   });
 
   editor.Components.addType("card-body", {
     model: {
       defaults: {
+        disableMovement: true,
         tagName: "div",
         draggable: false,
         droppable: false,
@@ -4088,7 +4248,7 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() {},
+      onAttributesChange() { },
     },
   });
 

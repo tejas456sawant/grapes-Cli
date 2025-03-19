@@ -95,17 +95,14 @@ export default (editor, opts = {}) => {
     },
   });
 
-  // Add the Edit button to the toolbar when a component with the flag is selected
-  editor.on("component:add", (component) => {
-    if (component.get("disableToolbar")) {
+  editor.on('component:add', (component) => {
+    if (component.get('disableToolbar')) {
       component.set({ toolbar: [] });
       return;
     }
 
-    let toolbar = [...(component.get("toolbar") || [])];
-
-    // Keep only the last button (if any exist)
-    toolbar = toolbar.length > 0 ? [toolbar[toolbar.length - 1]] : [];
+    // Get the current toolbar or initialize an empty array
+    let toolbar = [...(component.get('toolbar') || [])];
 
     const parent = component.parent();
     const siblings = parent ? parent.components().models : [];
@@ -114,47 +111,103 @@ export default (editor, opts = {}) => {
     const isLast = index === siblings.length - 1;
     const isOnlyChild = siblings.length === 1;
 
-    // Add movement buttons if allowed and it's not the only child
-    if (component.get("movement") && !isOnlyChild) {
+    // Add movement buttons if movement is NOT disabled and it's not the only child
+    if (!component.get('disableMovement') && !isOnlyChild) {
       if (!isFirst) {
-        console.log("first child" + component.get("type"));
-        toolbar.push({
-          id: "move-up",
-          label: `<svg viewBox="0 0 24 24" width="16" height="16" style="fill: currentColor;">
-                <path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path>
-            </svg>`,
-          attributes: { title: "Move Up" },
-        });
+        // Check if the move-up button already exists
+        const hasMoveUp = toolbar.some(btn => btn.id === 'move-up');
+        if (!hasMoveUp) {
+          toolbar.push({
+            id: 'move-up',
+            label: `<svg viewBox="0 0 24 24" width="16" height="16" style="fill: currentColor;">
+                  <path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path>
+              </svg>`,
+            attributes: { title: 'Move Up' },
+            command: () => moveComponent(component, 'up'), // Attach move-up command
+          });
+        }
       }
 
       if (!isLast) {
-        console.log("last child" + component.get("type"));
-        toolbar.push({
-          id: "move-down",
-          label: `<svg viewBox="0 0 24 24" width="16" height="16" style="fill: currentColor;">
-                <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"></path>
-            </svg>`,
-          attributes: { title: "Move Down" },
-        });
+        // Check if the move-down button already exists
+        const hasMoveDown = toolbar.some(btn => btn.id === 'move-down');
+        if (!hasMoveDown) {
+          toolbar.push({
+            id: 'move-down',
+            label: `<svg viewBox="0 0 24 24" width="16" height="16" style="fill: currentColor;">
+                  <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"></path>
+              </svg>`,
+            attributes: { title: 'Move Down' },
+            command: () => moveComponent(component, 'down'), // Attach move-down command
+          });
+        }
       }
     }
 
     // Add edit button if enabled
-    if (component.get("showEditButton")) {
-      toolbar.push({
-        id: "edit-button",
-        label: `
-          <svg viewBox="0 0 24 24" width="16" height="16" style="fill: currentColor;">
-            <path fill="currentColor" d="M14.06,9L15,9.94L5.92,19H5V18.08L14.06,9M17.66,3C17.41,3 17.15,3.1 16.96,3.29L15.13,5.12L18.88,8.87L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18.17,3.09 17.92,3 17.66,3M14.06,6.19L3,17.25V21H6.75L17.81,9.94L14.06,6.19Z"></path>
-          </svg>
-        `,
-        command: "edit-component",
-        attributes: { title: "Edit Component" },
-      });
+    if (component.get('showEditButton')) {
+      // Check if the edit button already exists
+      const hasEditButton = toolbar.some(btn => btn.id === 'edit-button');
+      if (!hasEditButton) {
+        toolbar.push({
+          id: 'edit-button',
+          label: `
+            <svg viewBox="0 0 24 24" width="16" height="16" style="fill: currentColor;">
+              <path fill="currentColor" d="M14.06,9L15,9.94L5.92,19H5V18.08L14.06,9M17.66,3C17.41,3 17.15,3.1 16.96,3.29L15.13,5.12L18.88,8.87L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18.17,3.09 17.92,3 17.66,3M14.06,6.19L3,17.25V21H6.75L17.81,9.94L14.06,6.19Z"></path>
+            </svg>
+          `,
+          command: 'edit-component',
+          attributes: { title: 'Edit Component' },
+        });
+      }
     }
 
-    component.set({ toolbar }); // Apply the updated toolbar
+    // Apply the updated toolbar
+    component.set({ toolbar });
   });
+
+  /**
+   * Move a component up or down in the hierarchy.
+   * @param {Component} component - The component to move.
+   * @param {string} direction - The direction to move ('up' or 'down').
+   */
+  function moveComponent(component, direction) {
+    const parent = component.parent();
+    if (!parent) return; // If no parent, cannot move
+
+    const siblings = parent.components().models;
+    const index = siblings.indexOf(component);
+
+    // Determine the target index based on direction
+    let targetIndex;
+    if (direction === 'up') {
+      targetIndex = index - 1;
+    } else if (direction === 'down') {
+      targetIndex = index + 1;
+    } else {
+      return; // Invalid direction
+    }
+
+    // Check if the target index is valid
+    if (targetIndex < 0 || targetIndex >= siblings.length) return;
+
+    // Get the target component
+    const targetComponent = siblings[targetIndex];
+
+    // Check if the target component has disableMovement set to true
+    if (targetComponent.get('disableMovement')) {
+      console.warn('Cannot move: Target component has disableMovement set to true.');
+      return;
+    }
+
+    // Swap the components
+    parent.components().at(index).remove(); // Remove the current component
+    parent.components().add(component, { at: targetIndex }); // Re-add it at the target position
+
+    // Trigger a refresh to update the UI
+    editor.trigger('component:update', component);
+    editor.trigger('component:update', targetComponent);
+  }
 
   // Define the command for the Edit button
   editor.Commands.add("edit-component", {
