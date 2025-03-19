@@ -31,78 +31,14 @@ export default (editor, opts = {}) => {
 
   console.log("Components and blocks loaded");
 
-  editor.Commands.add("update-theme-options", {
-    run(editor, sender, { themeoptions }) {
-      console.log(themeoptions);
-      // Function to update CSS variables
-      const updateCSSVariables = (options) => {
-        console.log("THEME1");
-        const rootStyle = document.documentElement;
-
-        // Update font variables
-        rootStyle.style.setProperty("--font-primary", options.fonts.primary);
-        rootStyle.style.setProperty(
-          "--font-secondary",
-          options.fonts.secondary,
-        );
-        rootStyle.style.setProperty("--font-scale", options.fonts.scale);
-
-        // Update color variables
-        // rootStyle.style.setProperty("--color-primary", options.colors.primary);
-        // rootStyle.style.setProperty(
-        //   "--color-primary-light",
-        //   options.colors.primaryLight
-        // );
-        // rootStyle.style.setProperty(
-        //   "--color-primary-dark",
-        //   options.colors.primaryDark
-        // );
-        // rootStyle.style.setProperty(
-        //   "--color-text-light",
-        //   options.colors.textLight
-        // );
-        // rootStyle.style.setProperty(
-        //   "--color-section-light",
-        //   options.colors.sectionLight
-        // );
-        // rootStyle.style.setProperty(
-        //   "--color-section-accent1",
-        //   options.colors.sectionAccent1
-        // );
-        // rootStyle.style.setProperty(
-        //   "--color-section-accent2",
-        //   options.colors.sectionAccent2
-        // );
-        // rootStyle.style.setProperty(
-        //   "--color-section-dark",
-        //   options.colors.sectionDark
-        // );
-        // rootStyle.style.setProperty(
-        //   "--color-text-primary",
-        //   options.colors.textPrimary
-        // );
-        // rootStyle.style.setProperty(
-        //   "--color-text-secondary",
-        //   options.colors.textSecondary
-        // );
-      };
-
-      // Update CSS variables
-      updateCSSVariables(themeoptions);
-
-      // Optional: Trigger a re-render or update in the editor
-      editor.refresh();
-    },
-  });
-
-  editor.on('component:add', (component) => {
-    if (component.get('disableToolbar')) {
+  editor.on("component:add", (component) => {
+    if (component.get("disableToolbar")) {
       component.set({ toolbar: [] });
       return;
     }
 
     // Get the current toolbar or initialize an empty array
-    let toolbar = [...(component.get('toolbar') || [])];
+    let toolbar = [...(component.get("toolbar") || [])];
 
     const parent = component.parent();
     const siblings = parent ? parent.components().models : [];
@@ -112,52 +48,52 @@ export default (editor, opts = {}) => {
     const isOnlyChild = siblings.length === 1;
 
     // Add movement buttons if movement is NOT disabled and it's not the only child
-    if (!component.get('disableMovement') && !isOnlyChild) {
+    if (!component.get("disableMovement") && !isOnlyChild) {
       if (!isFirst) {
         // Check if the move-up button already exists
-        const hasMoveUp = toolbar.some(btn => btn.id === 'move-up');
+        const hasMoveUp = toolbar.some((btn) => btn.id === "move-up");
         if (!hasMoveUp) {
           toolbar.push({
-            id: 'move-up',
+            id: "move-up",
             label: `<svg viewBox="0 0 24 24" width="16" height="16" style="fill: currentColor;">
                   <path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path>
               </svg>`,
-            attributes: { title: 'Move Up' },
-            command: () => moveComponent(component, 'up'), // Attach move-up command
+            attributes: { title: "Move Up" },
+            command: () => moveComponent(component, "up"), // Attach move-up command
           });
         }
       }
 
       if (!isLast) {
         // Check if the move-down button already exists
-        const hasMoveDown = toolbar.some(btn => btn.id === 'move-down');
+        const hasMoveDown = toolbar.some((btn) => btn.id === "move-down");
         if (!hasMoveDown) {
           toolbar.push({
-            id: 'move-down',
+            id: "move-down",
             label: `<svg viewBox="0 0 24 24" width="16" height="16" style="fill: currentColor;">
                   <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"></path>
               </svg>`,
-            attributes: { title: 'Move Down' },
-            command: () => moveComponent(component, 'down'), // Attach move-down command
+            attributes: { title: "Move Down" },
+            command: () => moveComponent(component, "down"), // Attach move-down command
           });
         }
       }
     }
 
     // Add edit button if enabled
-    if (component.get('showEditButton')) {
+    if (component.get("showEditButton")) {
       // Check if the edit button already exists
-      const hasEditButton = toolbar.some(btn => btn.id === 'edit-button');
+      const hasEditButton = toolbar.some((btn) => btn.id === "edit-button");
       if (!hasEditButton) {
         toolbar.push({
-          id: 'edit-button',
+          id: "edit-button",
           label: `
             <svg viewBox="0 0 24 24" width="16" height="16" style="fill: currentColor;">
               <path fill="currentColor" d="M14.06,9L15,9.94L5.92,19H5V18.08L14.06,9M17.66,3C17.41,3 17.15,3.1 16.96,3.29L15.13,5.12L18.88,8.87L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18.17,3.09 17.92,3 17.66,3M14.06,6.19L3,17.25V21H6.75L17.81,9.94L14.06,6.19Z"></path>
             </svg>
           `,
-          command: 'edit-component',
-          attributes: { title: 'Edit Component' },
+          command: "edit-component",
+          attributes: { title: "Edit Component" },
         });
       }
     }
@@ -180,9 +116,9 @@ export default (editor, opts = {}) => {
 
     // Determine the target index based on direction
     let targetIndex;
-    if (direction === 'up') {
+    if (direction === "up") {
       targetIndex = index - 1;
-    } else if (direction === 'down') {
+    } else if (direction === "down") {
       targetIndex = index + 1;
     } else {
       return; // Invalid direction
@@ -195,8 +131,10 @@ export default (editor, opts = {}) => {
     const targetComponent = siblings[targetIndex];
 
     // Check if the target component has disableMovement set to true
-    if (targetComponent.get('disableMovement')) {
-      console.warn('Cannot move: Target component has disableMovement set to true.');
+    if (targetComponent.get("disableMovement")) {
+      console.warn(
+        "Cannot move: Target component has disableMovement set to true.",
+      );
       return;
     }
 
@@ -205,8 +143,8 @@ export default (editor, opts = {}) => {
     parent.components().add(component, { at: targetIndex }); // Re-add it at the target position
 
     // Trigger a refresh to update the UI
-    editor.trigger('component:update', component);
-    editor.trigger('component:update', targetComponent);
+    editor.trigger("component:update", component);
+    editor.trigger("component:update", targetComponent);
   }
 
   // Define the command for the Edit button

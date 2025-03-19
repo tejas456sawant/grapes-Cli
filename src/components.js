@@ -43,8 +43,9 @@ function showAddComponentModal(targetComponent) {
   function updateModalContent() {
     modal.innerHTML = `
       <div class="bg-white rounded-lg max-w-2xl w-full mx-4 relative">
-        ${isLoading
-        ? `
+        ${
+          isLoading
+            ? `
           <div class="absolute inset-0 bg-white bg-opacity-75 z-10 flex items-center justify-center rounded-lg">
             <div class="flex flex-col items-center space-y-3">
               <div class="animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-blue-500"></div>
@@ -52,15 +53,16 @@ function showAddComponentModal(targetComponent) {
             </div>
           </div>
         `
-        : ""
-      }
+            : ""
+        }
         <div class="p-6">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-semibold">
               ${currentStep === 1 ? "Choose Block Type" : "Block Details"}
             </h2>
-            <button class="close-modal text-gray-400 hover:text-gray-600" ${isLoading ? "disabled" : ""
-      }>
+            <button class="close-modal text-gray-400 hover:text-gray-600" ${
+              isLoading ? "disabled" : ""
+            }>
               <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -68,12 +70,13 @@ function showAddComponentModal(targetComponent) {
           </div>
           
           <div class="modal-body mb-6">
-            ${currentStep === 1
-        ? `
+            ${
+              currentStep === 1
+                ? `
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 ${registeredBlocks
-          .map(
-            (block) => `
+                  .map(
+                    (block) => `
                   <button 
                     class="component-type-btn flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                     data-type="${block.id}"
@@ -83,16 +86,17 @@ function showAddComponentModal(targetComponent) {
                     <span class="text-left font-medium">${block.name}</span>
                   </button>
                 `,
-          )
-          .join("")}
+                  )
+                  .join("")}
               </div>
             `
-        : `
+                : `
               <div class="space-y-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Selected Block: ${registeredBlocks.find((t) => t.id === selectedType)?.name
-        }
+                    Selected Block: ${
+                      registeredBlocks.find((t) => t.id === selectedType)?.name
+                    }
                   </label>
                 </div>
                 <div>
@@ -109,17 +113,19 @@ function showAddComponentModal(targetComponent) {
                 </div>
               </div>
             `
-      }
+            }
           </div>
 
           <div class="flex justify-between">
-            <button class="back-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium ${currentStep === 1 ? "invisible" : ""
-      }" ${isLoading ? "disabled" : ""}>
+            <button class="back-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium ${
+              currentStep === 1 ? "invisible" : ""
+            }" ${isLoading ? "disabled" : ""}>
               Back
             </button>
             <div class="space-x-3">
-              <button class="cancel-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium" ${isLoading ? "disabled" : ""
-      }>
+              <button class="cancel-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium" ${
+                isLoading ? "disabled" : ""
+              }>
                 Cancel
               </button>
               <button 
@@ -253,13 +259,14 @@ export default (editor, options) => {
                 <div>
                   <label class="block mb-2">Component Type</label>
                   <input type="text" value="${component.get(
-              "type",
-            )}" class="w-full border p-2 rounded" disabled>
+                    "type",
+                  )}" class="w-full border p-2 rounded" disabled>
                 </div>
                 <div>
                   <label class="block mb-2">Content</label>
-                  <textarea class="w-full border p-2 rounded component-content" rows="4">${component.get("content") || ""
-              }</textarea>
+                  <textarea class="w-full border p-2 rounded component-content" rows="4">${
+                    component.get("content") || ""
+                  }</textarea>
                 </div>
               </div>
             `;
@@ -289,13 +296,15 @@ export default (editor, options) => {
               <div class="space-y-4">
                 <div>
                   <label class="block mb-2">Image Source</label>
-                  <input type="text" class="w-full border p-2 rounded image-src" value="${component.getAttributes().src || ""
-              }">
+                  <input type="text" class="w-full border p-2 rounded image-src" value="${
+                    component.getAttributes().src || ""
+                  }">
                 </div>
                 <div>
                   <label class="block mb-2">Alt Text</label>
-                  <input type="text" class="w-full border p-2 rounded image-alt" value="${component.getAttributes().alt || ""
-              }">
+                  <input type="text" class="w-full border p-2 rounded image-alt" value="${
+                    component.getAttributes().alt || ""
+                  }">
                 </div>
               </div>
             `;
@@ -325,8 +334,9 @@ export default (editor, options) => {
               <div class="space-y-4">
                 <div>
                   <label class="block mb-2">Content</label>
-                  <textarea class="w-full border p-2 rounded text-content" rows="4">${component.getContent() || ""
-              }</textarea>
+                  <textarea class="w-full border p-2 rounded text-content" rows="4">${
+                    component.getContent() || ""
+                  }</textarea>
                 </div>
               </div>
             `;
@@ -350,8 +360,9 @@ export default (editor, options) => {
               <div class="space-y-4">
                 <div>
                   <label class="block mb-2">Button Text</label>
-                  <input type="text" class="w-full border p-2 rounded button-text" value="${component.get("content") || ""
-              }">
+                  <input type="text" class="w-full border p-2 rounded button-text" value="${
+                    component.get("content") || ""
+                  }">
                 </div>
               </div>
             `;
@@ -401,8 +412,9 @@ export default (editor, options) => {
  
                 <div>
                   <label class="block mb-2">Alt Text</label>
-                  <input type="text" class="w-full border p-2 rounded image-alt" value="${component.getAttributes().alt || ""
-              }">
+                  <input type="text" class="w-full border p-2 rounded image-alt" value="${
+                    component.getAttributes().alt || ""
+                  }">
                 </div>
               </div>
             `;
@@ -689,18 +701,18 @@ export default (editor, options) => {
         content: `
           <div id="navbar-links-container">
             ${linksList
-            .components()
-            .map(
-              (link, index) => `
+              .components()
+              .map(
+                (link, index) => `
               <div class="mb-2">
                 <input type="text" class="navbar-link-input border rounded px-2 py-1" data-index="${index}" value="${link.get(
-                "content",
-              )}">
+                  "content",
+                )}">
                 <button class="remove-link bg-red-500 text-white px-2 py-1 rounded" data-index="${index}">Remove</button>
               </div>
             `,
-            )
-            .join("")}
+              )
+              .join("")}
           </div>
           <button id="add-navbar-link" class="bg-blue-500 text-white px-3 py-2 rounded mt-4">Add Link</button>
         `,
@@ -956,16 +968,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -1211,7 +1223,8 @@ export default (editor, options) => {
       },
       createColorSwatches() {
         const swatchesContainer = document.createElement("div");
-        swatchesContainer.className = "absolute top-2 right-2 flex space-x-2 z-[99]";
+        swatchesContainer.className =
+          "absolute top-2 right-2 flex space-x-2 z-[99]";
 
         const colors = [
           { type: "normal", color: "bg-section-light" },
@@ -1224,7 +1237,10 @@ export default (editor, options) => {
           const swatch = document.createElement("div");
           swatch.className = `w-6 h-6 rounded-full border-2 border-white shadow-md hover:shadow-lg  transition-all transform hover:scale-110 cursor-pointer ${color.color}`;
           swatch.addEventListener("click", () => {
-            this.model.set("attributes", { ...this.model.get("attributes"), sectiontype: color.type });
+            this.model.set("attributes", {
+              ...this.model.get("attributes"),
+              sectiontype: color.type,
+            });
           });
           swatchesContainer.appendChild(swatch);
         });
@@ -1395,7 +1411,8 @@ export default (editor, options) => {
       },
       createColorSwatches() {
         const swatchesContainer = document.createElement("div");
-        swatchesContainer.className = "absolute top-2 right-2 flex space-x-2 z-[99]";
+        swatchesContainer.className =
+          "absolute top-2 right-2 flex space-x-2 z-[99]";
 
         const colors = [
           { type: "normal", color: "bg-section-light" },
@@ -1408,7 +1425,10 @@ export default (editor, options) => {
           const swatch = document.createElement("div");
           swatch.className = `w-6 h-6 rounded-full border-2 border-white shadow-md hover:shadow-lg  transition-all transform hover:scale-110 cursor-pointer ${color.color}`;
           swatch.addEventListener("click", () => {
-            this.model.set("attributes", { ...this.model.get("attributes"), sectiontype: color.type });
+            this.model.set("attributes", {
+              ...this.model.get("attributes"),
+              sectiontype: color.type,
+            });
           });
           swatchesContainer.appendChild(swatch);
         });
@@ -1505,7 +1525,6 @@ export default (editor, options) => {
         },
         styles: `
         .hero-text-title{
-        font-family: Inter;
         text-transform: capitalize;
         color: rgb(255, 255, 255);
         text-decoration: none;
@@ -1531,7 +1550,6 @@ export default (editor, options) => {
         },
         styles: `
         .hero-text-subtitle{
-        font-family: Inter;
         text-transform: capitalize;
         color: rgb(255, 255, 255);
         text-decoration: none;
@@ -1579,16 +1597,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -1705,7 +1723,7 @@ export default (editor, options) => {
       </div>
           `;
 
-        btn.addEventListener("click", () => { });
+        btn.addEventListener("click", () => {});
 
         this.swapButton = btn;
         console.log("Y. Button created:", btn);
@@ -1855,14 +1873,14 @@ export default (editor, options) => {
             type: "text",
             label: "Button Text",
             name: "content",
-            changeProp: 1
+            changeProp: 1,
           },
           {
             type: "text",
             label: "Link URL",
             name: "href",
-            changeProp: 1
-          }
+            changeProp: 1,
+          },
         ],
         propagate: ["content", "href"],
       },
@@ -1910,7 +1928,7 @@ export default (editor, options) => {
                       id="open-new-tab" 
                       type="checkbox" 
                       class="h-4 w-4 text-rose-500 border-gray-300 rounded" 
-                      ${openInNewTab ? 'checked' : ''}
+                      ${openInNewTab ? "checked" : ""}
                     >
                     <label for="open-new-tab" class="ml-2 block text-sm text-gray-700">
                       Open in new tab
@@ -1922,21 +1940,23 @@ export default (editor, options) => {
               return {
                 container,
                 getData() {
-                  const buttonText = container.querySelector("#button-text").value;
+                  const buttonText =
+                    container.querySelector("#button-text").value;
                   const linkUrl = container.querySelector("#link-url").value;
-                  const openInNewTab = container.querySelector("#open-new-tab").checked;
+                  const openInNewTab =
+                    container.querySelector("#open-new-tab").checked;
 
                   return {
                     content: buttonText,
                     attributes: {
                       href: linkUrl,
                       target: openInNewTab ? "_blank" : "",
-                      rel: openInNewTab ? "noopener noreferrer" : ""
-                    }
+                      rel: openInNewTab ? "noopener noreferrer" : "",
+                    },
                   };
-                }
+                },
               };
-            }
+            },
           },
 
           // Default handler for generic components (keeping your existing handler)
@@ -1947,15 +1967,17 @@ export default (editor, options) => {
                 <div class="space-y-4">
                   <div>
                     <label class="block mb-2">Component Type</label>
-                    <input type="text" value="${component.get("type")}" class="w-full border p-2 rounded" disabled>
+                    <input type="text" value="${component.get(
+                      "type",
+                    )}" class="w-full border p-2 rounded" disabled>
                   </div>
                   <div>
                     <label class="block mb-2">Attributes</label>
                     <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2
-              )}</textarea>
+                      component.getAttributes(),
+                      null,
+                      2,
+                    )}</textarea>
                   </div>
                 </div>
               `;
@@ -1965,7 +1987,7 @@ export default (editor, options) => {
                 getData() {
                   try {
                     const attrs = JSON.parse(
-                      container.querySelector(".component-attributes").value
+                      container.querySelector(".component-attributes").value,
                     );
                     return { attributes: attrs };
                   } catch (e) {
@@ -2096,7 +2118,6 @@ export default (editor, options) => {
     },
   });
 
-
   editor.Components.addType("button-secondary", {
     model: {
       defaults: {
@@ -2173,7 +2194,7 @@ export default (editor, options) => {
                       id="open-new-tab" 
                       type="checkbox" 
                       class="h-4 w-4 text-rose-500 border-gray-300 rounded" 
-                      ${openInNewTab ? 'checked' : ''}
+                      ${openInNewTab ? "checked" : ""}
                     >
                     <label for="open-new-tab" class="ml-2 block text-sm text-gray-700">
                       Open in new tab
@@ -2185,21 +2206,23 @@ export default (editor, options) => {
               return {
                 container,
                 getData() {
-                  const buttonText = container.querySelector("#button-text").value;
+                  const buttonText =
+                    container.querySelector("#button-text").value;
                   const linkUrl = container.querySelector("#link-url").value;
-                  const openInNewTab = container.querySelector("#open-new-tab").checked;
+                  const openInNewTab =
+                    container.querySelector("#open-new-tab").checked;
 
                   return {
                     content: buttonText,
                     attributes: {
                       href: linkUrl,
                       target: openInNewTab ? "_blank" : "",
-                      rel: openInNewTab ? "noopener noreferrer" : ""
-                    }
+                      rel: openInNewTab ? "noopener noreferrer" : "",
+                    },
                   };
-                }
+                },
               };
-            }
+            },
           },
 
           // Default handler for generic components (keeping your existing handler)
@@ -2210,15 +2233,17 @@ export default (editor, options) => {
                 <div class="space-y-4">
                   <div>
                     <label class="block mb-2">Component Type</label>
-                    <input type="text" value="${component.get("type")}" class="w-full border p-2 rounded" disabled>
+                    <input type="text" value="${component.get(
+                      "type",
+                    )}" class="w-full border p-2 rounded" disabled>
                   </div>
                   <div>
                     <label class="block mb-2">Attributes</label>
                     <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2
-              )}</textarea>
+                      component.getAttributes(),
+                      null,
+                      2,
+                    )}</textarea>
                   </div>
                 </div>
               `;
@@ -2228,7 +2253,7 @@ export default (editor, options) => {
                 getData() {
                   try {
                     const attrs = JSON.parse(
-                      container.querySelector(".component-attributes").value
+                      container.querySelector(".component-attributes").value,
                     );
                     return { attributes: attrs };
                   } catch (e) {
@@ -2409,16 +2434,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -2530,7 +2555,7 @@ export default (editor, options) => {
         }
       },
 
-      handleDeselect() { },
+      handleDeselect() {},
 
       updateEditButton() {
         const editor = this.em.get("Editor");
@@ -3943,16 +3968,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -4245,7 +4270,7 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() { },
+      onAttributesChange() {},
     },
   });
 
@@ -4275,7 +4300,7 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() { },
+      onAttributesChange() {},
     },
   });
 
@@ -4296,7 +4321,7 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() { },
+      onAttributesChange() {},
     },
   });
 
