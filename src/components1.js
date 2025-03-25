@@ -197,7 +197,7 @@ export default (editor, options) => {
                   const uniqueFileName = `${crypto.randomUUID()}.${fileExt}`;
 
                   const presignedResponse = await fetch(
-                    "https://dev.byteai.bytesuite.io/api/get-presigned-url",
+                    "https://dev.byteai.bytesuite.io/api/presigned-url",
                     {
                       method: "POST",
                       headers: {
@@ -1473,7 +1473,7 @@ export default (editor, options) => {
 
                     // Get presigned URL with correct content type
                     const presignedResponse = await fetch(
-                      "https://dev.byteai.bytesuite.io/api/get-presigned-url",
+                      "https://dev.byteai.bytesuite.io/api/presigned-url",
                       {
                         method: "POST",
                         headers: {
