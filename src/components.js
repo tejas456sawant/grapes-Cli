@@ -29,6 +29,47 @@ function addComponentAfter(targetComponent, newComponent) {
   parent.components().add(newComponent, { at: index + 1 });
 }
 
+
+
+/**
+ * Replaces current selection with AI-generated component
+ * @param {Object} aiData - AI-generated component JSON
+ * @param {grapesjs.Editor} editor - GrapesJS instance
+ */
+function replaceWithAISection(aiData, editor) {
+  const selected = editor.getSelected();
+  if (!selected) {
+    console.warn('No component selected');
+    return;
+  }
+
+  // Get parent and position - works for both Components and Component
+  const parent = selected.parent();
+  let position = 0;
+
+  if (parent && typeof parent.indexOf === 'function') {
+    position = parent.indexOf(selected);
+  }
+
+  // Remove old component
+  selected.remove();
+
+  // Add new component - handles both append() and add()
+  let newComponent;
+  if (parent && typeof parent.append === 'function') {
+    newComponent = parent.append(aiData, { at: position })[0];
+  } else {
+    // Handle case where parent is the canvas or root
+    newComponent = editor.getWrapper().append(aiData)[0];
+  }
+
+  // Select the new component
+  editor.select(newComponent);
+
+  return newComponent;
+}
+
+
 // Show modal and handle component addition
 function showAddComponentModal(targetComponent) {
   let currentStep = 1;
@@ -43,9 +84,8 @@ function showAddComponentModal(targetComponent) {
   function updateModalContent() {
     modal.innerHTML = `
       <div class="bg-white rounded-lg max-w-2xl w-full mx-4 relative">
-        ${
-          isLoading
-            ? `
+        ${isLoading
+        ? `
           <div class="absolute inset-0 bg-white bg-opacity-75 z-10 flex items-center justify-center rounded-lg">
             <div class="flex flex-col items-center space-y-3">
               <div class="animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-blue-500"></div>
@@ -53,16 +93,15 @@ function showAddComponentModal(targetComponent) {
             </div>
           </div>
         `
-            : ""
-        }
+        : ""
+      }
         <div class="p-6">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-semibold">
               ${currentStep === 1 ? "Choose Block Type" : "Block Details"}
             </h2>
-            <button class="close-modal text-gray-400 hover:text-gray-600" ${
-              isLoading ? "disabled" : ""
-            }>
+            <button class="close-modal text-gray-400 hover:text-gray-600" ${isLoading ? "disabled" : ""
+      }>
               <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -70,13 +109,12 @@ function showAddComponentModal(targetComponent) {
           </div>
           
           <div class="modal-body mb-6">
-            ${
-              currentStep === 1
-                ? `
+            ${currentStep === 1
+        ? `
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 ${registeredBlocks
-                  .map(
-                    (block) => `
+          .map(
+            (block) => `
                   <button 
                     class="component-type-btn flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                     data-type="${block.id}"
@@ -86,17 +124,16 @@ function showAddComponentModal(targetComponent) {
                     <span class="text-left font-medium">${block.name}</span>
                   </button>
                 `,
-                  )
-                  .join("")}
+          )
+          .join("")}
               </div>
             `
-                : `
+        : `
               <div class="space-y-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Selected Block: ${
-                      registeredBlocks.find((t) => t.id === selectedType)?.name
-                    }
+                    Selected Block: ${registeredBlocks.find((t) => t.id === selectedType)?.name
+        }
                   </label>
                 </div>
                 <div>
@@ -113,19 +150,17 @@ function showAddComponentModal(targetComponent) {
                 </div>
               </div>
             `
-            }
+      }
           </div>
 
           <div class="flex justify-between">
-            <button class="back-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium ${
-              currentStep === 1 ? "invisible" : ""
-            }" ${isLoading ? "disabled" : ""}>
+            <button class="back-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium ${currentStep === 1 ? "invisible" : ""
+      }" ${isLoading ? "disabled" : ""}>
               Back
             </button>
             <div class="space-x-3">
-              <button class="cancel-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium" ${
-                isLoading ? "disabled" : ""
-              }>
+              <button class="cancel-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium" ${isLoading ? "disabled" : ""
+      }>
                 Cancel
               </button>
               <button 
@@ -259,14 +294,13 @@ export default (editor, options) => {
                 <div>
                   <label class="block mb-2">Component Type</label>
                   <input type="text" value="${component.get(
-                    "type",
-                  )}" class="w-full border p-2 rounded" disabled>
+              "type",
+            )}" class="w-full border p-2 rounded" disabled>
                 </div>
                 <div>
                   <label class="block mb-2">Content</label>
-                  <textarea class="w-full border p-2 rounded component-content" rows="4">${
-                    component.get("content") || ""
-                  }</textarea>
+                  <textarea class="w-full border p-2 rounded component-content" rows="4">${component.get("content") || ""
+              }</textarea>
                 </div>
               </div>
             `;
@@ -296,15 +330,13 @@ export default (editor, options) => {
               <div class="space-y-4">
                 <div>
                   <label class="block mb-2">Image Source</label>
-                  <input type="text" class="w-full border p-2 rounded image-src" value="${
-                    component.getAttributes().src || ""
-                  }">
+                  <input type="text" class="w-full border p-2 rounded image-src" value="${component.getAttributes().src || ""
+              }">
                 </div>
                 <div>
                   <label class="block mb-2">Alt Text</label>
-                  <input type="text" class="w-full border p-2 rounded image-alt" value="${
-                    component.getAttributes().alt || ""
-                  }">
+                  <input type="text" class="w-full border p-2 rounded image-alt" value="${component.getAttributes().alt || ""
+              }">
                 </div>
               </div>
             `;
@@ -334,9 +366,8 @@ export default (editor, options) => {
               <div class="space-y-4">
                 <div>
                   <label class="block mb-2">Content</label>
-                  <textarea class="w-full border p-2 rounded text-content" rows="4">${
-                    component.getContent() || ""
-                  }</textarea>
+                  <textarea class="w-full border p-2 rounded text-content" rows="4">${component.getContent() || ""
+              }</textarea>
                 </div>
               </div>
             `;
@@ -360,9 +391,8 @@ export default (editor, options) => {
               <div class="space-y-4">
                 <div>
                   <label class="block mb-2">Button Text</label>
-                  <input type="text" class="w-full border p-2 rounded button-text" value="${
-                    component.get("content") || ""
-                  }">
+                  <input type="text" class="w-full border p-2 rounded button-text" value="${component.get("content") || ""
+              }">
                 </div>
               </div>
             `;
@@ -412,9 +442,8 @@ export default (editor, options) => {
  
                 <div>
                   <label class="block mb-2">Alt Text</label>
-                  <input type="text" class="w-full border p-2 rounded image-alt" value="${
-                    component.getAttributes().alt || ""
-                  }">
+                  <input type="text" class="w-full border p-2 rounded image-alt" value="${component.getAttributes().alt || ""
+              }">
                 </div>
               </div>
             `;
@@ -645,6 +674,125 @@ export default (editor, options) => {
     },
   };
 
+
+  function getWebsiteIdFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const websiteId = urlParams.get('website_id');
+
+    // Validate it's a proper number
+    return websiteId && !isNaN(websiteId)
+      ? parseInt(websiteId, 10)
+      : null;
+  }
+
+  // Add this to your editor initialization
+  editor.Commands.add('regenerate-section', {
+    run: function (editor, sender, options = {}) {
+      const selectedComponent = editor.getSelected();
+
+      if (!selectedComponent) {
+        alert('Please select a component first');
+        return;
+      }
+
+      // Get website ID from URL
+      const websiteId = new URLSearchParams(window.location.search).get('website_id');
+      if (!websiteId) {
+        alert('Website ID not found in URL');
+        return;
+      }
+
+      // Create modal using your preferred structure
+      const modal = document.createElement("div");
+      modal.className = "fixed inset-0 bg-black bg-opacity-50 z-[50] flex items-center justify-center";
+
+      modal.innerHTML = `
+      <div class="bg-white p-6 rounded-lg max-w-md w-full relative">
+        <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-gray-900">
+          &times;
+        </button>
+        <h2 class="text-xl font-semibold mb-4">Regenerate Section</h2>
+        <div class="modal-body">
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-2">How should we improve this section?</label>
+            <textarea 
+              id="regenerate-prompt" 
+              class="w-full p-2 border rounded" 
+              rows="4"
+              placeholder="Make this more modern with brighter colors..."
+            ></textarea>
+          </div>
+        </div>
+        <div class="mt-4 flex justify-end space-x-2">
+          <button class="cancel-modal px-4 py-2 bg-gray-200 rounded">Cancel</button>
+          <button class="regenerate-modal px-4 py-2 bg-blue-500 border border-rose-500 text-white rounded bg-rose-500">
+            Regenerate
+          </button>
+        </div>
+      </div>
+    `;
+
+      // Event Listeners
+      const closeModal = () => modal.remove();
+      modal.querySelector(".close-modal").addEventListener("click", closeModal);
+      modal.querySelector(".cancel-modal").addEventListener("click", closeModal);
+
+      // Regenerate button handler
+      modal.querySelector(".regenerate-modal").addEventListener("click", async () => {
+        const prompt = modal.querySelector("#regenerate-prompt").value.trim();
+
+        if (!prompt) {
+          alert('Please enter your improvement instructions');
+          return;
+        }
+
+        // Show loading state
+        modal.querySelector(".modal-body").innerHTML = `
+        <div class="flex flex-col items-center justify-center p-8">
+          <svg class="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <p class="mt-4">Generating new section...</p>
+        </div>
+      `;
+
+        try {
+          const response = await fetch(`http://127.0.0.1:5000/api/website/${websiteId}/regenerate-section`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjZTNiNWMyMC04ODIyLTQ5YzUtOGM4OS1mNzk4N2VjOTZmZTQiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzQzOTk2Mjg4LCJpYXQiOjE3NDMzOTE0ODgsImVtYWlsIjoidXRrYXJzaHJvZGUxMkBnbWFpbC5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIiwiZ29vZ2xlIl19LCJ1c2VyX21ldGFkYXRhIjp7ImF2YXRhcl91cmwiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NJVGtKaUdGV3N6djFMbURVN01LQjg1V1p1dHZ1aW1NeTl0NFlXUU85LXBRdmdyUEdOYz1zOTYtYyIsImVtYWlsIjoidXRrYXJzaHJvZGUxMkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyc3RfbmFtZSI6IlV0a2Fyc2giLCJmdWxsX25hbWUiOiJVdGthcnNoIFJvZGUiLCJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJsYXN0X25hbWUiOiJSb2RlIiwibmFtZSI6IlV0a2Fyc2ggUm9kZSIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0lUa0ppR0ZXc3p2MUxtRFU3TUtCODVXWnV0dnVpbU15OXQ0WVdRTzktcFF2Z3JQR05jPXM5Ni1jIiwicHJvdmlkZXJfaWQiOiIxMDExODg5NDIyMzA3NTYyNTAwNjAiLCJzdWIiOiIxMDExODg5NDIyMzA3NTYyNTAwNjAifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTc0MzM5MTQ4OH1dLCJzZXNzaW9uX2lkIjoiZGUxYjBmOTYtOWU0Mi00NTYwLTliOGEtYWY2NDUyOGJjYjE2IiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.JQ4VvvQZyh46a3CFzwCkSvNWVkURMLojEWR2xME9cVs"
+            },
+            body: JSON.stringify({
+              prompt,
+              section: selectedComponent.toJSON(),
+            })
+          });
+
+          const data = await response.json();
+
+          if (data.status && data.section) {
+            replaceWithAISection(data.section, editor);
+            closeModal();
+            alert('Section regenerated successfully!');
+          } else {
+            throw new Error(data.message || 'Invalid response from server');
+          }
+        } catch (error) {
+          console.error("Error regenerating section:", error);
+          alert(`Failed to regenerate: ${error.message}`);
+          closeModal();
+        }
+      });
+
+      document.body.appendChild(modal);
+    }
+  });
+
+
+
   editor.Commands.add("open-icon-picker", {
     run(editor) {
       const modal = editor.Modal;
@@ -701,18 +849,18 @@ export default (editor, options) => {
         content: `
           <div id="navbar-links-container">
             ${linksList
-              .components()
-              .map(
-                (link, index) => `
+            .components()
+            .map(
+              (link, index) => `
               <div class="mb-2">
                 <input type="text" class="navbar-link-input border rounded px-2 py-1" data-index="${index}" value="${link.get(
-                  "content",
-                )}">
+                "content",
+              )}">
                 <button class="remove-link bg-red-500 text-white px-2 py-1 rounded" data-index="${index}">Remove</button>
               </div>
             `,
-              )
-              .join("")}
+            )
+            .join("")}
           </div>
           <button id="add-navbar-link" class="bg-blue-500 text-white px-3 py-2 rounded mt-4">Add Link</button>
         `,
@@ -968,16 +1116,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                                    "type",
-                                  )}" class="w-full border p-2 rounded" disabled>
+                "type",
+              )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                                    component.getAttributes(),
-                                    null,
-                                    2,
-                                  )}</textarea>
+                component.getAttributes(),
+                null,
+                2,
+              )}</textarea>
                               </div>
                           </div>
                       `;
@@ -1218,6 +1366,13 @@ export default (editor, options) => {
       </div>
           `;
 
+        btn.addEventListener("click", () => {
+          editor.runCommand('regenerate-section', {
+            // You can pass options here if needed
+            // websiteId: 123 
+          });
+        });
+
         this.aiButton = btn;
         return btn;
       },
@@ -1355,6 +1510,7 @@ export default (editor, options) => {
     },
     view: {
       onRender() {
+
         console.log("2. About to create bottom button");
         const buttonRow2 = this.createBottomButton();
 
@@ -1366,6 +1522,45 @@ export default (editor, options) => {
         // Add color swatches to the top right
         const colorSwatches = this.createColorSwatches();
         this.el.appendChild(colorSwatches);
+      },
+      createButtonRow() {
+        if (this.buttonRow) return this.buttonRow;
+
+        const row = document.createElement("div");
+        row.className =
+          "gjs-component-buttons absolute bottom-6 left-2 md:left-14 m-2 flex space-x-2 z-50";
+
+        // Edit Button
+        // const editBtn = this.createEditButton();
+        // row.appendChild(editBtn);
+
+        // Edit Button
+        const aiBtn = this.createAiButton();
+        row.appendChild(aiBtn);
+
+        this.buttonRow = row;
+        return row;
+      },
+
+      handleSelect(selectedComponent) {
+        if (selectedComponent !== this.model) {
+          this.removeButtonRow();
+          return;
+        }
+
+        const buttonRow = this.createButtonRow();
+        this.el.appendChild(buttonRow);
+      },
+
+      handleDeselect() {
+        this.removeButtonRow();
+      },
+
+      removeButtonRow() {
+        if (this.buttonRow) {
+          this.buttonRow.remove();
+          this.buttonRow = null;
+        }
       },
       createBottomButton() {
         console.log("A. createBottomButton called");
@@ -1434,6 +1629,36 @@ export default (editor, options) => {
         });
 
         return swatchesContainer;
+      },
+      createAiButton() {
+        if (this.aiButton) return this.aiButton;
+
+        const btn = document.createElement("button");
+
+        btn.className =
+          "relative overflow-hidden text-rose-400 flex z-100 items-center group flex-row relative rounded-full py-1 px-3 text-md leading-6 text-gray-600 bg-white ring-1 ring-gray-900/10 hover:ring-gray-900/20";
+
+        btn.innerHTML = `
+        
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+      </svg>
+      
+
+      <div class="lg:absolute lg:group-hover:relative lg:left-10  lg:group-hover:left-1 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out hidden lg:block opacity-0 lg:group-hover:opacity-100">
+        Regenerate Section
+      </div>
+          `;
+
+        btn.addEventListener("click", () => {
+          editor.runCommand('regenerate-section', {
+            // You can pass options here if needed
+            // websiteId: 123 
+          });
+        });
+
+        this.aiButton = btn;
+        return btn;
       },
     },
   });
@@ -1597,16 +1822,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                                    "type",
-                                  )}" class="w-full border p-2 rounded" disabled>
+                "type",
+              )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                                    component.getAttributes(),
-                                    null,
-                                    2,
-                                  )}</textarea>
+                component.getAttributes(),
+                null,
+                2,
+              )}</textarea>
                               </div>
                           </div>
                       `;
@@ -1723,7 +1948,7 @@ export default (editor, options) => {
       </div>
           `;
 
-        btn.addEventListener("click", () => {});
+        btn.addEventListener("click", () => { });
 
         this.swapButton = btn;
         console.log("Y. Button created:", btn);
@@ -1817,6 +2042,13 @@ export default (editor, options) => {
         Regenerate Section
       </div>
           `;
+
+        btn.addEventListener("click", () => {
+          editor.runCommand('regenerate-section', {
+            // You can pass options here if needed
+            // websiteId: 123 
+          });
+        });
 
         this.aiButton = btn;
         return btn;
@@ -1968,16 +2200,16 @@ export default (editor, options) => {
                   <div>
                     <label class="block mb-2">Component Type</label>
                     <input type="text" value="${component.get(
-                      "type",
-                    )}" class="w-full border p-2 rounded" disabled>
+                "type",
+              )}" class="w-full border p-2 rounded" disabled>
                   </div>
                   <div>
                     <label class="block mb-2">Attributes</label>
                     <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                      component.getAttributes(),
-                      null,
-                      2,
-                    )}</textarea>
+                component.getAttributes(),
+                null,
+                2,
+              )}</textarea>
                   </div>
                 </div>
               `;
@@ -2234,16 +2466,16 @@ export default (editor, options) => {
                   <div>
                     <label class="block mb-2">Component Type</label>
                     <input type="text" value="${component.get(
-                      "type",
-                    )}" class="w-full border p-2 rounded" disabled>
+                "type",
+              )}" class="w-full border p-2 rounded" disabled>
                   </div>
                   <div>
                     <label class="block mb-2">Attributes</label>
                     <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                      component.getAttributes(),
-                      null,
-                      2,
-                    )}</textarea>
+                component.getAttributes(),
+                null,
+                2,
+              )}</textarea>
                   </div>
                 </div>
               `;
@@ -2434,16 +2666,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                                    "type",
-                                  )}" class="w-full border p-2 rounded" disabled>
+                "type",
+              )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                                    component.getAttributes(),
-                                    null,
-                                    2,
-                                  )}</textarea>
+                component.getAttributes(),
+                null,
+                2,
+              )}</textarea>
                               </div>
                           </div>
                       `;
@@ -2555,7 +2787,7 @@ export default (editor, options) => {
         }
       },
 
-      handleDeselect() {},
+      handleDeselect() { },
 
       updateEditButton() {
         const editor = this.em.get("Editor");
@@ -3226,7 +3458,12 @@ export default (editor, options) => {
       </div>
           `;
 
-        btn.addEventListener("click", this.onEditButtonClick.bind(this));
+        btn.addEventListener("click", () => {
+          editor.runCommand('regenerate-section', {
+            // You can pass options here if needed
+            // websiteId: 123 
+          });
+        });
 
         this.aiButton = btn;
         return btn;
@@ -3968,16 +4205,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                                    "type",
-                                  )}" class="w-full border p-2 rounded" disabled>
+                "type",
+              )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                                    component.getAttributes(),
-                                    null,
-                                    2,
-                                  )}</textarea>
+                component.getAttributes(),
+                null,
+                2,
+              )}</textarea>
                               </div>
                           </div>
                       `;
@@ -4225,6 +4462,12 @@ export default (editor, options) => {
         Regenerate Section
       </div>
           `;
+        btn.addEventListener("click", () => {
+          editor.runCommand('regenerate-section', {
+            // You can pass options here if needed
+            // websiteId: 123 
+          });
+        });
 
         this.aiButton = btn;
         return btn;
@@ -4270,7 +4513,7 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() {},
+      onAttributesChange() { },
     },
   });
 
@@ -4300,7 +4543,7 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() {},
+      onAttributesChange() { },
     },
   });
 
@@ -4321,7 +4564,7 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() {},
+      onAttributesChange() { },
     },
   });
 
