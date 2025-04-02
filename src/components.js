@@ -1510,7 +1510,6 @@ export default (editor, options) => {
     },
     view: {
       onRender() {
-
         console.log("2. About to create bottom button");
         const buttonRow2 = this.createBottomButton();
 
@@ -1518,49 +1517,11 @@ export default (editor, options) => {
         console.log("4. this.el:", this.el);
 
         this.el.appendChild(buttonRow2);
+        this.updateEditButton();
 
         // Add color swatches to the top right
         const colorSwatches = this.createColorSwatches();
         this.el.appendChild(colorSwatches);
-      },
-      createButtonRow() {
-        if (this.buttonRow) return this.buttonRow;
-
-        const row = document.createElement("div");
-        row.className =
-          "gjs-component-buttons absolute bottom-6 left-2 md:left-14 m-2 flex space-x-2 z-50";
-
-        // Edit Button
-        // const editBtn = this.createEditButton();
-        // row.appendChild(editBtn);
-
-        // Edit Button
-        const aiBtn = this.createAiButton();
-        row.appendChild(aiBtn);
-
-        this.buttonRow = row;
-        return row;
-      },
-
-      handleSelect(selectedComponent) {
-        if (selectedComponent !== this.model) {
-          this.removeButtonRow();
-          return;
-        }
-
-        const buttonRow = this.createButtonRow();
-        this.el.appendChild(buttonRow);
-      },
-
-      handleDeselect() {
-        this.removeButtonRow();
-      },
-
-      removeButtonRow() {
-        if (this.buttonRow) {
-          this.buttonRow.remove();
-          this.buttonRow = null;
-        }
       },
       createBottomButton() {
         console.log("A. createBottomButton called");
@@ -1588,13 +1549,16 @@ export default (editor, options) => {
           "relative overflow-hidden z-[99]  hover:text-rose-400 flex z-100 items-center group flex-row relative rounded-md py-1 px-3 text-md leading-6 text-white bg-black ring-1 ring-gray-900/10 hover:ring-gray-900/20";
 
         btn.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 my-1">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          <div class="ml-3 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out block">
-            Add Section
-          </div>
-        `;
+        
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 my-1">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      
+
+      <div class="ml-3 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out block">
+      Add Section
+      </div>
+          `;
 
         btn.addEventListener("click", () => {
           showAddComponentModal(this.model);
@@ -1604,32 +1568,44 @@ export default (editor, options) => {
         console.log("Y. Button created:", btn);
         return btn;
       },
-      createColorSwatches() {
-        const swatchesContainer = document.createElement("div");
-        swatchesContainer.className =
-          "absolute top-2 right-2 flex space-x-2 z-[99]";
 
-        const colors = [
-          { type: "normal", color: "bg-section-light" },
-          { type: "accent-1", color: "bg-accent-1" },
-          { type: "accent-2", color: "bg-accent-2" },
-          { type: "dark", color: "bg-section-dark" },
-        ];
+      createButtonRow() {
+        if (this.buttonRow) return this.buttonRow;
 
-        colors.forEach((color) => {
-          const swatch = document.createElement("div");
-          swatch.className = `w-6 h-6 rounded-full border-2 border-white shadow-md hover:shadow-lg  transition-all transform hover:scale-110 cursor-pointer ${color.color}`;
-          swatch.addEventListener("click", () => {
-            this.model.set("attributes", {
-              ...this.model.get("attributes"),
-              sectiontype: color.type,
-            });
-          });
-          swatchesContainer.appendChild(swatch);
-        });
+        const row = document.createElement("div");
+        row.className =
+          "gjs-component-buttons absolute bottom-6 left-2 md:left-14 m-2 flex space-x-2 z-50";
 
-        return swatchesContainer;
+        // Edit Button
+        const aiBtn = this.createAiButton();
+        row.appendChild(aiBtn);
+
+
+        this.buttonRow = row;
+        return row;
       },
+
+      handleSelect(selectedComponent) {
+        if (selectedComponent !== this.model) {
+          this.removeButtonRow();
+          return;
+        }
+
+        const buttonRow = this.createButtonRow();
+        this.el.appendChild(buttonRow);
+      },
+
+      handleDeselect() {
+        this.removeButtonRow();
+      },
+
+      removeButtonRow() {
+        if (this.buttonRow) {
+          this.buttonRow.remove();
+          this.buttonRow = null;
+        }
+      },
+
       createAiButton() {
         if (this.aiButton) return this.aiButton;
 
@@ -1659,6 +1635,37 @@ export default (editor, options) => {
 
         this.aiButton = btn;
         return btn;
+      },
+      createColorSwatches() {
+        const swatchesContainer = document.createElement("div");
+        swatchesContainer.className =
+          "absolute top-2 right-2 flex space-x-2 z-[99]";
+
+        const colors = [
+          { type: "normal", color: "bg-section-light" },
+          { type: "accent-1", color: "bg-accent-1" },
+          { type: "accent-2", color: "bg-accent-2" },
+          { type: "dark", color: "bg-section-dark" },
+        ];
+
+        colors.forEach((color) => {
+          const swatch = document.createElement("div");
+          swatch.className = `w-6 h-6 rounded-full border-2 border-white shadow-md hover:shadow-lg  transition-all transform hover:scale-110 cursor-pointer ${color.color}`;
+          swatch.addEventListener("click", () => {
+            this.model.set("attributes", {
+              ...this.model.get("attributes"),
+              sectiontype: color.type,
+            });
+          });
+          swatchesContainer.appendChild(swatch);
+        });
+
+        return swatchesContainer;
+      },
+      updateEditButton() {
+        const editor = this.em.get("Editor");
+        editor.on("component:select", this.handleSelect.bind(this));
+        editor.on("component:deselect", this.handleDeselect.bind(this));
       },
     },
   });
