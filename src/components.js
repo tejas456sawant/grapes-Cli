@@ -29,8 +29,6 @@ function addComponentAfter(targetComponent, newComponent) {
   parent.components().add(newComponent, { at: index + 1 });
 }
 
-
-
 /**
  * Replaces current selection with AI-generated component
  * @param {Object} aiData - AI-generated component JSON
@@ -39,7 +37,7 @@ function addComponentAfter(targetComponent, newComponent) {
 function replaceWithAISection(aiData, editor) {
   const selected = editor.getSelected();
   if (!selected) {
-    console.warn('No component selected');
+    console.warn("No component selected");
     return;
   }
 
@@ -47,7 +45,7 @@ function replaceWithAISection(aiData, editor) {
   const parent = selected.parent();
   let position = 0;
 
-  if (parent && typeof parent.indexOf === 'function') {
+  if (parent && typeof parent.indexOf === "function") {
     position = parent.indexOf(selected);
   }
 
@@ -56,7 +54,7 @@ function replaceWithAISection(aiData, editor) {
 
   // Add new component - handles both append() and add()
   let newComponent;
-  if (parent && typeof parent.append === 'function') {
+  if (parent && typeof parent.append === "function") {
     newComponent = parent.append(aiData, { at: position })[0];
   } else {
     // Handle case where parent is the canvas or root
@@ -68,7 +66,6 @@ function replaceWithAISection(aiData, editor) {
 
   return newComponent;
 }
-
 
 // Show modal and handle component addition
 function showAddComponentModal(targetComponent) {
@@ -84,8 +81,9 @@ function showAddComponentModal(targetComponent) {
   function updateModalContent() {
     modal.innerHTML = `
       <div class="bg-white rounded-lg max-w-2xl w-full mx-4 relative">
-        ${isLoading
-        ? `
+        ${
+          isLoading
+            ? `
           <div class="absolute inset-0 bg-white bg-opacity-75 z-10 flex items-center justify-center rounded-lg">
             <div class="flex flex-col items-center space-y-3">
               <div class="animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-blue-500"></div>
@@ -93,15 +91,16 @@ function showAddComponentModal(targetComponent) {
             </div>
           </div>
         `
-        : ""
-      }
+            : ""
+        }
         <div class="p-6">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-semibold">
               ${currentStep === 1 ? "Choose Block Type" : "Block Details"}
             </h2>
-            <button class="close-modal text-gray-400 hover:text-gray-600" ${isLoading ? "disabled" : ""
-      }>
+            <button class="close-modal text-gray-400 hover:text-gray-600" ${
+              isLoading ? "disabled" : ""
+            }>
               <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -109,12 +108,13 @@ function showAddComponentModal(targetComponent) {
           </div>
           
           <div class="modal-body mb-6">
-            ${currentStep === 1
-        ? `
+            ${
+              currentStep === 1
+                ? `
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 ${registeredBlocks
-          .map(
-            (block) => `
+                  .map(
+                    (block) => `
                   <button 
                     class="component-type-btn flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                     data-type="${block.id}"
@@ -124,16 +124,17 @@ function showAddComponentModal(targetComponent) {
                     <span class="text-left font-medium">${block.name}</span>
                   </button>
                 `,
-          )
-          .join("")}
+                  )
+                  .join("")}
               </div>
             `
-        : `
+                : `
               <div class="space-y-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Selected Block: ${registeredBlocks.find((t) => t.id === selectedType)?.name
-        }
+                    Selected Block: ${
+                      registeredBlocks.find((t) => t.id === selectedType)?.name
+                    }
                   </label>
                 </div>
                 <div>
@@ -150,17 +151,19 @@ function showAddComponentModal(targetComponent) {
                 </div>
               </div>
             `
-      }
+            }
           </div>
 
           <div class="flex justify-between">
-            <button class="back-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium ${currentStep === 1 ? "invisible" : ""
-      }" ${isLoading ? "disabled" : ""}>
+            <button class="back-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium ${
+              currentStep === 1 ? "invisible" : ""
+            }" ${isLoading ? "disabled" : ""}>
               Back
             </button>
             <div class="space-x-3">
-              <button class="cancel-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium" ${isLoading ? "disabled" : ""
-      }>
+              <button class="cancel-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium" ${
+                isLoading ? "disabled" : ""
+              }>
                 Cancel
               </button>
               <button 
@@ -283,34 +286,35 @@ export default (editor, options) => {
 
   function getWebsiteIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
-    const websiteId = urlParams.get('website_id');
+    const websiteId = urlParams.get("website_id");
 
     // Validate it's a proper number
-    return websiteId && !isNaN(websiteId)
-      ? parseInt(websiteId, 10)
-      : null;
+    return websiteId && !isNaN(websiteId) ? parseInt(websiteId, 10) : null;
   }
 
   // Add this to your editor initialization
-  editor.Commands.add('regenerate-section', {
+  editor.Commands.add("regenerate-section", {
     run: function (editor, sender, options = {}) {
       const selectedComponent = editor.getSelected();
 
       if (!selectedComponent) {
-        alert('Please select a component first');
+        alert("Please select a component first");
         return;
       }
 
       // Get website ID from URL
-      const websiteId = new URLSearchParams(window.location.search).get('website_id');
+      const websiteId = new URLSearchParams(window.location.search).get(
+        "website_id",
+      );
       if (!websiteId) {
-        alert('Website ID not found in URL');
+        alert("Website ID not found in URL");
         return;
       }
 
       // Create modal using your preferred structure
       const modal = document.createElement("div");
-      modal.className = "fixed inset-0 bg-black bg-opacity-50 z-[50] flex items-center justify-center";
+      modal.className =
+        "fixed inset-0 bg-black bg-opacity-50 z-[50] flex items-center justify-center";
 
       modal.innerHTML = `
       <div class="bg-white p-6 rounded-lg max-w-md w-full relative">
@@ -341,19 +345,23 @@ export default (editor, options) => {
       // Event Listeners
       const closeModal = () => modal.remove();
       modal.querySelector(".close-modal").addEventListener("click", closeModal);
-      modal.querySelector(".cancel-modal").addEventListener("click", closeModal);
+      modal
+        .querySelector(".cancel-modal")
+        .addEventListener("click", closeModal);
 
       // Regenerate button handler
-      modal.querySelector(".regenerate-modal").addEventListener("click", async () => {
-        const prompt = modal.querySelector("#regenerate-prompt").value.trim();
+      modal
+        .querySelector(".regenerate-modal")
+        .addEventListener("click", async () => {
+          const prompt = modal.querySelector("#regenerate-prompt").value.trim();
 
-        if (!prompt) {
-          alert('Please enter your improvement instructions');
-          return;
-        }
+          if (!prompt) {
+            alert("Please enter your improvement instructions");
+            return;
+          }
 
-        // Show loading state
-        modal.querySelector(".modal-body").innerHTML = `
+          // Show loading state
+          modal.querySelector(".modal-body").innerHTML = `
         <div class="flex flex-col items-center justify-center p-8">
           <svg class="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -363,41 +371,50 @@ export default (editor, options) => {
         </div>
       `;
 
-        try {
-          const response = await fetch(`http://127.0.0.1:5000/api/website/${websiteId}/regenerate-section`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization:
-                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjZTNiNWMyMC04ODIyLTQ5YzUtOGM4OS1mNzk4N2VjOTZmZTQiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzQzOTk2Mjg4LCJpYXQiOjE3NDMzOTE0ODgsImVtYWlsIjoidXRrYXJzaHJvZGUxMkBnbWFpbC5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIiwiZ29vZ2xlIl19LCJ1c2VyX21ldGFkYXRhIjp7ImF2YXRhcl91cmwiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NJVGtKaUdGV3N6djFMbURVN01LQjg1V1p1dHZ1aW1NeTl0NFlXUU85LXBRdmdyUEdOYz1zOTYtYyIsImVtYWlsIjoidXRrYXJzaHJvZGUxMkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyc3RfbmFtZSI6IlV0a2Fyc2giLCJmdWxsX25hbWUiOiJVdGthcnNoIFJvZGUiLCJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJsYXN0X25hbWUiOiJSb2RlIiwibmFtZSI6IlV0a2Fyc2ggUm9kZSIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0lUa0ppR0ZXc3p2MUxtRFU3TUtCODVXWnV0dnVpbU15OXQ0WVdRTzktcFF2Z3JQR05jPXM5Ni1jIiwicHJvdmlkZXJfaWQiOiIxMDExODg5NDIyMzA3NTYyNTAwNjAiLCJzdWIiOiIxMDExODg5NDIyMzA3NTYyNTAwNjAifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTc0MzM5MTQ4OH1dLCJzZXNzaW9uX2lkIjoiZGUxYjBmOTYtOWU0Mi00NTYwLTliOGEtYWY2NDUyOGJjYjE2IiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.JQ4VvvQZyh46a3CFzwCkSvNWVkURMLojEWR2xME9cVs"
-            },
-            body: JSON.stringify({
-              prompt,
-              section: selectedComponent.toJSON(),
-            })
-          });
+          try {
+            const token = document.cookie
+              .split("; ")
+              .find((row) => row.startsWith("Bearer="))
+              ?.split("=")[1];
 
-          const data = await response.json();
+            if (!token) {
+              throw new Error("Authorization token not found");
+            }
 
-          if (data.status && data.section) {
-            // replaceWithAISection(data.section, editor);
+            const response = await fetch(
+              `${process.env.BACKEND_URL}/api/website/${websiteId}/regenerate-section`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  prompt,
+                  section: selectedComponent.toJSON(),
+                }),
+              },
+            );
+
+            const data = await response.json();
+
+            if (data.status && data.section) {
+              // replaceWithAISection(data.section, editor);
+              closeModal();
+              alert("Section regenerated successfully!");
+            } else {
+              throw new Error(data.message || "Invalid response from server");
+            }
+          } catch (error) {
+            console.error("Error regenerating section:", error);
+            alert(`Failed to regenerate: ${error}`);
             closeModal();
-            alert('Section regenerated successfully!');
-          } else {
-            throw new Error(data.message || 'Invalid response from server');
           }
-        } catch (error) {
-          console.error("Error regenerating section:", error);
-          alert(`Failed to regenerate: ${error}`);
-          closeModal();
-        }
-      });
+        });
 
       document.body.appendChild(modal);
-    }
+    },
   });
-
-
 
   editor.Commands.add("open-icon-picker", {
     run(editor) {
@@ -455,18 +472,18 @@ export default (editor, options) => {
         content: `
           <div id="navbar-links-container">
             ${linksList
-            .components()
-            .map(
-              (link, index) => `
+              .components()
+              .map(
+                (link, index) => `
               <div class="mb-2">
                 <input type="text" class="navbar-link-input border rounded px-2 py-1" data-index="${index}" value="${link.get(
-                "content",
-              )}">
+                  "content",
+                )}">
                 <button class="remove-link bg-red-500 text-white px-2 py-1 rounded" data-index="${index}">Remove</button>
               </div>
             `,
-            )
-            .join("")}
+              )
+              .join("")}
           </div>
           <button id="add-navbar-link" class="bg-blue-500 text-white px-3 py-2 rounded mt-4">Add Link</button>
         `,
@@ -724,16 +741,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -975,9 +992,9 @@ export default (editor, options) => {
           `;
 
         btn.addEventListener("click", () => {
-          editor.runCommand('regenerate-section', {
+          editor.runCommand("regenerate-section", {
             // You can pass options here if needed
-            // websiteId: 123 
+            // websiteId: 123
           });
         });
 
@@ -1188,7 +1205,6 @@ export default (editor, options) => {
         const aiBtn = this.createAiButton();
         row.appendChild(aiBtn);
 
-
         this.buttonRow = row;
         return row;
       },
@@ -1235,9 +1251,9 @@ export default (editor, options) => {
           `;
 
         btn.addEventListener("click", () => {
-          editor.runCommand('regenerate-section', {
+          editor.runCommand("regenerate-section", {
             // You can pass options here if needed
-            // websiteId: 123 
+            // websiteId: 123
           });
         });
 
@@ -1319,7 +1335,7 @@ export default (editor, options) => {
     model: {
       defaults: {
         tagName: "h5",
-       
+
         draggable: false,
         droppable: false,
         attributes: {
@@ -1341,7 +1357,7 @@ export default (editor, options) => {
     model: {
       defaults: {
         tagName: "h5",
-        
+
         draggable: false,
         droppable: false,
         attributes: {
@@ -1419,7 +1435,7 @@ export default (editor, options) => {
     model: {
       defaults: {
         tagName: "div",
-        
+
         draggable: false,
         droppable: false,
         attributes: {
@@ -1439,16 +1455,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -1565,7 +1581,7 @@ export default (editor, options) => {
       </div>
           `;
 
-        btn.addEventListener("click", () => { });
+        btn.addEventListener("click", () => {});
 
         this.swapButton = btn;
         console.log("Y. Button created:", btn);
@@ -1661,9 +1677,9 @@ export default (editor, options) => {
           `;
 
         btn.addEventListener("click", () => {
-          editor.runCommand('regenerate-section', {
+          editor.runCommand("regenerate-section", {
             // You can pass options here if needed
-            // websiteId: 123 
+            // websiteId: 123
           });
         });
 
@@ -1697,7 +1713,7 @@ export default (editor, options) => {
       defaults: {
         showEditButton: true,
         tagName: "a", // Changed to anchor tag for proper linking
-        
+
         draggable: false,
         droppable: false,
         attributes: {
@@ -1819,16 +1835,16 @@ export default (editor, options) => {
                   <div>
                     <label class="block mb-2">Component Type</label>
                     <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                      "type",
+                    )}" class="w-full border p-2 rounded" disabled>
                   </div>
                   <div>
                     <label class="block mb-2">Attributes</label>
                     <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                      component.getAttributes(),
+                      null,
+                      2,
+                    )}</textarea>
                   </div>
                 </div>
               `;
@@ -1974,7 +1990,7 @@ export default (editor, options) => {
       defaults: {
         showEditButton: true,
         tagName: "button",
-        
+
         draggable: false,
         droppable: false,
         attributes: {
@@ -2087,16 +2103,16 @@ export default (editor, options) => {
                   <div>
                     <label class="block mb-2">Component Type</label>
                     <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                      "type",
+                    )}" class="w-full border p-2 rounded" disabled>
                   </div>
                   <div>
                     <label class="block mb-2">Attributes</label>
                     <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                      component.getAttributes(),
+                      null,
+                      2,
+                    )}</textarea>
                   </div>
                 </div>
               `;
@@ -2240,7 +2256,6 @@ export default (editor, options) => {
   editor.DomComponents.addType("icon", {
     model: {
       defaults: {
-
         draggable: false,
         droppable: false,
         showEditButton: true,
@@ -2290,16 +2305,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -2411,7 +2426,7 @@ export default (editor, options) => {
         }
       },
 
-      handleDeselect() { },
+      handleDeselect() {},
 
       updateEditButton() {
         const editor = this.em.get("Editor");
@@ -2499,7 +2514,7 @@ export default (editor, options) => {
     model: {
       defaults: {
         tagName: "div",
-        
+
         draggable: false,
         droppable: false,
         attributes: {
@@ -2515,7 +2530,6 @@ export default (editor, options) => {
     extend: "text",
     model: {
       defaults: {
-
         draggable: false,
         droppable: false,
         tagName: "div",
@@ -2754,15 +2768,23 @@ export default (editor, options) => {
                       .toLowerCase();
                     const uniqueFileName = `${crypto.randomUUID()}.${fileExt}`;
 
+                    const token = document.cookie
+                      .split("; ")
+                      .find((row) => row.startsWith("Bearer="))
+                      ?.split("=")[1];
+
+                    if (!token) {
+                      throw new Error("Authorization token not found");
+                    }
+
                     // Get presigned URL with correct content type
                     const presignedResponse = await fetch(
-                      "https://dev.byteai.bytesuite.io/api/presigned-url",
+                      `${process.env.BACKEND_URL}/api/presigned-url`,
                       {
                         method: "POST",
                         headers: {
                           "Content-Type": "application/json",
-                          Authorization:
-                            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMWMwZWMzMS0wZDIzLTRiMDQtYTdkOS04OTRiOWE0NTNjYWIiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzMzMzg2MTUzLCJpYXQiOjE3MzI3ODEzNTMsImVtYWlsIjoic2lkZGhhcnRoLnNhYmxlNDYxOEBnbWFpbC5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIiwiZ29vZ2xlIl19LCJ1c2VyX21ldGFkYXRhIjp7ImF2YXRhcl91cmwiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NMU3BETjlQbS1DaDdGazl2RnJrVkhVWXRHRGV3NVJqSTJUbWMweFg5WnpDZGxoNjBNMj1zOTYtYyIsImVtYWlsIjoic2lkZGhhcnRoLnNhYmxlNDYxOEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZnVsbF9uYW1lIjoiU2lkZGhhcnRoIFNhYmFsZSIsImlzcyI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbSIsIm5hbWUiOiJTaWRkaGFydGggU2FiYWxlIiwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jTFNwRE45UG0tQ2g3Rms5dkZya1ZIVVl0R0RldzVSakkyVG1jMHhYOVp6Q2RsaDYwTTI9czk2LWMiLCJwcm92aWRlcl9pZCI6IjEwNzcyMjEyMzY4ODM1OTAxNzA2NyIsInN1YiI6IjEwNzcyMjEyMzY4ODM1OTAxNzA2NyJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzMyNzgxMzUzfV0sInNlc3Npb25faWQiOiJiOGFhODJhNi1mOGJlLTQ1ZGEtYTMzOC1jODdkOGRiZWRjMjMiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.wT4ONOL3peUJwIHXyJpR4znAFXwcSAW6zFe5pE6YmFQ",
+                          Authorization: `Bearer ${token}`,
                         },
                         body: JSON.stringify({
                           file_name: uniqueFileName,
@@ -3087,9 +3109,9 @@ export default (editor, options) => {
           `;
 
         btn.addEventListener("click", () => {
-          editor.runCommand('regenerate-section', {
+          editor.runCommand("regenerate-section", {
             // You can pass options here if needed
-            // websiteId: 123 
+            // websiteId: 123
           });
         });
 
@@ -3257,16 +3279,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -3515,9 +3537,9 @@ export default (editor, options) => {
       </div>
           `;
         btn.addEventListener("click", () => {
-          editor.runCommand('regenerate-section', {
+          editor.runCommand("regenerate-section", {
             // You can pass options here if needed
-            // websiteId: 123 
+            // websiteId: 123
           });
         });
 
@@ -3565,7 +3587,7 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() { },
+      onAttributesChange() {},
     },
   });
 
@@ -3595,7 +3617,7 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() { },
+      onAttributesChange() {},
     },
   });
 
@@ -3616,7 +3638,7 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() { },
+      onAttributesChange() {},
     },
   });
 };
