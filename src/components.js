@@ -281,400 +281,6 @@ export default (editor, options) => {
     },
   });
 
-  // Add this to your GrapesJS editor initialization
-  const withEditButton3 = {
-    init() {
-      this.componentEditHandlers = {
-        // Default handler for generic components
-        default: {
-          createModalContent(component) {
-            const container = document.createElement("div");
-            container.innerHTML = `
-              <div class="space-y-4">
-                <div>
-                  <label class="block mb-2">Component Type</label>
-                  <input type="text" value="${component.get(
-              "type",
-            )}" class="w-full border p-2 rounded" disabled>
-                </div>
-                <div>
-                  <label class="block mb-2">Content</label>
-                  <textarea class="w-full border p-2 rounded component-content" rows="4">${component.get("content") || ""
-              }</textarea>
-                </div>
-              </div>
-            `;
-
-            return {
-              container,
-              getData() {
-                try {
-                  const attrs = JSON.parse(
-                    container.querySelector(".component-attributes").value,
-                  );
-                  return { attributes: attrs };
-                } catch (e) {
-                  alert("Invalid JSON for attributes");
-                  return null;
-                }
-              },
-            };
-          },
-        },
-
-        // Specific handlers for different component types
-        image: {
-          createModalContent(component) {
-            const container = document.createElement("div");
-            container.innerHTML = `
-              <div class="space-y-4">
-                <div>
-                  <label class="block mb-2">Image Source</label>
-                  <input type="text" class="w-full border p-2 rounded image-src" value="${component.getAttributes().src || ""
-              }">
-                </div>
-                <div>
-                  <label class="block mb-2">Alt Text</label>
-                  <input type="text" class="w-full border p-2 rounded image-alt" value="${component.getAttributes().alt || ""
-              }">
-                </div>
-              </div>
-            `;
-
-            return {
-              container,
-              getData() {
-                return {
-                  attributes: {
-                    src: container.querySelector(".image-src").value,
-                    alt: container.querySelector(".image-alt").value,
-                  },
-                };
-                const content =
-                  container.querySelector(".component-content").value;
-                return { content };
-              },
-            };
-          },
-        },
-
-        // Text components handler
-        text: {
-          createModalContent(component) {
-            const container = document.createElement("div");
-            container.innerHTML = `
-              <div class="space-y-4">
-                <div>
-                  <label class="block mb-2">Content</label>
-                  <textarea class="w-full border p-2 rounded text-content" rows="4">${component.getContent() || ""
-              }</textarea>
-                </div>
-              </div>
-            `;
-
-            return {
-              container,
-              getData() {
-                return {
-                  content: container.querySelector(".text-content").value,
-                };
-              },
-            };
-          },
-        },
-
-        // Button handler
-        button: {
-          createModalContent(component) {
-            const container = document.createElement("div");
-            container.innerHTML = `
-              <div class="space-y-4">
-                <div>
-                  <label class="block mb-2">Button Text</label>
-                  <input type="text" class="w-full border p-2 rounded button-text" value="${component.get("content") || ""
-              }">
-                </div>
-              </div>
-            `;
-
-            return {
-              container,
-              getData() {
-                return {
-                  content: container.querySelector(".button-text").value,
-                };
-              },
-            };
-          },
-        },
-
-        // Specific handlers for different component types
-        image: {
-          createModalContent(component) {
-            const container = document.createElement("div");
-            const currentImage = component.getAttributes().src || "";
-
-            container.innerHTML = `
-              <div class="space-y-4">
-                <div>
-                  <label class="block mb-2">Image Preview</label>
-                  <img src="${currentImage}" alt="Preview" class="w-full h-48 object-cover rounded-lg shadow-sm mb-4">
-                  <div class="absolute inset-0 bg-black bg-opacity-50 hidden items-center justify-center" id="upload-loading">
-                    <svg class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                  </div>
-                </div>
-               
-                <div class="flex items-center justify-center w-full">
-                  <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-rose-300 border-dashed rounded-lg cursor-pointer bg-rose-50 hover:bg-rose-100">
-                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                      <svg class="w-8 h-8 mb-4 text-rose-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2"/>
-                      </svg>
-                      <p class="mb-2 text-sm text-rose-500"><span class="font-semibold">Click to upload</span></p>
-                      <p class="text-xs text-rose-500">PNG, JPG or JPEG</p>
-                    </div>
-                    <input id="image-upload" type="file" class="hidden" accept="image/*" />
-                  </label>
-                </div>
- 
-                <div>
-                  <label class="block mb-2">Alt Text</label>
-                  <input type="text" class="w-full border p-2 rounded image-alt" value="${component.getAttributes().alt || ""
-              }">
-                </div>
-              </div>
-            `;
-
-            let selectedFile = null;
-            const previewImg = container.querySelector("img");
-            const loadingEl = container.querySelector("#upload-loading");
-            const fileInput = container.querySelector("#image-upload");
-
-            fileInput.addEventListener("change", (e) => {
-              const file = e.target.files[0];
-              if (!file) return;
-
-              const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-              if (!allowedTypes.includes(file.type)) {
-                alert("Please select a valid image file (JPG, JPEG or PNG)");
-                return;
-              }
-
-              selectedFile = file;
-              const reader = new FileReader();
-              reader.onload = (e) => {
-                previewImg.src = e.target.result;
-              };
-              reader.readAsDataURL(file);
-            });
-
-            return {
-              container,
-              async getData() {
-                const altText = container.querySelector(".image-alt").value;
-
-                if (!selectedFile) {
-                  return {
-                    attributes: {
-                      src: component.getAttributes().src,
-                      alt: altText,
-                    },
-                  };
-                }
-
-                try {
-                  loadingEl.classList.remove("hidden");
-                  loadingEl.classList.add("flex");
-
-                  const fileExt = selectedFile.name
-                    .split(".")
-                    .pop()
-                    .toLowerCase();
-                  const uniqueFileName = `${crypto.randomUUID()}.${fileExt}`;
-
-                  const presignedResponse = await fetch(
-                    "https://dev.byteai.bytesuite.io/api/presigned-url",
-                    {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                        Authorization: "Bearer YOUR_TOKEN",
-                      },
-                      body: JSON.stringify({
-                        file_name: uniqueFileName,
-                        file_type: selectedFile.type,
-                      }),
-                    },
-                  );
-
-                  const { file_url, presigned_url } =
-                    await presignedResponse.json();
-
-                  await fetch(presigned_url, {
-                    method: "PUT",
-                    body: selectedFile,
-                    headers: {
-                      "Content-Type": selectedFile.type,
-                    },
-                  });
-
-                  const imageUrl = file_url.split("?")[0];
-
-                  return {
-                    attributes: {
-                      src: imageUrl,
-                      alt: altText,
-                    },
-                  };
-                } catch (error) {
-                  console.error("Error uploading image:", error);
-                  alert("Failed to upload image. Please try again.");
-                  return null;
-                } finally {
-                  loadingEl.classList.add("hidden");
-                  loadingEl.classList.remove("flex");
-                }
-              },
-            };
-          },
-        },
-      };
-    },
-
-    onRender() {
-      const editor = this.em.get("Editor");
-      editor.on("component:select", this.handleSelect.bind(this));
-      editor.on("component:deselect", this.handleDeselect.bind(this));
-    },
-
-    createModal(component) {
-      const componentType = component.get("type") || "default";
-      const handler =
-        this.componentEditHandlers[componentType] ||
-        this.componentEditHandlers.default;
-
-      const modal = document.createElement("div");
-      modal.className =
-        "fixed inset-0 bg-black bg-opacity-50 z-[50] flex items-center justify-center";
-
-      const modalContent = handler.createModalContent(component);
-
-      modal.innerHTML = `
-        <div class="bg-white p-6 rounded-lg max-w-md w-full relative">
-          <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-gray-900">
-            &times;
-          </button>
-          <h2 class="text-xl font-semibold mb-4">Edit ${componentType} Component</h2>
-          <div class="modal-body"></div>
-          <div class="mt-4 flex justify-end space-x-2">
-            <button class="cancel-modal px-4 py-2 bg-gray-200 rounded">Cancel</button>
-            <button class="save-modal px-4 py-2 bg-rose-500 text-white rounded">Save</button>
-          </div>
-        </div>
-      `;
-
-      const modalBody = modal.querySelector(".modal-body");
-      modalBody.appendChild(modalContent.container);
-
-      // Event Listeners
-      const closeBtn = modal.querySelector(".close-modal");
-      const cancelBtn = modal.querySelector(".cancel-modal");
-      const saveBtn = modal.querySelector(".save-modal");
-
-      const closeModal = () => modal.remove();
-      closeBtn.addEventListener("click", closeModal);
-      cancelBtn.addEventListener("click", closeModal);
-
-      saveBtn.addEventListener("click", () => {
-        const editData = modalContent.getData();
-        if (editData) {
-          // Apply changes to the component
-          if (editData.attributes) {
-            component.setAttributes(editData.attributes);
-          }
-          if (editData.content) {
-            component.set("content", editData.content);
-          }
-          closeModal();
-        }
-      });
-
-      return modal;
-    },
-
-    handleSelect(component) {
-      if (component.getEl() === this.el) {
-        const btn = this.createEditButton();
-        const rect = this.el.getBoundingClientRect();
-
-        btn.style.position = "fixed";
-        btn.style.top = `${rect.top + rect.height / 2 - 15}px`;
-        btn.style.left = `${rect.right - 35}px`;
-
-        btn.addEventListener("click", () => {
-          const modal = this.createModal(component);
-          document.body.appendChild(modal);
-        });
-
-        const editor = this.em.get("Editor");
-        editor.getContainer().appendChild(btn);
-      }
-    },
-
-    handleDeselect(component) {
-      if (component.getEl() === this.el) {
-        const editor = this.em.get("Editor");
-        const btn = editor.getContainer().querySelector(".gjs-edit-btn");
-        if (btn) btn.remove();
-      }
-      const btn = this.createEditButton();
-      const rect = component.view.el.getBoundingClientRect();
-
-      btn.style.position = "fixed";
-      btn.style.top = `${rect.top + rect.height / 2 - 15}px`;
-      btn.style.left = `${rect.right - 35}px`;
-
-      btn.addEventListener("click", () => {
-        const modal = this.createModal(component);
-        document.body.appendChild(modal);
-      });
-
-      const editor = this.em.get("Editor");
-      editor.getContainer().appendChild(btn);
-    },
-
-    handleDeselect(component) {
-      const editor = this.em.get("Editor");
-      const btn = editor.getContainer().querySelector(".gjs-edit-btn");
-      if (btn) btn.remove();
-    },
-
-    createEditButton() {
-      const btn = document.createElement("button");
-      btn.className =
-        "gjs-edit-btn text-gray-900 border-gray-300 bg-white absolute bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px] z-50";
-      btn.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
-          <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z"></path>
-        </svg>
-      `;
-      return btn;
-    },
-
-    remove() {
-      const editor = this.em.get("Editor");
-      editor.off("component:select", this.handleSelect);
-      editor.off("component:deselect", this.handleDeselect);
-
-      const btn = editor.getContainer().querySelector(".gjs-edit-btn");
-      if (btn) btn.remove();
-    },
-  };
-
-
   function getWebsiteIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     const websiteId = urlParams.get('website_id');
@@ -774,7 +380,7 @@ export default (editor, options) => {
           const data = await response.json();
 
           if (data.status && data.section) {
-            replaceWithAISection(data.section, editor);
+            // replaceWithAISection(data.section, editor);
             closeModal();
             alert('Section regenerated successfully!');
           } else {
@@ -782,7 +388,7 @@ export default (editor, options) => {
           }
         } catch (error) {
           console.error("Error regenerating section:", error);
-          alert(`Failed to regenerate: ${error.message}`);
+          alert(`Failed to regenerate: ${error}`);
           closeModal();
         }
       });
@@ -948,6 +554,8 @@ export default (editor, options) => {
   editor.Components.addType("custom-image", {
     model: {
       defaults: {
+        draggable: false,
+        droppable: false,
         tagName: "img", // Image element
         attributes: {
           class: "w-full h-auto object-cover", // Default styling
@@ -1673,6 +1281,8 @@ export default (editor, options) => {
   editor.DomComponents.addType("container", {
     model: {
       defaults: {
+        draggable: false,
+        droppable: false,
         tagName: "div",
         attributes: {
           class:
@@ -1688,10 +1298,11 @@ export default (editor, options) => {
     extend: "text",
     model: {
       defaults: {
-        tagName: "h2",
-        draggable: true,
+        draggable: false,
         droppable: false,
-        traits: [withEditButton3],
+        tagName: "h2",
+        draggable: false,
+        droppable: false,
         handlerType: "text", // Specify handler type
         attributes: {
           class:
@@ -1708,9 +1319,9 @@ export default (editor, options) => {
     model: {
       defaults: {
         tagName: "h5",
-        draggable: true,
+       
+        draggable: false,
         droppable: false,
-        traits: [withEditButton3],
         attributes: {
           class: "text-lg lg:text-xl font-secondary content-subtitle",
         },
@@ -1730,9 +1341,9 @@ export default (editor, options) => {
     model: {
       defaults: {
         tagName: "h5",
-        draggable: true,
+        
+        draggable: false,
         droppable: false,
-        traits: [withEditButton3],
         attributes: {
           class: "text-xl lg:text-2xl font-bold font-primary pt-1 mb-2",
         },
@@ -1750,7 +1361,6 @@ export default (editor, options) => {
         movement: true,
         draggable: false,
         droppable: false,
-        traits: [withEditButton3],
         attributes: {
           class:
             "hero-text-title pb-10 md:max-w-2xl text-5xl lg:text-6xl font-primary",
@@ -1775,7 +1385,6 @@ export default (editor, options) => {
         tagName: "h3",
         draggable: false,
         droppable: false,
-        traits: [withEditButton3],
         attributes: {
           class:
             "hero-text-subtitle md:max-w-2xl text-md lg:text-lg leading-relaxed pb-4",
@@ -1810,8 +1419,9 @@ export default (editor, options) => {
     model: {
       defaults: {
         tagName: "div",
+        
         draggable: false,
-        droppable: true,
+        droppable: false,
         attributes: {
           class: "item-container",
         },
@@ -2074,7 +1684,7 @@ export default (editor, options) => {
       defaults: {
         tagName: "div",
         draggable: false,
-        droppable: true,
+        droppable: false,
         attributes: {
           class:
             "flex flex-row flex-wrap justify-center items-center w-max justify-start gap-x-6 gap-y-4",
@@ -2087,6 +1697,8 @@ export default (editor, options) => {
       defaults: {
         showEditButton: true,
         tagName: "a", // Changed to anchor tag for proper linking
+        
+        draggable: false,
         droppable: false,
         attributes: {
           class:
@@ -2362,6 +1974,8 @@ export default (editor, options) => {
       defaults: {
         showEditButton: true,
         tagName: "button",
+        
+        draggable: false,
         droppable: false,
         attributes: {
           class:
@@ -2626,6 +2240,9 @@ export default (editor, options) => {
   editor.DomComponents.addType("icon", {
     model: {
       defaults: {
+
+        draggable: false,
+        droppable: false,
         showEditButton: true,
         tagName: "span",
         attributes: {
@@ -2882,6 +2499,8 @@ export default (editor, options) => {
     model: {
       defaults: {
         tagName: "div",
+        
+        draggable: false,
         droppable: false,
         attributes: {
           class:
@@ -2896,8 +2515,10 @@ export default (editor, options) => {
     extend: "text",
     model: {
       defaults: {
+
+        draggable: false,
+        droppable: false,
         tagName: "div",
-        traits: [withEditButton3],
         attributes: {
           class: "mb-3 para",
         },
@@ -3478,581 +3099,6 @@ export default (editor, options) => {
     },
   });
 
-  editor.DomComponents.addType("navbar1", {
-    model: {
-      defaults: {
-        tagName: "nav",
-        draggable: true,
-        droppable: false,
-        attributes: { class: "bg-white shadow" },
-        components: [
-          {
-            tagName: "div",
-            attributes: { class: "container mx-auto px-4 sm:px-6 lg:px-8" },
-            components: [
-              {
-                tagName: "div",
-                attributes: { class: "flex items-center justify-between h-16" },
-                components: [
-                  {
-                    tagName: "div",
-                    attributes: { class: "flex-shrink-0" },
-                    components: [
-                      {
-                        tagName: "img",
-                        attributes: {
-                          class: "h-8 w-auto",
-                          src: "https://via.placeholder.com/150x50?text=Logo",
-                          alt: "Logo",
-                        },
-                      },
-                    ],
-                  },
-                  {
-                    tagName: "div",
-                    attributes: { class: "hidden md:block" },
-                    components: [
-                      {
-                        tagName: "div",
-                        attributes: {
-                          class: "ml-10 flex items-baseline space-x-4",
-                        },
-                        components: [
-                          {
-                            tagName: "a",
-                            attributes: {
-                              href: "#",
-                              class:
-                                "text-gray-800 hover:bg-gray-200 px-3 py-2 rounded-md text-sm font-medium",
-                            },
-                            components: [
-                              {
-                                type: "text",
-                                content: "Home",
-                              },
-                            ],
-                          },
-                          {
-                            tagName: "a",
-                            content: "About",
-                            attributes: {
-                              href: "#",
-                              class:
-                                "text-gray-800 hover:bg-gray-200 px-3 py-2 rounded-md text-sm font-medium",
-                            },
-                          },
-                          {
-                            tagName: "a",
-                            content: "Contact",
-                            attributes: {
-                              href: "#",
-                              class:
-                                "text-gray-800 hover:bg-gray-200 px-3 py-2 rounded-md text-sm font-medium",
-                            },
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                  {
-                    // Hamburger menu button for mobile
-                    tagName: "div",
-                    attributes: {
-                      class: "md:hidden flex items-center",
-                    },
-                    components: [
-                      {
-                        tagName: "button",
-                        attributes: {
-                          class:
-                            "inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:bg-gray-200",
-                          "aria-expanded": "false",
-                          "aria-label": "Toggle Menu",
-                          // Adjusting to use 'this' for correct scope binding
-                          onclick: "toggleMobileMenu(event);",
-                        },
-                        components: [
-                          {
-                            tagName: "span",
-                            attributes: { class: "sr-only" },
-                            content: "Open main menu",
-                          },
-                          {
-                            tagName: "svg",
-                            attributes: {
-                              class: "block h-6 w-6",
-                              xmlns: "http://www.w3.org/2000/svg",
-                              fill: "none",
-                              viewBox: "0 0 24 24",
-                              stroke: "currentColor",
-                            },
-                            components: [
-                              {
-                                tagName: "path",
-                                attributes: {
-                                  "stroke-linecap": "round",
-                                  "stroke-linejoin": "round",
-                                  "stroke-width": "2",
-                                  d: "M4 6h16M4 12h16M4 18h16",
-                                },
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-              // Mobile menu that appears when hamburger button is clicked
-              {
-                tagName: "div",
-                attributes: {
-                  class: "hidden md:hidden transition duration-200 ease-in-out",
-                  id: "mobile-menu",
-                },
-                components: [
-                  {
-                    tagName: "div",
-                    attributes: {
-                      class: "px-2 pt-2 pb-3 space-y-1 sm:px-3",
-                    },
-                    components: [
-                      {
-                        tagName: "a",
-                        attributes: {
-                          href: "#",
-                          class:
-                            "block text-gray-800 hover:bg-gray-200 px-3 py-2 rounded-md text-base font-medium",
-                        },
-                        content: "Home",
-                      },
-                      {
-                        tagName: "a",
-                        attributes: {
-                          href: "#",
-                          class:
-                            "block text-gray-800 hover:bg-gray-200 px-3 py-2 rounded-md text-base font-medium",
-                        },
-                        content: "About",
-                      },
-                      {
-                        tagName: "a",
-                        attributes: {
-                          href: "#",
-                          class:
-                            "block text-gray-800 hover:bg-gray-200 px-3 py-2 rounded-md text-base font-medium",
-                        },
-                        content: "Contact",
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-        traits: [
-          {
-            type: "select",
-            name: "navbarPosition",
-            label: "Navbar Position",
-            options: [
-              { value: "", name: "Static" },
-              { value: "fixed top-0 left-0 right-0 z-50", name: "Fixed" },
-              { value: "sticky top-0 z-50", name: "Sticky" },
-            ],
-          },
-          {
-            type: "select",
-            name: "logoPosition",
-            label: "Logo Position",
-            options: [
-              { value: "justify-start", name: "Left" },
-              { value: "justify-center", name: "Center" },
-              { value: "justify-end", name: "Right" },
-            ],
-          },
-          {
-            type: "text",
-            name: "logoSrc",
-            label: "Logo Image URL",
-          },
-        ],
-      },
-
-      init() {
-        this.componentEditHandlers = {
-          // Default handler for generic components
-          default: {
-            createModalContent(component) {
-              const container = document.createElement("div");
-              const currentBgImage =
-                component.get("attributes")["bg-image"] || "";
-
-              container.innerHTML = `
-                <div class="space-y-4">
-                  <div class="flex flex-col gap-4">
-                    <div class="relative">
-                      <img src="${currentBgImage}" alt="Current background"
-                        class="w-full h-48 object-cover rounded-lg shadow-sm" />
-                      <div class="absolute inset-0 bg-black bg-opacity-50 hidden items-center justify-center" id="upload-loading">
-                        <svg class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                      </div>
-                    </div>
-                   
-                    <div class="flex items-center justify-center w-full">
-                      <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-rose-300 border-dashed rounded-lg cursor-pointer bg-rose-50 hover:bg-rose-100">
-                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                          <svg class="w-8 h-8 mb-4 text-rose-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-                          </svg>
-                          <p class="mb-2 text-sm text-rose-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                          <p class="text-xs text-rose-500">PNG, JPG or JPEG</p>
-                        </div>
-                        <input id="bg-image-upload" type="file" class="hidden" accept="image/*" />
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              `;
-
-              let selectedFile = null;
-              const previewImg = container.querySelector("img");
-              const loadingEl = container.querySelector("#upload-loading");
-
-              // Handle file selection for preview
-              const fileInput = container.querySelector("#bg-image-upload");
-              fileInput.addEventListener("change", (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                // Validate file type
-                const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-                if (!allowedTypes.includes(file.type)) {
-                  alert("Please select a valid image file (JPG, JPEG or PNG)");
-                  return;
-                }
-
-                selectedFile = file;
-                const reader = new FileReader();
-
-                reader.onload = (e) => {
-                  previewImg.src = e.target.result;
-                };
-
-                reader.readAsDataURL(file);
-              });
-
-              return {
-                container,
-                async getData() {
-                  if (!selectedFile) {
-                    return {
-                      attributes: {
-                        "bg-image": component.get("attributes")["bg-image"],
-                      },
-                    };
-                  }
-
-                  try {
-                    loadingEl.classList.remove("hidden");
-                    loadingEl.classList.add("flex");
-
-                    // Generate unique filename with proper extension
-                    const fileExt = selectedFile.name
-                      .split(".")
-                      .pop()
-                      .toLowerCase();
-                    const uniqueFileName = `${crypto.randomUUID()}.${fileExt}`;
-
-                    // Get presigned URL with correct content type
-                    const presignedResponse = await fetch(
-                      "https://dev.byteai.bytesuite.io/api/presigned-url",
-                      {
-                        method: "POST",
-                        headers: {
-                          "Content-Type": "application/json",
-                          Authorization:
-                            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMWMwZWMzMS0wZDIzLTRiMDQtYTdkOS04OTRiOWE0NTNjYWIiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzMzMzg2MTUzLCJpYXQiOjE3MzI3ODEzNTMsImVtYWlsIjoic2lkZGhhcnRoLnNhYmxlNDYxOEBnbWFpbC5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIiwiZ29vZ2xlIl19LCJ1c2VyX21ldGFkYXRhIjp7ImF2YXRhcl91cmwiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NMU3BETjlQbS1DaDdGazl2RnJrVkhVWXRHRGV3NVJqSTJUbWMweFg5WnpDZGxoNjBNMj1zOTYtYyIsImVtYWlsIjoic2lkZGhhcnRoLnNhYmxlNDYxOEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZnVsbF9uYW1lIjoiU2lkZGhhcnRoIFNhYmFsZSIsImlzcyI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbSIsIm5hbWUiOiJTaWRkaGFydGggU2FiYWxlIiwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jTFNwRE45UG0tQ2g3Rms5dkZya1ZIVVl0R0RldzVSakkyVG1jMHhYOVp6Q2RsaDYwTTI9czk2LWMiLCJwcm92aWRlcl9pZCI6IjEwNzcyMjEyMzY4ODM1OTAxNzA2NyIsInN1YiI6IjEwNzcyMjEyMzY4ODM1OTAxNzA2NyJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzMyNzgxMzUzfV0sInNlc3Npb25faWQiOiJiOGFhODJhNi1mOGJlLTQ1ZGEtYTMzOC1jODdkOGRiZWRjMjMiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.wT4ONOL3peUJwIHXyJpR4znAFXwcSAW6zFe5pE6YmFQ",
-                        },
-                        body: JSON.stringify({
-                          file_name: uniqueFileName,
-                          file_type: selectedFile.type,
-                        }),
-                      },
-                    );
-
-                    const { file_url, presigned_url } =
-                      await presignedResponse.json();
-
-                    // Upload to S3 using PUT request with correct headers
-                    const uploadResponse = await fetch(presigned_url, {
-                      method: "PUT",
-                      headers: {
-                        "Content-Type": selectedFile.type,
-                      },
-                      body: selectedFile,
-                    });
-
-                    if (!uploadResponse.ok) {
-                      throw new Error(
-                        `Upload failed with status: ${uploadResponse.status}`,
-                      );
-                    }
-
-                    // Get clean URL without query params
-                    const imageUrl = file_url.split("?")[0];
-
-                    // First set the new bg-image attribute
-                    component.setAttributes({ "bg-image": imageUrl });
-
-                    // Then call updateBackgroundImage to refresh the view
-                    component.updateBackgroundImage();
-
-                    // Return the new attributes
-                    return {
-                      attributes: {
-                        "bg-image": imageUrl,
-                      },
-                    };
-                  } catch (error) {
-                    console.error("Error uploading image:", error);
-                    // Log more detailed error information
-                    if (error.response) {
-                      console.error("Response status:", error.response.status);
-                      console.error(
-                        "Response data:",
-                        await error.response.text(),
-                      );
-                    }
-                    // Show more specific error message to user
-                    let errorMessage = "Failed to upload image. ";
-                    if (error.message) {
-                      errorMessage += error.message;
-                    }
-                    if (error.response && error.response.status) {
-                      errorMessage += ` (Status: ${error.response.status})`;
-                    }
-                    alert(errorMessage);
-                    return null;
-                  } finally {
-                    loadingEl.classList.add("hidden");
-                    loadingEl.classList.remove("flex");
-                  }
-                },
-              };
-            },
-          },
-        };
-      },
-
-      onRender() {
-        this.updateEditButton();
-      },
-
-      createModal(component) {
-        const componentType = component.get("type") || "default";
-        const handler =
-          this.componentEditHandlers[componentType] ||
-          this.componentEditHandlers.default;
-
-        const modal = document.createElement("div");
-        modal.className =
-          "fixed inset-0 bg-black bg-opacity-50 z-[50] flex items-center justify-center";
-
-        const modalContent = handler.createModalContent(component);
-
-        modal.innerHTML = `
-          <div class="bg-white p-6 rounded-lg max-w-md w-full relative">
-            <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-gray-900">
-              &times;
-            </button>
-            <h2 class="text-xl font-semibold mb-4">Edit ${componentType} Component</h2>
-            <div class="modal-body"></div>
-            <div class="mt-4 flex justify-end space-x-2">
-              <button class="cancel-modal px-4 py-2 bg-gray-200 rounded">Cancel</button>
-              <button class="save-modal px-4 py-2 bg-blue-500 border border-rose-500 text-white rounded bg-rose-500">Save</button>
-            </div>
-          </div>
-        `;
-
-        const modalBody = modal.querySelector(".modal-body");
-        modalBody.appendChild(modalContent.container);
-
-        // Event Listeners
-        const closeBtn = modal.querySelector(".close-modal");
-        const cancelBtn = modal.querySelector(".cancel-modal");
-        const saveBtn = modal.querySelector(".save-modal");
-
-        const closeModal = () => modal.remove();
-        closeBtn.addEventListener("click", closeModal);
-        cancelBtn.addEventListener("click", closeModal);
-
-        saveBtn.addEventListener("click", () => {
-          const editData = modalContent.getData();
-          if (editData) {
-            // Apply changes to the component
-            if (editData.attributes) {
-              component.setAttributes(editData.attributes);
-            }
-            if (editData.content) {
-              component.set("content", editData.content);
-            }
-            closeModal();
-          }
-        });
-
-        return modal;
-      },
-
-      onEditButtonClick() {
-        const modal = this.createModal(this.model);
-
-        // Add save button handler
-        const saveBtn = modal.querySelector(".save-modal");
-        saveBtn.addEventListener("click", () => {
-          // Implement save logic here
-          if (typeof this.onEditSave === "function") {
-            this.onEditSave(this.el);
-          }
-          modal.remove();
-        });
-
-        document.body.appendChild(modal);
-      },
-
-      updateEditButton() {
-        const editor = this.em.get("Editor");
-        editor.on("component:select", this.handleSelect.bind(this));
-        editor.on("component:deselect", this.handleDeselect.bind(this));
-      },
-
-      handleSelect(selectedComponent) {
-        if (selectedComponent !== this.model) {
-          this.removeEditButton();
-          return;
-        }
-
-        const btn = this.createEditButton();
-        const rect = this.el.getBoundingClientRect();
-
-        btn.style.position = "absolute";
-        btn.style.top = `${rect.top + rect.height / 2 - 15}px`;
-        btn.style.right = `${rect.right - 35}px`;
-
-        this.el.appendChild(btn);
-      },
-
-      handleDeselect() {
-        this.removeEditButton();
-      },
-
-      createEditButton() {
-        if (this.editButton) return this.editButton;
-
-        const btn = document.createElement("button");
-        btn.className =
-          "gjs-edit-btn text-gray-900 border-gray-300 bg-white absolute bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px] z-50";
-        btn.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
-            <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z"></path>
-          </svg>
-        `;
-
-        btn.addEventListener("click", this.onEditButtonClick.bind(this));
-
-        this.editButton = btn;
-        return btn;
-      },
-
-      removeEditButton() {
-        if (this.editButton) {
-          this.editButton.remove();
-          this.editButton = null;
-        }
-      },
-    },
-  });
-
-  editor.DomComponents.addType("navbar", {
-    isComponent: (el) => el.tagName === "NAV",
-    model: {
-      defaults: {
-        tagName: "nav",
-        draggable: true,
-        droppable: true,
-        traits: [withEditButton3],
-        attributes: {
-          class: "bg-gray-900 shadow-lg fixed top-0 left-0 right-0 z-50 py-4",
-        },
-        components: [
-          {
-            type: "container",
-            components: [
-              {
-                type: "blank-container",
-                components: [
-                  {
-                    type: "navbar-brand",
-                    content: "BytePlexure",
-                    attributes: {
-                      class: "text-2xl font-bold text-white",
-                    },
-                  },
-                ],
-                attributes: {
-                  class: "flex items-center",
-                },
-              },
-              {
-                type: "blank-container",
-                components: [
-                  {
-                    type: "navbar-link",
-                    content: "Test Nav 1",
-                    attributes: {
-                      href: "#",
-                      class:
-                        "text-white hover:text-gray-300 px-3 py-2 text-base font-medium",
-                    },
-                  },
-                  {
-                    type: "navbar-link",
-                    content: "Test Nav 2",
-                    attributes: {
-                      href: "#",
-                      class:
-                        "text-white hover:text-gray-300 px-3 py-2 text-base font-medium",
-                    },
-                  },
-                  {
-                    type: "navbar-link",
-                    content: "Test Nav 3",
-                    attributes: {
-                      href: "#",
-                      class:
-                        "text-white hover:text-gray-300 px-3 py-2 text-base font-medium",
-                    },
-                  },
-                ],
-                attributes: {
-                  class: "flex items-center space-x-8",
-                },
-              },
-            ],
-            attributes: {
-              class: "container mx-auto px-6 flex items-center justify-between",
-            },
-          },
-        ],
-      },
-    },
-  });
-
   editor.DomComponents.addType("footer", {
     isComponent: (el) => el.tagName === "FOOTER",
     model: {
@@ -4060,7 +3106,6 @@ export default (editor, options) => {
         tagName: "footer",
         draggable: true,
         droppable: true,
-        traits: [withEditButton3],
         attributes: {
           class: "bg-gray-900 text-white py-12",
         },
@@ -4572,176 +3617,6 @@ export default (editor, options) => {
       },
 
       onAttributesChange() { },
-    },
-  });
-
-  editor.DomComponents.addType("navbar", {
-    model: {
-      defaults: {
-        tagName: "nav",
-        attributes: {
-          class: "navbar fixed w-full top-0 transition-all duration-300 mx-10",
-        },
-        droppable: true,
-        traits: [],
-        script: function () {
-          const nav = this;
-          window.addEventListener("scroll", function () {
-            if (window.scrollY > 50) {
-              nav.classList.add("navbar-bg", "shadow-md");
-              nav.classList.remove("bg-transparent");
-            } else {
-              nav.classList.remove("navbar-bg", "shadow-md");
-              nav.classList.add("bg-transparent");
-            }
-          });
-        },
-        styles: `
-        .navbar img{
-          height: 1.75rem !important;
-          width: auto;
-        }
-        .navbar-bg{
-          background-color: var(--color-section-light) !important;
-        }
-        .navbar{
-          z-index : 700
-        } 
-        
-        `,
-      },
-    },
-  });
-
-  editor.DomComponents.addType("navbar-container", {
-    model: {
-      defaults: {
-        tagName: "div",
-        attributes: {
-          class:
-            "relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16",
-        },
-      },
-    },
-  });
-
-  editor.DomComponents.addType("logo", {
-    model: {
-      defaults: {
-        tagName: "div",
-        attributes: { class: "flex items-center" },
-        content: `<span class="text-2xl font-bold text-blue-600">Brand</span>`,
-        droppable: false,
-      },
-    },
-  });
-
-  editor.DomComponents.addType("nav-list", {
-    model: {
-      defaults: {
-        tagName: "div",
-        attributes: {
-          class: "hidden md:flex md:items-center md:space-x-4 ",
-        },
-        droppable: true,
-      },
-    },
-  });
-
-  editor.DomComponents.addType("nav-link", {
-    model: {
-      defaults: {
-        tagName: "a",
-        attributes: {
-          class:
-            "nav-link text-sm px-4 py-2 text-white transition-colors duration-200 mix-blend-difference filter contrast-200 hover:mix-blend-normal hover:filter-none hover:contrast-50",
-          href: "#",
-        },
-        content: "Link",
-        droppable: false,
-        traits: [
-          {
-            type: "text",
-            name: "href",
-            label: "Link URL",
-          },
-          {
-            type: "text",
-            name: "innerHTML",
-            label: "Text",
-          },
-        ],
-        styles: `
-        .nav-link:hover{
-          color: var(--color-primary-light) !important
-        }
-        `,
-      },
-    },
-  });
-
-  // Mobile menu button component
-  editor.DomComponents.addType("mobile-menu-button", {
-    model: {
-      defaults: {
-        tagName: "button",
-        attributes: {
-          class:
-            "md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 focus:outline-none",
-        },
-        content: `
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        `,
-        script: function () {
-          const btn = this;
-          const navbar = btn.closest("nav");
-          const mobileMenu = navbar.querySelector(".mobile-menu");
-
-          btn.addEventListener("click", () => {
-            mobileMenu.classList.toggle("hidden");
-          });
-        },
-      },
-    },
-  });
-
-  editor.DomComponents.addType("footer", {
-    model: {
-      defaults: {
-        tagName: "footer",
-        attributes: {
-          class: "bg-gray-100 border-t border-gray-300 py-6 px-8",
-        },
-        droppable: true,
-      },
-    },
-  });
-
-  editor.DomComponents.addType("footer-container", {
-    model: {
-      defaults: {
-        tagName: "footer",
-        attributes: {
-          class: "flex flex-col lg:flex-row lg:justify-between items-center",
-        },
-        droppable: true,
-      },
-    },
-  });
-
-  // Mobile menu container
-  editor.DomComponents.addType("mobile-menu", {
-    model: {
-      defaults: {
-        tagName: "div",
-        attributes: {
-          class:
-            "mobile-menu hidden md:hidden transition-all duration-300 ease-in-out",
-        },
-        droppable: true,
-      },
     },
   });
 };

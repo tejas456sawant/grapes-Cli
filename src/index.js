@@ -166,4 +166,66 @@ export default (editor, opts = {}) => {
       }
     },
   });
+
+  const initAOS = (editor) => {
+    const frameEl = editor.Canvas.getFrameEl();
+
+    if (!frameEl) {
+      console.error('Canvas frame not found.');
+      return;
+    }
+
+    const frameDoc = frameEl.contentDocument;
+    const frameWin = frameEl.contentWindow;
+
+    const loadAOS = () => {
+      // Add CSS
+      const link = frameDoc.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css';
+      link.referrerPolicy = 'no-referrer';
+      frameDoc.head.appendChild(link);
+
+      // Add Script
+      const script = frameDoc.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js';
+      script.referrerPolicy = 'no-referrer';
+
+      script.onload = () => {
+        console.log('AOS loaded');
+        frameWin.AOS.init({
+          once: true,
+          duration: 600,
+          easing: 'ease-in-out',
+          offset: 100,
+          disable: frameWin.innerWidth < 768,
+        });
+
+        // Refresh function inside onload to avoid ReferenceError
+        const refreshAOS = () => {
+          if (frameWin.AOS) {
+            frameWin.AOS.refresh();
+            frameWin.dispatchEvent(new Event('scroll'));
+          }
+        };
+
+        // Hook events that should refresh AOS
+        editor.on('component:add component:update component:remove canvas:drop', refreshAOS);
+        editor.on('canvas:resize', refreshAOS);
+      };
+
+      frameDoc.body.appendChild(script);
+    };
+
+    if (frameDoc.readyState === 'complete') {
+      loadAOS();
+    } else {
+      frameEl.onload = loadAOS;
+    }
+  };
+
+  // Hook into editor load
+  editor.on('load', () => {
+    setTimeout(() => initAOS(editor), 500); // Wait a bit for iframe
+  });
 };
