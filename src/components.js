@@ -2,6 +2,9 @@ import IconPicker from "./IconPicker.js";
 import React, { useState, useCallback, useMemo } from "react";
 import ReactDOM from "react-dom/client"; // For React 18+
 
+const BACKEND_URL = "https://dev.byteai.bytesuite.io";
+// const BACKEND_URL = "http://127.0.0.1:5000";
+
 const getRegisteredBlocks = () => [
   { id: "text", name: "Custom Block", icon: "📝" },
   { id: "image", name: "Image Section", icon: "🖼️" },
@@ -382,7 +385,7 @@ export default (editor, options) => {
             }
 
             const response = await fetch(
-              `${process.env.BACKEND_URL}/api/website/${websiteId}/regenerate-section`,
+              `${BACKEND_URL}/api/website/${websiteId}/regenerate-section`,
               {
                 method: "POST",
                 headers: {
@@ -2779,7 +2782,7 @@ export default (editor, options) => {
 
                     // Get presigned URL with correct content type
                     const presignedResponse = await fetch(
-                      `${process.env.BACKEND_URL}/api/presigned-url`,
+                      `${BACKEND_URL}/api/presigned-url`,
                       {
                         method: "POST",
                         headers: {
