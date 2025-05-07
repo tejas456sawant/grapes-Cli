@@ -2978,10 +2978,10 @@ export default (editor, options) => {
         },
         styles: `
         
-          .icon-box svg{
+          .icon-box svg, .icon-box i{
             height: 1rem;
             width: 1rem;
-          margin: 4px;
+            margin: 4px;
           }
 
           .card:hover>.icon-box>svg{
@@ -2995,11 +2995,11 @@ export default (editor, options) => {
           height: auto;
           }
 
-          .card .icon-box>svg{
+          .card .icon-box>svg, .card .icon-box>i{
           width: 3.5rem !important;
           height: 3.5rem !important;
         }
-           .card-horizontal>.icon-box>svg{
+           .card-horizontal>.icon-box>svg, .card-horizontal>.icon-box>i{
           width: 2.5rem !important;
           height: 2.5rem !important;
         }
