@@ -62,20 +62,19 @@ export default (editor, opts = {}) => {
   // Register a command to update phone numbers throughout the GrapesJS editor
   editor.Commands.add("update-phone-numbers", {
     run(editor, sender, options = {}) {
-      console.log(options);
       // Get the values from options or use defaults
       const defaultPhone = "+91-1234567890";
       const defaultEmail = "xyz@mail.com";
       const defaultAddress = "address";
       const defaultBusinessHours = "";
       const defaultName = "";
-      const phoneDigits = options.phoneDigits || defaultPhone;
-      const email = options.email || defaultEmail;
-      const address = options.address || defaultAddress;
-      const businessHours = options.businessHours || defaultBusinessHours;
-      const name = options.name || defaultName;
-      const brandimg = options.brandimg || "";
-      const businessdescription = options.businessdescription || "";
+      const phoneDigits = options?.contact_phone || defaultPhone;
+      const email = options?.business_email || defaultEmail;
+      const address = options?.company_address || defaultAddress;
+      const businessHours = options?.business_hours || defaultBusinessHours;
+      const name = options?.name || defaultName;
+      const brandimg = options?.brandimg || "";
+      const businessdescription = options?.business_description || "";
 
       // Track how many elements we've updated
       let updatedCount = 0;
