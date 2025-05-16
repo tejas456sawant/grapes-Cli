@@ -2,8 +2,8 @@ import IconPicker from "./IconPicker.js";
 import React, { useState, useCallback, useMemo } from "react";
 import ReactDOM from "react-dom/client"; // For React 18+
 
-// const BACKEND_URL = "https://dev.byteai.bytesuite.io";
-const BACKEND_URL = "http://127.0.0.1:5000";
+const BACKEND_URL = "https://dev.byteai.bytesuite.io";
+// const BACKEND_URL = "http://127.0.0.1:5000";
 
 const getRegisteredBlocks = () => [
   { id: "text", name: "Custom Block", icon: "📝" },

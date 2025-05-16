@@ -34,22 +34,21 @@ export default (editor, opts = {}) => {
     });
 
   // Register a command to update phone numbers throughout the GrapesJS editor
-  // Register a command to update phone numbers throughout the GrapesJS editor
-  editor.Commands.add('update-phone-numbers', {
+  editor.Commands.add("update-phone-numbers", {
     run(editor, sender, options = {}) {
       // Get the values from options or use defaults
-      const defaultPhone = '+91-1234567890';
-      const defaultEmail = 'xyz@mail.com';
-      const defaultAddress = 'address';
-      const defaultBusinessHours = '';
-      const defaultName = '';
-      const phoneDigits = options.phoneDigits || defaultPhone;
-      const email = options.email || defaultEmail;
-      const address = options.address || defaultAddress;
-      const businessHours = options.businessHours || defaultBusinessHours;
-      const name = options.name || defaultName;
-      const brandimg = options.brandimg || "";
-      const businessdescription = options.businessdescription || "";
+      const defaultPhone = "+91-1234567890";
+      const defaultEmail = "xyz@mail.com";
+      const defaultAddress = "address";
+      const defaultBusinessHours = "";
+      const defaultName = "";
+      const phoneDigits = options?.contact_phone || defaultPhone;
+      const email = options?.business_email || defaultEmail;
+      const address = options?.company_address || defaultAddress;
+      const businessHours = options?.business_hours || defaultBusinessHours;
+      const name = options?.name || defaultName;
+      const brandimg = options?.brandimg || "";
+      const businessdescription = options?.business_description || "";
 
       // Track how many elements we've updated
       let updatedCount = 0;
@@ -58,11 +57,11 @@ export default (editor, opts = {}) => {
       const pages = editor.Pages.getAll();
 
       // Process each page
-      pages.forEach(page => {
-        const frames = page.get('frames') || [];
+      pages.forEach((page) => {
+        const frames = page.get("frames") || [];
 
-        frames.forEach(frame => {
-          const rootComponent = frame.get('component');
+        frames.forEach((frame) => {
+          const rootComponent = frame.get("component");
           if (rootComponent) {
             // Traverse the component tree and update elements
             traverseAndUpdate(rootComponent);
@@ -78,38 +77,38 @@ export default (editor, opts = {}) => {
         const classes = component.getClasses ? component.getClasses() : [];
 
         // Update phone number
-        if (classes.includes('phone-number')) {
+        if (classes.includes("phone-number")) {
           component.addAttributes({ href: `tel:${phoneDigits}` });
           component.set({ content: phoneDigits });
           updatedCount++;
         }
 
         // Update email
-        if (classes.includes('email')) {
+        if (classes.includes("email")) {
           component.addAttributes({ href: `mailto:${email}` });
           component.set({ content: email });
           updatedCount++;
         }
 
         // Update address
-        if (classes.includes('address')) {
+        if (classes.includes("address")) {
           component.set({ content: address });
           updatedCount++;
         }
 
         // Update branding image
-        if (classes.includes('brandimg') && brandimg) {
+        if (classes.includes("brandimg") && brandimg) {
           component.addAttributes({ src: brandimg });
           updatedCount++;
         }
 
         // Check if component has content property with HTML
-        const content = component.get('content');
-        if (content && typeof content === 'string' && content.includes('<')) {
+        const content = component.get("content");
+        if (content && typeof content === "string" && content.includes("<")) {
           // Update any HTML content
           const updatedContent = updateHTMLContent(content);
           if (updatedContent !== content) {
-            component.set('content', updatedContent);
+            component.set("content", updatedContent);
             updatedCount++;
           }
         }
@@ -117,7 +116,7 @@ export default (editor, opts = {}) => {
         // Recurse through children
         const children = component.components();
         if (children && children.length) {
-          children.forEach(child => traverseAndUpdate(child));
+          children.forEach((child) => traverseAndUpdate(child));
         }
       }
 
@@ -131,57 +130,77 @@ export default (editor, opts = {}) => {
 
         try {
           // Update phone numbers
-          const phoneRegex = /<a[^>]*class="[^"]*phone-number[^"]*"[^>]*>.*?<\/a>/g;
-          htmlString = htmlString.replace(phoneRegex, `<a href="tel:${phoneDigits}" class="phone-number ml-3">${phoneDigits}</a>`);
+          const phoneRegex =
+            /<a[^>]*class="[^"]*phone-number[^"]*"[^>]*>.*?<\/a>/g;
+          htmlString = htmlString.replace(
+            phoneRegex,
+            `<a href="tel:${phoneDigits}" class="phone-number ml-3">${phoneDigits}</a>`,
+          );
 
           // Update emails - replace entire <a> tag
           const emailRegex = /<a[^>]*class="[^"]*email[^"]*"[^>]*>.*?<\/a>/g;
-          htmlString = htmlString.replace(emailRegex, `<a href="mailto:${email}" class="email ml-3">${email}</a>`);
+          htmlString = htmlString.replace(
+            emailRegex,
+            `<a href="mailto:${email}" class="email ml-3">${email}</a>`,
+          );
 
           // Update addresses
-          const addressRegex = /<[^>]*class="[^"]*address[^"]*"[^>]*>(.*?)<\/[^>]*>/g;
-          htmlString = htmlString.replace(addressRegex, `<span class="address">${address}</span>`);
+          const addressRegex =
+            /<[^>]*class="[^"]*address[^"]*"[^>]*>(.*?)<\/[^>]*>/g;
+          htmlString = htmlString.replace(
+            addressRegex,
+            `<span class="address">${address}</span>`,
+          );
 
           // Update branding images
           if (brandimg) {
             const brandRegex = /<img[^>]*class="[^"]*brandimg[^"]*"[^>]*>/g;
-            htmlString = htmlString.replace(brandRegex, `<img src="${brandimg}" class="brandimg block h-9 w-auto sm:h-8" alt="${name}"/>`);
+            htmlString = htmlString.replace(
+              brandRegex,
+              `<img src="${brandimg}" class="brandimg block h-9 w-auto sm:h-8" alt="${name}"/>`,
+            );
           }
 
           // Update business hours, name, and other content
           if (businessHours) {
-            const hoursRegex = /<[^>]*class="[^"]*business-hours[^"]*"[^>]*>(.*?)<\/[^>]*>/g;
-            htmlString = htmlString.replace(hoursRegex, `<span class="business-hours"> Open ${businessHours}</span>`);
+            const hoursRegex =
+              /<[^>]*class="[^"]*business-hours[^"]*"[^>]*>(.*?)<\/[^>]*>/g;
+            htmlString = htmlString.replace(
+              hoursRegex,
+              `<span class="business-hours"> Open ${businessHours}</span>`,
+            );
           }
 
           if (name) {
-            const nameRegex = /<[^>]*class="[^"]*business-name[^"]*"[^>]*>(.*?)<\/[^>]*>/g;
-            htmlString = htmlString.replace(nameRegex, `<span class="business-name">${name}</span>`);
+            const nameRegex =
+              /<[^>]*class="[^"]*business-name[^"]*"[^>]*>(.*?)<\/[^>]*>/g;
+            htmlString = htmlString.replace(
+              nameRegex,
+              `<span class="business-name">${name}</span>`,
+            );
           }
 
           if (businessdescription) {
-            const descRegex = /<[^>]*class="[^"]*business-description[^"]*"[^>]*>(.*?)<\/[^>]*>/g;
-            htmlString = htmlString.replace(descRegex, `<p class="business-description">${businessdescription}</p>`);
+            const descRegex =
+              /<[^>]*class="[^"]*business-description[^"]*"[^>]*>(.*?)<\/[^>]*>/g;
+            htmlString = htmlString.replace(
+              descRegex,
+              `<p class="business-description">${businessdescription}</p>`,
+            );
           }
 
           return htmlString;
         } catch (err) {
-          console.error('Error updating HTML content:', err);
+          console.error("Error updating HTML content:", err);
           return htmlString; // Return original if something fails
         }
       }
 
       return updatedCount;
-    }
+    },
   });
 
-
-
-
-
-
   editor.on("component:add", (component) => {
-
     if (component.get("disableToolbar")) {
       component.set({ toolbar: [] });
       return;
@@ -211,7 +230,6 @@ export default (editor, opts = {}) => {
 
     // Add movement buttons if movement is NOT disabled and it's not the only child
     if (!component.get("disableMovement")) {
-
       // Check if the move-up button already exists
       const hasMoveUp = toolbar.some((btn) => btn.id === "move-up");
       if (!hasMoveUp) {
@@ -225,8 +243,6 @@ export default (editor, opts = {}) => {
         });
       }
 
-
-
       // Check if the move-down button already exists
       const hasMoveDown = toolbar.some((btn) => btn.id === "move-down");
       if (!hasMoveDown) {
@@ -239,7 +255,6 @@ export default (editor, opts = {}) => {
           command: () => moveComponent(component, "down"), // Attach move-down command
         });
       }
-
     }
 
     // Add edit button if enabled
@@ -334,7 +349,7 @@ export default (editor, opts = {}) => {
     const frameEl = editor.Canvas.getFrameEl();
 
     if (!frameEl) {
-      console.error('Canvas frame not found.');
+      console.error("Canvas frame not found.");
       return;
     }
 
@@ -343,23 +358,23 @@ export default (editor, opts = {}) => {
 
     const loadAOS = () => {
       // Add CSS
-      const link = frameDoc.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = 'https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css';
-      link.referrerPolicy = 'no-referrer';
+      const link = frameDoc.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css";
+      link.referrerPolicy = "no-referrer";
       frameDoc.head.appendChild(link);
 
       // Add Script
-      const script = frameDoc.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js';
-      script.referrerPolicy = 'no-referrer';
+      const script = frameDoc.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js";
+      script.referrerPolicy = "no-referrer";
 
       script.onload = () => {
-        console.log('AOS loaded');
+        console.log("AOS loaded");
         frameWin.AOS.init({
           once: true,
           duration: 600,
-          easing: 'ease-in-out',
+          easing: "ease-in-out",
           offset: 100,
           disable: frameWin.innerWidth < 768,
         });
@@ -368,19 +383,22 @@ export default (editor, opts = {}) => {
         const refreshAOS = () => {
           if (frameWin.AOS) {
             frameWin.AOS.refresh();
-            frameWin.dispatchEvent(new Event('scroll'));
+            frameWin.dispatchEvent(new Event("scroll"));
           }
         };
 
         // Hook events that should refresh AOS
-        editor.on('component:add component:update component:remove canvas:drop', refreshAOS);
-        editor.on('canvas:resize', refreshAOS);
+        editor.on(
+          "component:add component:update component:remove canvas:drop",
+          refreshAOS,
+        );
+        editor.on("canvas:resize", refreshAOS);
       };
 
       frameDoc.body.appendChild(script);
     };
 
-    if (frameDoc.readyState === 'complete') {
+    if (frameDoc.readyState === "complete") {
       loadAOS();
     } else {
       frameEl.onload = loadAOS;
@@ -433,7 +451,7 @@ export default (editor, opts = {}) => {
   });
 
   // Hook into editor load
-  editor.on('load', () => {
+  editor.on("load", () => {
     setTimeout(() => initAOS(editor), 500); // Wait a bit for iframe
   });
 };
