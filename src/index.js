@@ -46,7 +46,7 @@ export default (editor, opts = {}) => {
       const email = options?.business_email || defaultEmail;
       const address = options?.company_address || defaultAddress;
       const businessHours = options?.business_hours || defaultBusinessHours;
-      const name = options?.name || defaultName;
+      const name = options?.business_name || defaultName;
       const brandimg = options?.brandimg || "";
       const businessdescription = options?.business_description || "";
 
@@ -205,7 +205,7 @@ export default (editor, opts = {}) => {
       component.set({ toolbar: [] });
       return;
     }
-    if (component.get('type') === 'body-wrapper') {
+    if (component.get("type") === "body-wrapper") {
       updateBodyClasses(component);
     }
 
@@ -410,41 +410,44 @@ export default (editor, opts = {}) => {
 
   // Function to update classes on the body-wrapper
   const updateBodyClasses = (body) => {
-    const settings = themeOptions
-    console.log("OPTS: ",settings)
-    
+    const settings = themeOptions;
+    console.log("OPTS: ", settings);
+
     // Classes to add based on settings
     const classesToAdd = [
       `theme-rounded-${settings.rounded}`,
       `highlight-${settings.highlightedTextStyle}`,
       `sections-${settings.sectionWidth}`,
-      settings.darkTheme === 'true' ? 'theme-dark' : '',
-      settings.shadows === 'true' ? 'shadows' : ''
+      settings.darkTheme === "true" ? "theme-dark" : "",
+      settings.shadows === "true" ? "shadows" : "",
     ].filter(Boolean);
 
     // Remove existing theme-related classes
-    body.getClasses().forEach(cls => {
-      if (cls.startsWith('theme-') || cls.startsWith('highlight-') || cls === 'shadows' || cls.startsWith('sections-')) {
+    body.getClasses().forEach((cls) => {
+      if (
+        cls.startsWith("theme-") ||
+        cls.startsWith("highlight-") ||
+        cls === "shadows" ||
+        cls.startsWith("sections-")
+      ) {
         body.removeClass(cls);
       }
     });
 
     // Add the new classes
-    classesToAdd.forEach(cls => body.addClass(cls));
+    classesToAdd.forEach((cls) => body.addClass(cls));
 
-    console.log('Theme classes updated:', body.getClasses());
+    console.log("Theme classes updated:", body.getClasses());
   };
 
   // Listen for component add or update and directly update classes
   editor.on("load", () => {
-    console.log("TEJAS")
+    console.log("TEJAS");
     // if (component.get('type') === 'body-wrapper') updateBodyClasses(component);
   });
 
-
-
-  editor.on('load', () => {
-    editor.RichTextEditor.get('wrap').result = (rte) => {
+  editor.on("load", () => {
+    editor.RichTextEditor.get("wrap").result = (rte) => {
       const sel = rte.selection();
       sel && rte.insertHTML(`<span class="highlight">${sel}</span>`);
     };
