@@ -773,9 +773,9 @@ export default (editor, options) => {
   editor.DomComponents.addType('flex', {
     model: {
       defaults: {
+        draggable: "false",
         droppable: "false",
         tagName: 'div',
-        draggable: "false",
         showEditButton: true,
         classes: ['flex', 'flex-col', 'flex-wrap', 'gap-2', 'items-start', 'justify-start', 'item-container'],
         attributes: {
@@ -2119,12 +2119,13 @@ export default (editor, options) => {
           }
 
           .theme-rounded-full .button-primary{
-            border-radius: 100%;
+            border-radius: 9999px;
           }
           
-          .theme-rounded-full .section{
-            border-radius: 100%;
+          .theme-rounded-full .button-secondary{
+            border-radius: 9999px;
           }
+          
         `,
         content: "Hero Subtitle",
       },
@@ -2734,7 +2735,7 @@ export default (editor, options) => {
           font-weight: 400;
           text-transform: uppercase;
           letter-spacing: 2px;
-         box-shadow:inset 0px 0px 0px 1px var(--color-text-primary);
+          box-shadow:inset 0px 0px 0px 1px currentcolor;
         }
         .button-secondary:hover{
           border: 0;
@@ -2743,10 +2744,10 @@ export default (editor, options) => {
           color: white;
         }
         .bg .button-secondary{
-          box-shadow:inset 0px 0px 0px 1px white !important;
+          box-shadow:inset 0px 0px 0px 1px white;
         }
            .bg-section-dark .button-secondary{
-          box-shadow:inset 0px 0px 0px 1px white !important;
+          box-shadow:inset 0px 0px 0px 1px white;
         }
         `,
       },
@@ -2995,12 +2996,6 @@ export default (editor, options) => {
           class: "relative transition isolate icon-box",
         },
         styles: `
-        
-          .icon-box svg, .icon-box i{
-            height: 1rem;
-            width: 1rem;
-            margin: 4px;
-          }
 
           .card:hover>.icon-box>svg{
           color:var(--color-primary) !important;
@@ -3016,10 +3011,12 @@ export default (editor, options) => {
           .card .icon-box>svg, .card .icon-box>i::before {
           width: 3.5rem !important;
           height: 3.5rem !important;
+          font-size: 3.5rem !important;
         }
            .card-horizontal>.icon-box>svg, .card-horizontal>.icon-box>i::before {
           width: 2.5rem !important;
           height: 2.5rem !important;
+          font-size: 3.5rem !important;
         }
         `,
       },
