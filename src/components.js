@@ -509,22 +509,6 @@ export default (editor, options) => {
         droppable: false,
         attributes: { class: "w-full overflow-x-hidden" },
         content: "", // Default content
-        styles: `
-        body {
-          color: var(--color-text-secondary);
-        }
-        h1, h2, h3, h4, h5, h6 {
-          color: var(--color-text-primary);
-         
-        }
-          .font-primary{
-           font-family: var(--font-primary) !important;
-          }
-
-          .font-heading{
-           font-family: var(--font-heading) !important;
-          }
-        `,
       },
     },
   });
@@ -1078,7 +1062,7 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "grid grid-cols-1 md:grid-cols-2 py-24 image-section relative md:min-h-[400px]",
+          class: "grid grid-cols-1 md:grid-cols-2 py-24 image-section relative md:min-h-[400px] section",
           sectiontype: "normal",
           direction: "left",
         },
@@ -1171,9 +1155,6 @@ export default (editor, options) => {
         switch (sectionType) {
           case "accent-1":
             classes.push("bg-accent-1"); // Add specific class for accent-1
-            break;
-          case "accent-2":
-            classes.push("bg-accent-2"); // Add specific class for accent-2
             break;
           case "dark":
             classes.push("bg-section-dark");
@@ -1475,7 +1456,6 @@ export default (editor, options) => {
         const colors = [
           { type: "normal", color: "bg-section-light" },
           { type: "accent-1", color: "bg-accent-1" },
-          { type: "accent-2", color: "bg-accent-2" },
           { type: "dark", color: "bg-section-dark" },
         ];
 
@@ -1514,7 +1494,7 @@ export default (editor, options) => {
         movement: true,
         droppable: false,
         attributes: {
-          class: "flex flex-col py-24 bg-slate-600 light-text px-8 relative",
+          class: "flex flex-col py-24 bg-slate-600 light-text px-8 relative section",
           sectiontype: "normal",
         },
         traits: [
@@ -1587,9 +1567,6 @@ export default (editor, options) => {
         switch (sectionType) {
           case "accent-1":
             classes.push("bg-accent-1"); // Add specific class for accent-1
-            break;
-          case "accent-2":
-            classes.push("bg-accent-2"); // Add specific class for accent-2
             break;
           case "dark":
             classes.push("bg-section-dark");
@@ -1739,7 +1716,6 @@ export default (editor, options) => {
         const colors = [
           { type: "normal", color: "bg-section-light" },
           { type: "accent-1", color: "bg-accent-1" },
-          { type: "accent-2", color: "bg-accent-2" },
           { type: "dark", color: "bg-section-dark" },
         ];
 
@@ -1815,9 +1791,6 @@ export default (editor, options) => {
         switch (sectionType) {
           case "accent-1":
             classes.push("bg-accent-1"); // Add specific class for accent-1
-            break;
-          case "accent-2":
-            classes.push("bg-accent-2"); // Add specific class for accent-2
             break;
           case "dark":
             classes.push("bg-section-dark");
@@ -1967,7 +1940,6 @@ export default (editor, options) => {
         const colors = [
           { type: "normal", color: "bg-section-light" },
           { type: "accent-1", color: "bg-accent-1" },
-          { type: "accent-2", color: "bg-accent-2" },
           { type: "dark", color: "bg-section-dark" },
         ];
 
@@ -2051,6 +2023,8 @@ export default (editor, options) => {
     },
   });
 
+
+  
   editor.DomComponents.addType("capsule-text", {
     extend: "text",
     model: {
@@ -2106,6 +2080,50 @@ export default (editor, options) => {
         styles: `
           .highlight{
             color: var(--color-primary) !important;
+          }
+          body {
+            color: var(--color-text-secondary);
+          }
+          h1, h2, h3, h4, h5, h6 {
+            color: var(--color-text-primary);
+          
+          }
+          .font-primary{
+           font-family: var(--font-primary) !important;
+          }
+
+          .font-heading{
+           font-family: var(--font-heading) !important;
+          }
+          
+          .theme-dark {
+            background-color: var(--color-section-dark) !important;
+            color: var(--color-text-light) !important;
+          }
+          .theme-dark  h1, .theme-dark  h2, .theme-dark  h3, .theme-dark  h4, .theme-dark  h5, .theme-dark  h6 {
+            color: white;
+          }
+          .theme-dark .bg-section-light{
+            background-color: var(--color-section-dark) !important;
+          }
+          .theme-dark .bg-accent-1, .theme-dark .bg-accent-2{
+            background-color: var(--color-section-dark-accent) !important;
+          }
+
+          .theme-rounded-md .button-primary{
+            border-radius: 8px;
+          }
+          
+          .theme-rounded-md .button-secondary{
+            border-radius: 8px;
+          }
+
+          .theme-rounded-full .button-primary{
+            border-radius: 100%;
+          }
+          
+          .theme-rounded-full .section{
+            border-radius: 100%;
           }
         `,
         content: "Hero Subtitle",
@@ -2995,11 +3013,11 @@ export default (editor, options) => {
           height: auto;
           }
 
-          .card .icon-box>svg, .card .icon-box>i{
+          .card .icon-box>svg, .card .icon-box>i::before {
           width: 3.5rem !important;
           height: 3.5rem !important;
         }
-           .card-horizontal>.icon-box>svg, .card-horizontal>.icon-box>i{
+           .card-horizontal>.icon-box>svg, .card-horizontal>.icon-box>i::before {
           width: 2.5rem !important;
           height: 2.5rem !important;
         }
@@ -4394,7 +4412,7 @@ export default (editor, options) => {
         disableToolbar: true,
         draggable: false,
         droppable: false,
-        attributes: { class : "bg-section-dark light-text"},
+        attributes: { class: "bg-section-dark light-text" },
         content: `
             <div class="mx-auto px-4 pt-16 sm:max-w-xl md:max-w-full md:px-24 lg:max-w-screen-xl lg:px-8">
               <div class="row-gap-6 mb-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
