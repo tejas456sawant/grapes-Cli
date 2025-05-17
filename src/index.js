@@ -7,13 +7,6 @@ export default (editor, opts = {}) => {
     i18n: {},
     ...opts,
   };
-  if (!document.querySelector('link[href*="font-awesome"]')) {
-    const link = document.createElement("link");
-    link.href =
-      "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css";
-    link.rel = "stylesheet";
-    document.head.appendChild(link);
-  }
 
   const config = opts.config || {};
   const bname = opts.businessname || {};
@@ -360,13 +353,13 @@ export default (editor, opts = {}) => {
       // Add CSS
       const link = frameDoc.createElement("link");
       link.rel = "stylesheet";
-      link.href = "https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css";
+      link.href = "https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css";
       link.referrerPolicy = "no-referrer";
       frameDoc.head.appendChild(link);
 
       // Add Script
       const script = frameDoc.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js";
+      script.src = "https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js";
       script.referrerPolicy = "no-referrer";
 
       script.onload = () => {
@@ -439,12 +432,6 @@ export default (editor, opts = {}) => {
 
     console.log("Theme classes updated:", body.getClasses());
   };
-
-  // Listen for component add or update and directly update classes
-  editor.on("load", () => {
-    console.log("TEJAS");
-    // if (component.get('type') === 'body-wrapper') updateBodyClasses(component);
-  });
 
   editor.on("load", () => {
     editor.RichTextEditor.get("wrap").result = (rte) => {

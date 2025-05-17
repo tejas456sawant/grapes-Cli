@@ -1,0 +1,368 @@
+/* image-section */
+.image-section > .item-container {
+  padding: 2.5rem;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.image-section > img {
+  height: 100%;
+}
+
+/* section */
+.light-text h1,
+.light-text h2,
+.light-text h3,
+.light-text h4,
+.light-text h5,
+.light-text h6 {
+  color: white;
+}
+
+.bg-section-dark {
+  background-color: var(--color-section-dark);
+}
+
+.bg-section-light {
+  background-color: var(--color-section-light);
+}
+
+.bg-accent-1 {
+  background-color: var(--color-section-accent1);
+}
+
+.bg-accent-2 {
+  background-color: var(--color-section-accent2);
+}
+
+.light-text {
+  color: var(--color-text-light);
+}
+
+/* content-subtitle */
+.content-subtitle {
+  color: var(--color-primary-light) !important;
+  text-transform: capitalize;
+}
+
+/* capsule-text */
+.capsule {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  width: max-content;
+  border-color: 1px solid var(--color-primary-dark);
+}
+
+/* body-wrapper */
+.highlight {
+  color: var(--color-primary) !important;
+}
+
+body {
+  color: var(--color-text-secondary);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--color-text-primary);
+}
+
+.font-primary {
+  font-family: var(--font-primary) !important;
+}
+
+.font-heading {
+  font-family: var(--font-heading) !important;
+}
+
+.theme-dark {
+  background-color: var(--color-section-dark) !important;
+  color: var(--color-text-light) !important;
+}
+
+.theme-dark h1,
+.theme-dark h2,
+.theme-dark h3,
+.theme-dark h4,
+.theme-dark h5,
+.theme-dark h6 {
+  color: white;
+}
+
+.theme-dark .bg-section-light {
+  background-color: var(--color-section-dark) !important;
+}
+
+.theme-dark .bg-accent-1,
+.theme-dark .bg-accent-2 {
+  background-color: var(--color-section-dark-accent) !important;
+}
+
+.theme-rounded-md .button-primary {
+  border-radius: 8px;
+}
+
+.theme-rounded-md .button-secondary {
+  border-radius: 8px;
+}
+
+.theme-rounded-full .button-primary {
+  border-radius: 9999px;
+}
+
+.theme-rounded-full .button-secondary {
+  border-radius: 9999px;
+}
+
+/* hero-text-title */
+.hero-text-title {
+  text-transform: capitalize;
+  text-decoration: none;
+  white-space: normal;
+  font-weight: 600;
+}
+
+/* hero-text-subtitle */
+.hero-text-subtitle {
+  text-transform: capitalize;
+  text-decoration: none;
+  white-space: normal;
+  font-weight: 500;
+}
+
+/* hero-section-content-container */
+.hero-section-content-container {
+  width: 42rem;
+}
+
+/* button-primary */
+.button-primary {
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background-color: var(--color-primary);
+  color: white !important;
+  text-decoration: none;
+  cursor: pointer;
+  width: max-content;
+}
+
+.button-primary:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* button-secondary */
+.button-secondary {
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  box-shadow: inset 0px 0px 0px 1px currentcolor;
+}
+
+.button-secondary:hover {
+  border: 0;
+  box-shadow: inset 0px 0px 0px 1px var(--color-primary) !important;
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.bg .button-secondary {
+  box-shadow: inset 0px 0px 0px 1px white;
+}
+
+.bg-section-dark .button-secondary {
+  box-shadow: inset 0px 0px 0px 1px white;
+}
+
+/* icon */
+.card:hover > .icon-box > svg {
+  color: var(--color-primary) !important;
+}
+
+.icon-box {
+  display: inline-block;
+  aspect-ratio: "1/1";
+  width: auto;
+  height: auto;
+}
+
+.card .icon-box > svg,
+.card .icon-box > i::before {
+  width: 3.5rem !important;
+  height: 3.5rem !important;
+  font-size: 3.5rem !important;
+}
+
+.card-horizontal > .icon-box > svg,
+.card-horizontal > .icon-box > i::before {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  font-size: 3.5rem !important;
+}
+
+/* visuals-full-image */
+.visuals-full-image {
+  background-image: url("http://hompark.themezinho.net/wp-content/uploads/2020/03/gallery-thumb02.jpg");
+}
+
+/* hero-section-bg */
+.bg
+  *:not(.gjs-component-buttons):not(.gjs-component-buttons *):not(.highlight) {
+  z-index: 2;
+  color: white !important;
+}
+
+.hero-section {
+  z-index: 2;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-section-container > .flex {
+  height: 100%;
+}
+
+.primary-gradient-overlay::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    161deg,
+    #26282b 0%,
+    #26282b 49%,
+    var(--color-primary) 100%
+  );
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.full-dark-overlay::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0.7) 50%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.top-gradient-overlay::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(to top, #0000006e 0%, rgb(0, 0, 0) 100%);
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.bottom-gradient-overlay::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(to bottom, #0000006e 0%, rgb(0, 0, 0) 100%);
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.left-gradient-overlay::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.right-gradient-overlay::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    to left,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.right-gradient-overlay::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: rgba(0, 0, 0, 0);
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+/* card */
+.card .card-body {
+  padding-bottom: 2rem;
+  padding-top: 0.5rem;
+}
+
+.card h5 {
+  font-weight: 600;
+}
+
+.card img {
+  height: 260px !important;
+}
+
+/* card-horizontal */
+.card-horizontal .card-body {
+  padding-bottom: 2rem;
+  padding-top: 0rem !important;
+}
+
+.card img {
+  height: 260px !important;
+}

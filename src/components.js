@@ -84,8 +84,9 @@ function showAddComponentModal(targetComponent) {
   function updateModalContent() {
     modal.innerHTML = `
       <div class="bg-white rounded-lg max-w-2xl w-full mx-4 relative">
-        ${isLoading
-        ? `
+        ${
+          isLoading
+            ? `
           <div class="absolute inset-0 bg-white bg-opacity-75 z-10 flex items-center justify-center rounded-lg">
             <div class="flex flex-col items-center space-y-3">
               <div class="animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-blue-500"></div>
@@ -93,15 +94,16 @@ function showAddComponentModal(targetComponent) {
             </div>
           </div>
         `
-        : ""
-      }
+            : ""
+        }
         <div class="p-6">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-semibold">
               ${currentStep === 1 ? "Choose Block Type" : "Block Details"}
             </h2>
-            <button class="close-modal text-gray-400 hover:text-gray-600" ${isLoading ? "disabled" : ""
-      }>
+            <button class="close-modal text-gray-400 hover:text-gray-600" ${
+              isLoading ? "disabled" : ""
+            }>
               <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -109,12 +111,13 @@ function showAddComponentModal(targetComponent) {
           </div>
           
           <div class="modal-body mb-6">
-            ${currentStep === 1
-        ? `
+            ${
+              currentStep === 1
+                ? `
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 ${registeredBlocks
-          .map(
-            (block) => `
+                  .map(
+                    (block) => `
                   <button 
                     class="component-type-btn flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                     data-type="${block.id}"
@@ -124,16 +127,17 @@ function showAddComponentModal(targetComponent) {
                     <span class="text-left font-medium">${block.name}</span>
                   </button>
                 `,
-          )
-          .join("")}
+                  )
+                  .join("")}
               </div>
             `
-        : `
+                : `
               <div class="space-y-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Selected Block: ${registeredBlocks.find((t) => t.id === selectedType)?.name
-        }
+                    Selected Block: ${
+                      registeredBlocks.find((t) => t.id === selectedType)?.name
+                    }
                   </label>
                 </div>
                 <div>
@@ -150,17 +154,19 @@ function showAddComponentModal(targetComponent) {
                 </div>
               </div>
             `
-      }
+            }
           </div>
 
           <div class="flex justify-between">
-            <button class="back-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium ${currentStep === 1 ? "invisible" : ""
-      }" ${isLoading ? "disabled" : ""}>
+            <button class="back-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium ${
+              currentStep === 1 ? "invisible" : ""
+            }" ${isLoading ? "disabled" : ""}>
               Back
             </button>
             <div class="space-x-3">
-              <button class="cancel-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium" ${isLoading ? "disabled" : ""
-      }>
+              <button class="cancel-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium" ${
+                isLoading ? "disabled" : ""
+              }>
                 Cancel
               </button>
               <button 
@@ -252,17 +258,6 @@ function showAddComponentModal(targetComponent) {
 }
 
 export default (editor, options) => {
-
-
-  function getWebsiteIdFromUrl() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const websiteId = urlParams.get("website_id");
-
-    // Validate it's a proper number
-    return websiteId && !isNaN(websiteId) ? parseInt(websiteId, 10) : null;
-  }
-
-  // Add this to your editor initialization
   editor.Commands.add("regenerate-section", {
     run: function (editor, sender, options = {}) {
       const selectedComponent = editor.getSelected();
@@ -442,18 +437,18 @@ export default (editor, options) => {
         content: `
           <div id="navbar-links-container">
             ${linksList
-            .components()
-            .map(
-              (link, index) => `
+              .components()
+              .map(
+                (link, index) => `
               <div class="mb-2">
                 <input type="text" class="navbar-link-input border rounded px-2 py-1" data-index="${index}" value="${link.get(
-                "content",
-              )}">
+                  "content",
+                )}">
                 <button class="remove-link bg-red-500 text-white px-2 py-1 rounded" data-index="${index}">Remove</button>
               </div>
             `,
-            )
-            .join("")}
+              )
+              .join("")}
           </div>
           <button id="add-navbar-link" class="bg-blue-500 text-white px-3 py-2 rounded mt-4">Add Link</button>
         `,
@@ -564,36 +559,37 @@ export default (editor, options) => {
     },
   });
 
-  editor.DomComponents.addType('grid-layout', {
+  editor.DomComponents.addType("grid-layout", {
     model: {
       defaults: {
-        tagName: 'div',
+        tagName: "div",
         showEditButton: true,
-        classes: ['grid', 'gap-2', 'items-start', 'justify-start'],
+        classes: ["grid", "gap-2", "items-start", "justify-start"],
         attributes: {
-          mobileColumns: 'grid-cols-1',
-          desktopColumns: 'grid-cols-2',
-          gap: 'gap-4',
-          alignItems: 'items-start',
-          alignContent: 'content-start',
-          justifyItems: 'justify-start',
-          stretch: 'false',
+          mobileColumns: "grid-cols-1",
+          desktopColumns: "grid-cols-2",
+          gap: "gap-4",
+          alignItems: "items-start",
+          alignContent: "content-start",
+          justifyItems: "justify-start",
+          stretch: "false",
         },
       },
 
       init() {
         this.updateClasses();
-        this.listenTo(this, 'change:attributes', this.updateClasses);
+        this.listenTo(this, "change:attributes", this.updateClasses);
       },
       updateClasses() {
         const attrs = this.getAttributes();
-        const cls = this.getClasses().filter(c =>
-          !c.startsWith('grid-cols-') &&
-          !c.startsWith('gap-') &&
-          !c.startsWith('items-') &&
-          !c.startsWith('content-') &&
-          !c.startsWith('justify-') &&
-          !c.startsWith('md:grid-cols-')
+        const cls = this.getClasses().filter(
+          (c) =>
+            !c.startsWith("grid-cols-") &&
+            !c.startsWith("gap-") &&
+            !c.startsWith("items-") &&
+            !c.startsWith("content-") &&
+            !c.startsWith("justify-") &&
+            !c.startsWith("md:grid-cols-"),
         );
 
         if (attrs.mobileColumns) cls.push(attrs.mobileColumns);
@@ -606,30 +602,33 @@ export default (editor, options) => {
 
         this.setClass(cls);
 
-        this.components().forEach(comp => {
-          const childCls = comp.getClasses().filter(c => c !== 'w-full' && c !== 'h-full');
-          if (attrs.stretch === 'true') {
-            comp.setClass([...childCls, 'w-full', 'h-full']);
+        this.components().forEach((comp) => {
+          const childCls = comp
+            .getClasses()
+            .filter((c) => c !== "w-full" && c !== "h-full");
+          if (attrs.stretch === "true") {
+            comp.setClass([...childCls, "w-full", "h-full"]);
           } else {
             comp.setClass(childCls);
           }
         });
       },
 
-      EditComponent(editorMode = 'desktop') {
+      EditComponent(editorMode = "desktop") {
         const view = this.view;
         const el = view.el;
         const oldAttrs = { ...this.getAttributes() };
-        const menu = document.createElement('div');
+        const menu = document.createElement("div");
 
         // Remove old menu
-        const existing = document.querySelector('.grid-editor-menu');
+        const existing = document.querySelector(".grid-editor-menu");
         if (existing) existing.remove();
 
-        menu.className = 'absolute z-[99999] p-4 bg-white left-[5rem] bottom-32 my-auto shadow-2xl rounded border text-sm w-72 grid-editor-menu';
-        menu.style.position = 'absolute';
-        menu.style.left = '3.5rem';
-        menu.style.bottom = '4rem';
+        menu.className =
+          "absolute z-[99999] p-4 bg-white left-[5rem] bottom-32 my-auto shadow-2xl rounded border text-sm w-72 grid-editor-menu";
+        menu.style.position = "absolute";
+        menu.style.left = "3.5rem";
+        menu.style.bottom = "4rem";
         document.body.appendChild(menu);
 
         menu.innerHTML = `
@@ -686,124 +685,140 @@ export default (editor, options) => {
         // Get attributes
         const attrs = this.getAttributes();
         const safeInt = (val, fallback) => {
-          const parsed = parseInt(val?.split('-').pop());
+          const parsed = parseInt(val?.split("-").pop());
           return isNaN(parsed) ? fallback : parsed;
         };
 
         // Set current values using proper attribute keys
-        menu.querySelector('#columnsDesktop').value = safeInt(attrs.desktopColumns, 2);
-        menu.querySelector('#columnsMobile').value = safeInt(attrs.mobileColumns, 1);
-        menu.querySelector('#gap').value = attrs.gap || 'gap-4';
-        menu.querySelector('#alignItems').value = attrs.alignItems || 'items-start';
-        menu.querySelector('#alignContent').value = attrs.alignContent || '';
-        menu.querySelector('#justifyItems').value = attrs.justifyItems || 'justify-start';
-        menu.querySelector('#stretch').checked = attrs.stretch === 'true';
-
-
-
+        menu.querySelector("#columnsDesktop").value = safeInt(
+          attrs.desktopColumns,
+          2,
+        );
+        menu.querySelector("#columnsMobile").value = safeInt(
+          attrs.mobileColumns,
+          1,
+        );
+        menu.querySelector("#gap").value = attrs.gap || "gap-4";
+        menu.querySelector("#alignItems").value =
+          attrs.alignItems || "items-start";
+        menu.querySelector("#alignContent").value = attrs.alignContent || "";
+        menu.querySelector("#justifyItems").value =
+          attrs.justifyItems || "justify-start";
+        menu.querySelector("#stretch").checked = attrs.stretch === "true";
 
         // Function to apply updates live
         const updateAttrs = () => {
           const newAttrs = {
-            desktopColumns: `grid-cols-${menu.querySelector('#columnsDesktop').value || 3}`,
-            mobileColumns: `grid-cols-${menu.querySelector('#columnsMobile').value || 1}`,
-            gap: menu.querySelector('#gap').value,
-            alignItems: menu.querySelector('#alignItems').value,
-            alignContent: menu.querySelector('#alignContent').value,
-            justifyItems: menu.querySelector('#justifyItems').value,
-            stretch: menu.querySelector('#stretch').checked ? 'true' : 'false',
+            desktopColumns: `grid-cols-${
+              menu.querySelector("#columnsDesktop").value || 3
+            }`,
+            mobileColumns: `grid-cols-${
+              menu.querySelector("#columnsMobile").value || 1
+            }`,
+            gap: menu.querySelector("#gap").value,
+            alignItems: menu.querySelector("#alignItems").value,
+            alignContent: menu.querySelector("#alignContent").value,
+            justifyItems: menu.querySelector("#justifyItems").value,
+            stretch: menu.querySelector("#stretch").checked ? "true" : "false",
           };
           this.addAttributes(newAttrs);
         };
 
         // Live update on change
         [
-          '#columnsDesktop',
-          '#columnsMobile',
-          '#gap',
-          '#alignItems',
-          '#alignContent',
-          '#justifyItems',
-          '#stretch',
-        ].forEach(id => {
+          "#columnsDesktop",
+          "#columnsMobile",
+          "#gap",
+          "#alignItems",
+          "#alignContent",
+          "#justifyItems",
+          "#stretch",
+        ].forEach((id) => {
           const el = menu.querySelector(id);
-          if (el.type === 'checkbox') {
-            el.addEventListener('change', updateAttrs);
+          if (el.type === "checkbox") {
+            el.addEventListener("change", updateAttrs);
           } else {
-            el.addEventListener('input', updateAttrs);
+            el.addEventListener("input", updateAttrs);
           }
         });
 
-
         // Apply button
-        menu.querySelector('#applyGridSettings').onclick = () => {
+        menu.querySelector("#applyGridSettings").onclick = () => {
           if (menu.parentNode) menu.remove();
-          document.removeEventListener('mousedown', onOutsideClick);
+          document.removeEventListener("mousedown", onOutsideClick);
         };
 
         // Cancel button - revert to original attributes
-        menu.querySelector('#cancelGridSettings').onclick = () => {
+        menu.querySelector("#cancelGridSettings").onclick = () => {
           this.addAttributes(oldAttrs);
           if (menu.parentNode) menu.remove();
-          document.removeEventListener('mousedown', onOutsideClick);
+          document.removeEventListener("mousedown", onOutsideClick);
         };
 
         // Close on outside click
-        const onOutsideClick = e => {
+        const onOutsideClick = (e) => {
           if (!menu.contains(e.target)) {
             this.addAttributes(oldAttrs);
             if (menu.parentNode) menu.remove();
-            document.removeEventListener('mousedown', onOutsideClick);
+            document.removeEventListener("mousedown", onOutsideClick);
           }
         };
-        setTimeout(() => document.addEventListener('mousedown', onOutsideClick), 0);
-      }
-
-
+        setTimeout(
+          () => document.addEventListener("mousedown", onOutsideClick),
+          0,
+        );
+      },
     },
 
     view: {
       onEditButtonClick() {
-        this.model.EditComponent('desktop');
-      }
-    }
+        this.model.EditComponent("desktop");
+      },
+    },
   });
 
-
-  editor.DomComponents.addType('flex', {
+  editor.DomComponents.addType("flex", {
     model: {
       defaults: {
         draggable: "false",
         droppable: "false",
-        tagName: 'div',
+        tagName: "div",
         showEditButton: true,
-        classes: ['flex', 'flex-col', 'flex-wrap', 'gap-2', 'items-start', 'justify-start', 'item-container'],
+        classes: [
+          "flex",
+          "flex-col",
+          "flex-wrap",
+          "gap-2",
+          "items-start",
+          "justify-start",
+          "item-container",
+        ],
         attributes: {
-          flexDirection: 'flex-col',
-          flexDirectionDesktop: 'md:flex-col',
-          wrap: 'flex-wrap',
-          gap: 'gap-4',
-          alignItems: 'items-start',
-          alignContent: 'content-start',
-          justifyContent: 'justify-start',
+          flexDirection: "flex-col",
+          flexDirectionDesktop: "md:flex-col",
+          wrap: "flex-wrap",
+          gap: "gap-4",
+          alignItems: "items-start",
+          alignContent: "content-start",
+          justifyContent: "justify-start",
         },
-
       },
 
       init() {
         this.updateClasses();
-        this.listenTo(this, 'change:attributes', this.updateClasses);
+        this.listenTo(this, "change:attributes", this.updateClasses);
       },
 
       updateClasses() {
         const attrs = this.getAttributes();
-        const cls = this.getClasses().filter(c =>
-          !c.startsWith('flex-') &&
-          !c.startsWith('gap-') &&
-          !c.startsWith('items-') &&
-          !c.startsWith('content-') &&
-          !c.startsWith('justify-') &&
-          !c.startsWith('md:flex-')
+        const cls = this.getClasses().filter(
+          (c) =>
+            !c.startsWith("flex-") &&
+            !c.startsWith("gap-") &&
+            !c.startsWith("items-") &&
+            !c.startsWith("content-") &&
+            !c.startsWith("justify-") &&
+            !c.startsWith("md:flex-"),
         );
 
         if (attrs.flexDirection) cls.push(attrs.flexDirection);
@@ -817,19 +832,20 @@ export default (editor, options) => {
         this.setClass(cls);
       },
 
-      EditComponent(editorMode = 'desktop') {
+      EditComponent(editorMode = "desktop") {
         const view = this.view;
         const el = view.el;
         const oldAttrs = { ...this.getAttributes() };
-        const menu = document.createElement('div');
+        const menu = document.createElement("div");
 
-        const existing = document.querySelector('.flex-editor-menu');
+        const existing = document.querySelector(".flex-editor-menu");
         if (existing) existing.remove();
 
-        menu.className = 'absolute z-[99999] p-4 bg-white left-[5rem] bottom-32 my-auto shadow-2xl rounded border text-sm w-72 flex-editor-menu';
-        menu.style.position = 'absolute';
-        menu.style.left = '3.5rem';
-        menu.style.bottom = '4rem';
+        menu.className =
+          "absolute z-[99999] p-4 bg-white left-[5rem] bottom-32 my-auto shadow-2xl rounded border text-sm w-72 flex-editor-menu";
+        menu.style.position = "absolute";
+        menu.style.left = "3.5rem";
+        menu.style.bottom = "4rem";
         document.body.appendChild(menu);
 
         menu.innerHTML = `
@@ -896,65 +912,73 @@ export default (editor, options) => {
 
         const attrs = this.getAttributes();
 
-        menu.querySelector('#flexDirection').value = attrs.flexDirection || 'flex-col';
-        menu.querySelector('#flexDirectionDesktop').value = attrs.flexDirectionDesktop || 'md:flex-row';
-        menu.querySelector('#wrap').value = attrs.wrap || 'flex-wrap';
-        menu.querySelector('#gap').value = attrs.gap || 'gap-4';
-        menu.querySelector('#alignItems').value = attrs.alignItems || 'items-start';
-        menu.querySelector('#alignContent').value = attrs.alignContent || '';
-        menu.querySelector('#justifyContent').value = attrs.justifyContent || 'justify-start';
+        menu.querySelector("#flexDirection").value =
+          attrs.flexDirection || "flex-col";
+        menu.querySelector("#flexDirectionDesktop").value =
+          attrs.flexDirectionDesktop || "md:flex-row";
+        menu.querySelector("#wrap").value = attrs.wrap || "flex-wrap";
+        menu.querySelector("#gap").value = attrs.gap || "gap-4";
+        menu.querySelector("#alignItems").value =
+          attrs.alignItems || "items-start";
+        menu.querySelector("#alignContent").value = attrs.alignContent || "";
+        menu.querySelector("#justifyContent").value =
+          attrs.justifyContent || "justify-start";
 
         const updateAttrs = () => {
           const newAttrs = {
-            flexDirection: menu.querySelector('#flexDirection').value,
-            flexDirectionDesktop: menu.querySelector('#flexDirectionDesktop').value,
-            wrap: menu.querySelector('#wrap').value,
-            gap: menu.querySelector('#gap').value,
-            alignItems: menu.querySelector('#alignItems').value,
-            alignContent: menu.querySelector('#alignContent').value,
-            justifyContent: menu.querySelector('#justifyContent').value,
+            flexDirection: menu.querySelector("#flexDirection").value,
+            flexDirectionDesktop: menu.querySelector("#flexDirectionDesktop")
+              .value,
+            wrap: menu.querySelector("#wrap").value,
+            gap: menu.querySelector("#gap").value,
+            alignItems: menu.querySelector("#alignItems").value,
+            alignContent: menu.querySelector("#alignContent").value,
+            justifyContent: menu.querySelector("#justifyContent").value,
           };
           this.addAttributes(newAttrs);
         };
 
         [
-          '#flexDirection',
-          '#flexDirectionDesktop',
-          '#wrap',
-          '#gap',
-          '#alignItems',
-          '#alignContent',
-          '#justifyContent',
-        ].forEach(id => {
+          "#flexDirection",
+          "#flexDirectionDesktop",
+          "#wrap",
+          "#gap",
+          "#alignItems",
+          "#alignContent",
+          "#justifyContent",
+        ].forEach((id) => {
           const el = menu.querySelector(id);
-          el.addEventListener('input', updateAttrs);
+          el.addEventListener("input", updateAttrs);
         });
 
-        menu.querySelector('#applyFlexSettings').onclick = () => {
+        menu.querySelector("#applyFlexSettings").onclick = () => {
           if (menu.parentNode) menu.remove();
-          document.removeEventListener('mousedown', onOutsideClick);
+          document.removeEventListener("mousedown", onOutsideClick);
         };
 
-        menu.querySelector('#cancelFlexSettings').onclick = () => {
+        menu.querySelector("#cancelFlexSettings").onclick = () => {
           this.addAttributes(oldAttrs);
           if (menu.parentNode) menu.remove();
-          document.removeEventListener('mousedown', onOutsideClick);
+          document.removeEventListener("mousedown", onOutsideClick);
         };
 
-        const onOutsideClick = e => {
+        const onOutsideClick = (e) => {
           if (!menu.contains(e.target)) {
             this.addAttributes(oldAttrs);
             if (menu.parentNode) menu.remove();
-            document.removeEventListener('mousedown', onOutsideClick);
+            document.removeEventListener("mousedown", onOutsideClick);
           }
         };
-        setTimeout(() => document.addEventListener('mousedown', onOutsideClick), 0);
-      }
+        setTimeout(
+          () => document.addEventListener("mousedown", onOutsideClick),
+          0,
+        );
+      },
     },
 
     view: {
       onEditButtonClick() {
-        this.model.EditComponent('desktop');
+        this.model.EditComponent("desktop");
       },
 
       onRender() {
@@ -1048,11 +1072,8 @@ export default (editor, options) => {
         editor.on("component:select", this.handleSelect.bind(this));
         editor.on("component:deselect", this.handleDeselect.bind(this));
       },
-    }
+    },
   });
-
-
-
 
   editor.DomComponents.addType("image-section", {
     model: {
@@ -1062,7 +1083,8 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "grid grid-cols-1 md:grid-cols-2 py-24 image-section relative md:min-h-[400px] section",
+          class:
+            "grid grid-cols-1 md:grid-cols-2 py-24 image-section relative md:min-h-[400px] section",
           sectiontype: "normal",
           direction: "left",
         },
@@ -1091,14 +1113,15 @@ export default (editor, options) => {
           },
         ],
         styles: `
-        .image-section>.item-container{
-          padding: 2.5rem;
-          padding-top: 4rem;
-          padding-bottom: 4rem;
-        }
-        .image-section>img{
-          height: 100%;
-        }
+.image-section > .item-container {
+  padding: 2.5rem;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.image-section > img {
+  height: 100%;
+}
         `,
       },
       init() {
@@ -1181,16 +1204,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -1459,7 +1482,6 @@ export default (editor, options) => {
           { type: "dark", color: "bg-section-dark" },
         ];
 
-
         colors.forEach((color) => {
           // Skip "dark" swatch if dark mode is not enabled
           if (color.type !== "dark" && isDarkMode) return;
@@ -1494,7 +1516,8 @@ export default (editor, options) => {
         movement: true,
         droppable: false,
         attributes: {
-          class: "flex flex-col py-24 bg-slate-600 light-text px-8 relative section",
+          class:
+            "flex flex-col py-24 bg-slate-600 light-text px-8 relative section",
           sectiontype: "normal",
         },
         traits: [
@@ -1512,36 +1535,35 @@ export default (editor, options) => {
           },
         ],
         styles: `
-       
-          .light-text h1,
-          .light-text h2,
-          .light-text h3,
-          .light-text h4,
-          .light-text h5,
-          .light-text h6 {
-            color: white;
-        }
+        .light-text h1,
+.light-text h2,
+.light-text h3,
+.light-text h4,
+.light-text h5,
+.light-text h6 {
+  color: white;
+}
 
-        .bg-section-dark{
-          background-color: var(--color-section-dark)
-        }
+.bg-section-dark {
+  background-color: var(--color-section-dark);
+}
 
-        .bg-section-light {
-          background-color: var(--color-section-light);
-      }
-     
-      .bg-accent-1 {
-          background-color: var(--color-section-accent1);
-      }
+.bg-section-light {
+  background-color: var(--color-section-light);
+}
 
-      .bg-accent-2 {
-          background-color: var(--color-section-accent2);
-      }
+.bg-accent-1 {
+  background-color: var(--color-section-accent1);
+}
 
-        .light-text{
-          color:var(--color-text-light);
-        }
-          `,
+.bg-accent-2 {
+  background-color: var(--color-section-accent2);
+}
+
+.light-text {
+  color: var(--color-text-light);
+}
+  `,
         content: "Hero Subtitle",
       },
       init() {
@@ -1750,7 +1772,8 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "min-h-screen flex items-center justify-center bg-cover bg-center p-4 pt-20 hero-section",
+          class:
+            "min-h-screen flex items-center justify-center bg-cover bg-center p-4 pt-20 hero-section",
           sectiontype: "normal",
         },
         traits: [
@@ -1785,7 +1808,17 @@ export default (editor, options) => {
       updateSectionType() {
         const sectionType = this.get("attributes")["sectiontype"] || "normal"; // Get the current attribute for section type
 
-        let classes = ["h-screen", "flex", "items-center", "justify-center", "bg-cover", "bg-center", "p-4", "pt-20", "hero-section"];
+        let classes = [
+          "h-screen",
+          "flex",
+          "items-center",
+          "justify-center",
+          "bg-cover",
+          "bg-center",
+          "p-4",
+          "pt-20",
+          "hero-section",
+        ];
 
         // Modify class list based on section type
         switch (sectionType) {
@@ -2013,18 +2046,16 @@ export default (editor, options) => {
           class: "text-lg lg:text-xl mb-1 font-primary content-subtitle",
         },
         styles: `
-          .content-subtitle{
-            color: var(--color-primary-light) !important;
-            text-transform: capitalize;
-          }
+        .content-subtitle {
+          color: var(--color-primary-light) !important;
+          text-transform: capitalize;
+        }
           `,
         content: "Hero Subtitle",
       },
     },
   });
 
-
-  
   editor.DomComponents.addType("capsule-text", {
     extend: "text",
     model: {
@@ -2038,13 +2069,13 @@ export default (editor, options) => {
             "capsule font-primary relative transition flex flex-row justify-center items-center px-5 py-1 my-2",
         },
         styles: `
-        .capsule{
-          font-size: 14px;
-          font-weight: 700;
-          text-transform: uppercase;
-          width: max-content;
-          border-color: 1px solid var(--color-primary-dark);
-        }`,
+        .capsule {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  width: max-content;
+  border-color: 1px solid var(--color-primary-dark);
+}`,
         content: "Hero Subtitle",
       },
     },
@@ -2075,57 +2106,73 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "overflow-x-hidden scroll-smooth antialiased min-h-screen w-full",
+          class:
+            "overflow-x-hidden scroll-smooth antialiased min-h-screen w-full",
         },
         styles: `
-          .highlight{
-            color: var(--color-primary) !important;
-          }
-          body {
-            color: var(--color-text-secondary);
-          }
-          h1, h2, h3, h4, h5, h6 {
-            color: var(--color-text-primary);
-          
-          }
-          .font-primary{
-           font-family: var(--font-primary) !important;
-          }
+        .highlight {
+  color: var(--color-primary) !important;
+}
 
-          .font-heading{
-           font-family: var(--font-heading) !important;
-          }
-          
-          .theme-dark {
-            background-color: var(--color-section-dark) !important;
-            color: var(--color-text-light) !important;
-          }
-          .theme-dark  h1, .theme-dark  h2, .theme-dark  h3, .theme-dark  h4, .theme-dark  h5, .theme-dark  h6 {
-            color: white;
-          }
-          .theme-dark .bg-section-light{
-            background-color: var(--color-section-dark) !important;
-          }
-          .theme-dark .bg-accent-1, .theme-dark .bg-accent-2{
-            background-color: var(--color-section-dark-accent) !important;
-          }
+body {
+  color: var(--color-text-secondary);
+}
 
-          .theme-rounded-md .button-primary{
-            border-radius: 8px;
-          }
-          
-          .theme-rounded-md .button-secondary{
-            border-radius: 8px;
-          }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--color-text-primary);
+}
 
-          .theme-rounded-full .button-primary{
-            border-radius: 9999px;
-          }
-          
-          .theme-rounded-full .button-secondary{
-            border-radius: 9999px;
-          }
-          
+.font-primary {
+  font-family: var(--font-primary) !important;
+}
+
+.font-heading {
+  font-family: var(--font-heading) !important;
+}
+
+.theme-dark {
+  background-color: var(--color-section-dark) !important;
+  color: var(--color-text-light) !important;
+}
+
+.theme-dark h1,
+.theme-dark h2,
+.theme-dark h3,
+.theme-dark h4,
+.theme-dark h5,
+.theme-dark h6 {
+  color: white;
+}
+
+.theme-dark .bg-section-light {
+  background-color: var(--color-section-dark) !important;
+}
+
+.theme-dark .bg-accent-1,
+.theme-dark .bg-accent-2 {
+  background-color: var(--color-section-dark-accent) !important;
+}
+
+.theme-rounded-md .button-primary {
+  border-radius: 8px;
+}
+
+.theme-rounded-md .button-secondary {
+  border-radius: 8px;
+}
+
+.theme-rounded-full .button-primary {
+  border-radius: 9999px;
+}
+
+.theme-rounded-full .button-secondary {
+  border-radius: 9999px;
+}         
         `,
         content: "Hero Subtitle",
       },
@@ -2149,7 +2196,6 @@ export default (editor, options) => {
     },
   });
 
-
   editor.DomComponents.addType("hero-text-title", {
     extend: "text",
     model: {
@@ -2163,11 +2209,12 @@ export default (editor, options) => {
             "hero-text-title md:max-w-2xl text-4xl lg:text-6xl pb-4 font-heading",
         },
         styles: `
-        .hero-text-title{
-        text-transform: capitalize;
-        text-decoration: none;
-        white-space: normal;
-        font-weight: 600;}
+    .hero-text-title {
+  text-transform: capitalize;
+  text-decoration: none;
+  white-space: normal;
+  font-weight: 600;
+}
         `,
         content: "Hero Title",
       },
@@ -2186,11 +2233,12 @@ export default (editor, options) => {
             "hero-text-subtitle font-primary md:max-w-2xl text-md lg:text-lg leading-relaxed pb-4",
         },
         styles: `
-        .hero-text-subtitle{
-        text-transform: capitalize;
-        text-decoration: none;
-        white-space: normal;
-        font-weight: 500;}
+.hero-text-subtitle {
+  text-transform: capitalize;
+  text-decoration: none;
+  white-space: normal;
+  font-weight: 500;
+}
         `,
         content: "Hero Subtitle",
       },
@@ -2204,7 +2252,8 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "lg:max-w-6xl container hero-section-container px-4 h-full pb-8",
+          class:
+            "lg:max-w-6xl container hero-section-container px-4 h-full pb-8",
         },
       },
     },
@@ -2231,8 +2280,9 @@ export default (editor, options) => {
           class: "md:max-w-3xl min-w-2xl hero-section-content-container",
         },
         styles: `
-        .hero-section-content-container{
-          width: 42rem
+.hero-section-content-container {
+  width: 42rem;
+}
         `,
       },
     },
@@ -2336,7 +2386,6 @@ export default (editor, options) => {
   //       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 my-1">
   //       <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
   //     </svg>
-
 
   //     <div class="ml-3 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out block">
   //     Add Section
@@ -2452,20 +2501,21 @@ export default (editor, options) => {
             "button-primary font-primary relative transition flex flex-row justify-center items-center px-8 py-4 my-2",
         },
         styles: `
-        .button-primary{
-          font-size: 12px;
-          font-weight: 400;
-          text-transform: uppercase;
-          letter-spacing: 2px;
-          background-color:var(--color-primary);
-          color: white !important;
-          text-decoration: none;
-          cursor: pointer;
-          width: max-content;
-        }
-        .button-primary:hover{
-          background-color:var(--color-primary-dark);
-        }
+.button-primary {
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background-color: var(--color-primary);
+  color: white !important;
+  text-decoration: none;
+  cursor: pointer;
+  width: max-content;
+}
+
+.button-primary:hover {
+  background-color: var(--color-primary-dark);
+}
         `,
         traits: [
           {
@@ -2567,16 +2617,16 @@ export default (editor, options) => {
                   <div>
                     <label class="block mb-2">Component Type</label>
                     <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                      "type",
+                    )}" class="w-full border p-2 rounded" disabled>
                   </div>
                   <div>
                     <label class="block mb-2">Attributes</label>
                     <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                      component.getAttributes(),
+                      null,
+                      2,
+                    )}</textarea>
                   </div>
                 </div>
               `;
@@ -2730,26 +2780,29 @@ export default (editor, options) => {
             "button-secondary font-primary transition flex flex-row justify-center items-center px-8 py-4 my-2",
         },
         styles: `
-        .button-secondary{
-          font-size: 12px;
-          font-weight: 400;
-          text-transform: uppercase;
-          letter-spacing: 2px;
-          box-shadow:inset 0px 0px 0px 1px currentcolor;
-        }
-        .button-secondary:hover{
-          border: 0;
-          box-shadow:inset 0px 0px 0px 1px var(--color-primary) !important;
-          background-color:var(--color-primary);
-          color: white;
-        }
-        .bg .button-secondary{
-          box-shadow:inset 0px 0px 0px 1px white;
-        }
-           .bg-section-dark .button-secondary{
-          box-shadow:inset 0px 0px 0px 1px white;
-        }
-        `,
+.button-secondary {
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  box-shadow: inset 0px 0px 0px 1px currentcolor;
+}
+
+.button-secondary:hover {
+  border: 0;
+  box-shadow: inset 0px 0px 0px 1px var(--color-primary) !important;
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.bg .button-secondary {
+  box-shadow: inset 0px 0px 0px 1px white;
+}
+
+.bg-section-dark .button-secondary {
+  box-shadow: inset 0px 0px 0px 1px white;
+}
+         `,
       },
     },
     view: {
@@ -2835,16 +2888,16 @@ export default (editor, options) => {
                   <div>
                     <label class="block mb-2">Component Type</label>
                     <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                      "type",
+                    )}" class="w-full border p-2 rounded" disabled>
                   </div>
                   <div>
                     <label class="block mb-2">Attributes</label>
                     <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                      component.getAttributes(),
+                      null,
+                      2,
+                    )}</textarea>
                   </div>
                 </div>
               `;
@@ -2996,28 +3049,30 @@ export default (editor, options) => {
           class: "relative transition isolate icon-box",
         },
         styles: `
+.card:hover > .icon-box > svg {
+  color: var(--color-primary) !important;
+}
 
-          .card:hover>.icon-box>svg{
-          color:var(--color-primary) !important;
-          }
+.icon-box {
+  display: inline-block;
+  aspect-ratio: "1/1";
+  width: auto;
+  height: auto;
+}
 
-          .icon-box{
-          display: inline-block;
-          aspect-ratio: '1/1';
-          width: auto;
-          height: auto;
-          }
+.card .icon-box > svg,
+.card .icon-box > i::before {
+  width: 3.5rem !important;
+  height: 3.5rem !important;
+  font-size: 3.5rem !important;
+}
 
-          .card .icon-box>svg, .card .icon-box>i::before {
-          width: 3.5rem !important;
-          height: 3.5rem !important;
-          font-size: 3.5rem !important;
-        }
-           .card-horizontal>.icon-box>svg, .card-horizontal>.icon-box>i::before {
-          width: 2.5rem !important;
-          height: 2.5rem !important;
-          font-size: 3.5rem !important;
-        }
+.card-horizontal > .icon-box > svg,
+.card-horizontal > .icon-box > i::before {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  font-size: 3.5rem !important;
+}
         `,
       },
     },
@@ -3033,16 +3088,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -3154,7 +3209,7 @@ export default (editor, options) => {
         }
       },
 
-      handleDeselect() { },
+      handleDeselect() {},
 
       updateEditButton() {
         const editor = this.em.get("Editor");
@@ -3249,7 +3304,11 @@ export default (editor, options) => {
           class:
             "w-full h-[300px] aspect-w-16 aspect-h-9 bg-cover bg-center visuals-full-image",
         },
-        styles: `.visuals-full-image{background-image: url('http://hompark.themezinho.net/wp-content/uploads/2020/03/gallery-thumb02.jpg');}`,
+        styles: `
+.visuals-full-image {
+  background-image: url("http://hompark.themezinho.net/wp-content/uploads/2020/03/gallery-thumb02.jpg");
+}
+        `,
       },
     },
   });
@@ -3287,7 +3346,7 @@ export default (editor, options) => {
 
       updateClasses() {
         const attrs = this.getAttributes();
-        const cls = this.getClasses().filter(c => !c.startsWith("text-"));
+        const cls = this.getClasses().filter((c) => !c.startsWith("text-"));
 
         if (attrs.center === "true") {
           cls.push("text-center");
@@ -3299,7 +3358,8 @@ export default (editor, options) => {
       },
 
       toggleCenter() {
-        const center = this.getAttributes().center === "true" ? "false" : "true";
+        const center =
+          this.getAttributes().center === "true" ? "false" : "true";
         this.addAttributes({ center });
       },
     },
@@ -3307,7 +3367,8 @@ export default (editor, options) => {
     view: {
       onRender() {
         const btn = document.createElement("div");
-        btn.className = "gjs-title-center-btn absolute top-0 right-0 z-[9999] bg-white text-xs px-2 py-1 border rounded shadow";
+        btn.className =
+          "gjs-title-center-btn absolute top-0 right-0 z-[9999] bg-white text-xs px-2 py-1 border rounded shadow";
         btn.innerText = "↔ Align";
         btn.style.cursor = "pointer";
         btn.style.display = "none";
@@ -3330,22 +3391,22 @@ export default (editor, options) => {
     },
   });
 
-  editor.Components.addType('bg-box', {
+  editor.Components.addType("bg-box", {
     model: {
       defaults: {
         draggable: false,
         droppable: false,
-        tagName: 'div',
+        tagName: "div",
         attributes: {
-          class: 'w-full h-full bg-center bg-cover relative flex items-center justify-center bg-box bg',
+          class:
+            "w-full h-full bg-center bg-cover relative flex items-center justify-center bg-box bg",
           "bg-image": "https://example.com/default-image.jpg", // Initial background image URL
           "bg-overlay": "primary-gradient",
         },
         components: [],
-        styles: `
-         
-        `,
-        _description: "A full-width, full-height background box with a cover image and flex layout to center its content both vertically and horizontally.",
+        styles: ``,
+        _description:
+          "A full-width, full-height background box with a cover image and flex layout to center its content both vertically and horizontally.",
         traits: [
           {
             type: "text",
@@ -3358,12 +3419,12 @@ export default (editor, options) => {
             label: "Background Overlay",
             name: "bg-overlay",
             options: [
-              { id: 'primary-gradient', name: 'Primary Gradient Overlay' },
-              { id: 'bottom-gradient', name: 'Black Gradient from Bottom' },
-              { id: 'top-gradient', name: 'Black Gradient from Top' },
-              { id: 'left-gradient', name: 'Black Gradient from Left' },
-              { id: 'right-gradient', name: 'Black Gradient from Right' },
-              { id: 'full-dark', name: 'Full Dark Overlay' },
+              { id: "primary-gradient", name: "Primary Gradient Overlay" },
+              { id: "bottom-gradient", name: "Black Gradient from Bottom" },
+              { id: "top-gradient", name: "Black Gradient from Top" },
+              { id: "left-gradient", name: "Black Gradient from Left" },
+              { id: "right-gradient", name: "Black Gradient from Right" },
+              { id: "full-dark", name: "Full Dark Overlay" },
             ],
             changeProp: 1,
           },
@@ -3400,10 +3461,10 @@ export default (editor, options) => {
         this.set({ style });
       },
 
-
       // This method updates DOM classes when the view is available
       updateBackgroundOverlay() {
-        const overlay = this.get("attributes")["bg-overlay"] || "primary-gradient";
+        const overlay =
+          this.get("attributes")["bg-overlay"] || "primary-gradient";
         if (overlay != "primary-gradient") {
           const url = this.get("attributes")["bg-image"] || "";
           const style = { ...this.get("style") };
@@ -3420,17 +3481,17 @@ export default (editor, options) => {
           "left-gradient-overlay",
           "right-gradient-overlay",
           "full-dark-overlay",
-          "no-overlay"
+          "no-overlay",
         ];
 
         // Remove all previous overlay classes
-        overlayClasses.forEach(cls => {
+        overlayClasses.forEach((cls) => {
           this.removeClass(cls);
         });
 
         // Add the new overlay class
         this.addClass(`${overlay}-overlay`);
-      }
+      },
     },
     view: {
       init() {
@@ -3446,21 +3507,55 @@ export default (editor, options) => {
 
               // Create overlay swatch options
               const overlayOptions = [
-                { id: 'primary-gradient', name: 'Primary Gradient', color: 'linear-gradient(161deg, #26282b 0%, #26282b 49%, #ff4b91 100%)' },
-                { id: 'bottom-gradient', name: 'Black from Bottom', color: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)' },
-                { id: 'top-gradient', name: 'Black from Top', color: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)' },
-                { id: 'left-gradient', name: 'Black from Left', color: 'linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)' },
-                { id: 'right-gradient', name: 'Black from Right', color: 'linear-gradient(to left, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)' },
-                { id: 'full-dark', name: 'Full Dark Overlay', color: 'linear-gradient(to left, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.5) 100%)' },
+                {
+                  id: "primary-gradient",
+                  name: "Primary Gradient",
+                  color:
+                    "linear-gradient(161deg, #26282b 0%, #26282b 49%, #ff4b91 100%)",
+                },
+                {
+                  id: "bottom-gradient",
+                  name: "Black from Bottom",
+                  color:
+                    "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)",
+                },
+                {
+                  id: "top-gradient",
+                  name: "Black from Top",
+                  color:
+                    "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)",
+                },
+                {
+                  id: "left-gradient",
+                  name: "Black from Left",
+                  color:
+                    "linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)",
+                },
+                {
+                  id: "right-gradient",
+                  name: "Black from Right",
+                  color:
+                    "linear-gradient(to left, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)",
+                },
+                {
+                  id: "full-dark",
+                  name: "Full Dark Overlay",
+                  color:
+                    "linear-gradient(to left, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.5) 100%)",
+                },
               ];
 
               // Create the HTML for overlay swatches
-              let overlaySwatchesHTML = '';
-              overlayOptions.forEach(option => {
+              let overlaySwatchesHTML = "";
+              overlayOptions.forEach((option) => {
                 const isSelected = currentBgOverlay === option.id;
                 overlaySwatchesHTML += `
-                  <div class="overlay-swatch-item ${isSelected ? 'selected' : ''}" data-overlay="${option.id}">
-                    <div class="swatch" style="background: ${option.color}"></div>
+                  <div class="overlay-swatch-item ${
+                    isSelected ? "selected" : ""
+                  }" data-overlay="${option.id}">
+                    <div class="swatch" style="background: ${
+                      option.color
+                    }"></div>
                     <div class="swatch-name">${option.name}</div>
                   </div>
                 `;
@@ -3559,13 +3654,17 @@ export default (editor, options) => {
               });
 
               // Handle overlay swatch selection
-              const swatchItems = container.querySelectorAll('.overlay-swatch-item');
-              swatchItems.forEach(item => {
-                item.addEventListener('click', () => {
+              const swatchItems = container.querySelectorAll(
+                ".overlay-swatch-item",
+              );
+              swatchItems.forEach((item) => {
+                item.addEventListener("click", () => {
                   // Remove selected class from all swatches
-                  swatchItems.forEach(swatch => swatch.classList.remove('selected'));
+                  swatchItems.forEach((swatch) =>
+                    swatch.classList.remove("selected"),
+                  );
                   // Add selected class to clicked swatch
-                  item.classList.add('selected');
+                  item.classList.add("selected");
                   // Store selected overlay
                   selectedOverlay = item.dataset.overlay;
                 });
@@ -3576,12 +3675,13 @@ export default (editor, options) => {
                 async getData() {
                   let result = {
                     attributes: {
-                      "bg-overlay": selectedOverlay
-                    }
+                      "bg-overlay": selectedOverlay,
+                    },
                   };
 
                   if (!selectedFile) {
-                    result.attributes["bg-image"] = component.get("attributes")["bg-image"];
+                    result.attributes["bg-image"] =
+                      component.get("attributes")["bg-image"];
                     return result;
                   }
 
@@ -3702,11 +3802,8 @@ export default (editor, options) => {
         this.editButton = btn;
         return btn;
       },
-    }
+    },
   });
-
-
-
 
   editor.Components.addType("hero-section-bg", {
     model: {
@@ -3731,114 +3828,136 @@ export default (editor, options) => {
             ],
           },
         ],
-        styles: `
-        .bg *:not(.gjs-component-buttons):not(.gjs-component-buttons *):not(.highlight){
-          z-index:2;
-          color:white!important
-        }
-        .hero-section {
-          z-index:2
-          width: 100%,
-          height: 100vh,
-          position: relative,
-          background-size: cover;
-          background-position: center;
-        }
+        styles: `.bg
+  *:not(.gjs-component-buttons):not(.gjs-component-buttons *):not(.highlight) {
+  z-index: 2;
+  color: white !important;
+}
 
-        .hero-section-container>.flex {
-          height: 100%;
-        }
+.hero-section {
+  z-index: 2;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+}
 
-        .primary-gradient-overlay::before {
-          content: "";
-          position: absolute;
-          z-index: 1,
-          top: 0px;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-image: linear-gradient(161deg, #26282b 0%, #26282b 49%, var(--color-primary) 100%);
-          opacity: 0.65;
-          pointer-events: none;
-        }
-        
-        .full-dark-overlay::before {
-          content: "";
-          position: absolute;
-          z-index: 1,
-          top: 0px;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-image: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.7) 100%);
-          opacity: 0.65;
-          pointer-events: none;
-        }
+.hero-section-container > .flex {
+  height: 100%;
+}
 
-        .top-gradient-overlay::before {
-          content: "";
-          position: absolute;
-          z-index: 1,
-          top: 0px;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-image: linear-gradient(to top, #0000006E 0%,rgb(0, 0, 0) 100%);
-          opacity: 0.65;
-          pointer-events: none;
-        }
-        
-        .bottom-gradient-overlay::before {
-          content: "";
-          position: absolute;
-          z-index: 1,
-          top: 0px;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-image: linear-gradient(to bottom, #0000006E 0%,rgb(0, 0, 0) 100%);
-          opacity: 0.65;
-          pointer-events: none;
-        }
+.primary-gradient-overlay::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    161deg,
+    #26282b 0%,
+    #26282b 49%,
+    var(--color-primary) 100%
+  );
+  opacity: 0.65;
+  pointer-events: none;
+}
 
-        .left-gradient-overlay::before {
-          content: "";
-          position: absolute;
-          z-index: 1,
-          top: 0px;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-image: linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.05) 100%);
-          opacity: 0.65;
-          pointer-events: none;
-        }
+.full-dark-overlay::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0.7) 50%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  opacity: 0.65;
+  pointer-events: none;
+}
 
-        .right-gradient-overlay::before {
-          content: "";
-          position: absolute;
-          z-index: 1,
-          top: 0px;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-image: linear-gradient(to left, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.05) 100%);
-          opacity: 0.65;
-          pointer-events: none;
-        }
-        .right-gradient-overlay::before {
-          content: "";
-          position: absolute;
-          z-index: 1,
-          top: 0px;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-image: rgba(0,0,0,0);
-          opacity: 0.65;
-          pointer-events: none;
-        }
-      `,
+.top-gradient-overlay::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(to top, #0000006e 0%, rgb(0, 0, 0) 100%);
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.bottom-gradient-overlay::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(to bottom, #0000006e 0%, rgb(0, 0, 0) 100%);
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.left-gradient-overlay::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.right-gradient-overlay::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+    to left,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.right-gradient-overlay::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: rgba(0, 0, 0, 0);
+  opacity: 0.65;
+  pointer-events: none;
+}
+`,
         traits: [
           {
             type: "text",
@@ -3851,12 +3970,12 @@ export default (editor, options) => {
             label: "Background Overlay",
             name: "bg-overlay",
             options: [
-              { id: 'primary-gradient', name: 'Primary Gradient Overlay' },
-              { id: 'bottom-gradient', name: 'Black Gradient from Bottom' },
-              { id: 'top-gradient', name: 'Black Gradient from Top' },
-              { id: 'left-gradient', name: 'Black Gradient from Left' },
-              { id: 'right-gradient', name: 'Black Gradient from Right' },
-              { id: 'full-dark', name: 'Full Dark Overlay' },
+              { id: "primary-gradient", name: "Primary Gradient Overlay" },
+              { id: "bottom-gradient", name: "Black Gradient from Bottom" },
+              { id: "top-gradient", name: "Black Gradient from Top" },
+              { id: "left-gradient", name: "Black Gradient from Left" },
+              { id: "right-gradient", name: "Black Gradient from Right" },
+              { id: "full-dark", name: "Full Dark Overlay" },
             ],
             changeProp: 1,
           },
@@ -3893,10 +4012,10 @@ export default (editor, options) => {
         this.set({ style });
       },
 
-
       // This method updates DOM classes when the view is available
       updateBackgroundOverlay() {
-        const overlay = this.get("attributes")["bg-overlay"] || "primary-gradient";
+        const overlay =
+          this.get("attributes")["bg-overlay"] || "primary-gradient";
         if (overlay != "primary-gradient") {
           const url = this.get("attributes")["bg-image"] || "";
           const style = { ...this.get("style") };
@@ -3913,18 +4032,17 @@ export default (editor, options) => {
           "left-gradient-overlay",
           "right-gradient-overlay",
           "full-dark-overlay",
-          "no-overlay"
+          "no-overlay",
         ];
 
         // Remove all previous overlay classes
-        overlayClasses.forEach(cls => {
+        overlayClasses.forEach((cls) => {
           this.removeClass(cls);
         });
 
         // Add the new overlay class
         this.addClass(`${overlay}-overlay`);
-      }
-
+      },
     },
     view: {
       init() {
@@ -3940,21 +4058,55 @@ export default (editor, options) => {
 
               // Create overlay swatch options
               const overlayOptions = [
-                { id: 'primary-gradient', name: 'Primary Gradient', color: 'linear-gradient(161deg, #26282b 0%, #26282b 49%, #ff4b91 100%)' },
-                { id: 'bottom-gradient', name: 'Black from Bottom', color: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)' },
-                { id: 'top-gradient', name: 'Black from Top', color: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)' },
-                { id: 'left-gradient', name: 'Black from Left', color: 'linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)' },
-                { id: 'right-gradient', name: 'Black from Right', color: 'linear-gradient(to left, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)' },
-                { id: 'full-dark', name: 'Full Dark Overlay', color: 'linear-gradient(to left, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.5) 100%)' },
+                {
+                  id: "primary-gradient",
+                  name: "Primary Gradient",
+                  color:
+                    "linear-gradient(161deg, #26282b 0%, #26282b 49%, #ff4b91 100%)",
+                },
+                {
+                  id: "bottom-gradient",
+                  name: "Black from Bottom",
+                  color:
+                    "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)",
+                },
+                {
+                  id: "top-gradient",
+                  name: "Black from Top",
+                  color:
+                    "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)",
+                },
+                {
+                  id: "left-gradient",
+                  name: "Black from Left",
+                  color:
+                    "linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)",
+                },
+                {
+                  id: "right-gradient",
+                  name: "Black from Right",
+                  color:
+                    "linear-gradient(to left, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)",
+                },
+                {
+                  id: "full-dark",
+                  name: "Full Dark Overlay",
+                  color:
+                    "linear-gradient(to left, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.5) 100%)",
+                },
               ];
 
               // Create the HTML for overlay swatches
-              let overlaySwatchesHTML = '';
-              overlayOptions.forEach(option => {
+              let overlaySwatchesHTML = "";
+              overlayOptions.forEach((option) => {
                 const isSelected = currentBgOverlay === option.id;
                 overlaySwatchesHTML += `
-                  <div class="overlay-swatch-item ${isSelected ? 'selected' : ''}" data-overlay="${option.id}">
-                    <div class="swatch" style="background: ${option.color}"></div>
+                  <div class="overlay-swatch-item ${
+                    isSelected ? "selected" : ""
+                  }" data-overlay="${option.id}">
+                    <div class="swatch" style="background: ${
+                      option.color
+                    }"></div>
                     <div class="swatch-name">${option.name}</div>
                   </div>
                 `;
@@ -4053,13 +4205,17 @@ export default (editor, options) => {
               });
 
               // Handle overlay swatch selection
-              const swatchItems = container.querySelectorAll('.overlay-swatch-item');
-              swatchItems.forEach(item => {
-                item.addEventListener('click', () => {
+              const swatchItems = container.querySelectorAll(
+                ".overlay-swatch-item",
+              );
+              swatchItems.forEach((item) => {
+                item.addEventListener("click", () => {
                   // Remove selected class from all swatches
-                  swatchItems.forEach(swatch => swatch.classList.remove('selected'));
+                  swatchItems.forEach((swatch) =>
+                    swatch.classList.remove("selected"),
+                  );
                   // Add selected class to clicked swatch
-                  item.classList.add('selected');
+                  item.classList.add("selected");
                   // Store selected overlay
                   selectedOverlay = item.dataset.overlay;
                 });
@@ -4070,12 +4226,13 @@ export default (editor, options) => {
                 async getData() {
                   let result = {
                     attributes: {
-                      "bg-overlay": selectedOverlay
-                    }
+                      "bg-overlay": selectedOverlay,
+                    },
                   };
 
                   if (!selectedFile) {
-                    result.attributes["bg-image"] = component.get("attributes")["bg-image"];
+                    result.attributes["bg-image"] =
+                      component.get("attributes")["bg-image"];
                     return result;
                   }
 
@@ -4515,7 +4672,7 @@ export default (editor, options) => {
               <p class="text-xs fw-600 px-2">Made Using Bytesites AI Website Builder</p>
             </div>
 
-          `
+          `,
       },
     },
   });
@@ -4576,16 +4733,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -4864,27 +5021,25 @@ export default (editor, options) => {
         },
         traits: [],
         styles: `
-          .card .card-body{
-            padding-bottom: 2rem;
-             padding-top: 0.5rem;
-          }
-          .card h5{
-          font-weight: 600
-          }
-          .card img{
-            height: 260px !important;
-          }
- 
- 
-         
-        `,
+.card .card-body {
+  padding-bottom: 2rem;
+  padding-top: 0.5rem;
+}
+
+.card h5 {
+  font-weight: 600;
+}
+
+.card img {
+  height: 260px !important;
+}`,
       },
 
       init() {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() { },
+      onAttributesChange() {},
     },
   });
 
@@ -4900,21 +5055,21 @@ export default (editor, options) => {
         },
         traits: [],
         styles: `
-          .card-horizontal .card-body{
-            padding-bottom: 2rem ;
-             padding-top: 0rem !important;
-          }
-          .card img{
-            height: 260px !important;
-          }
-        `,
+.card-horizontal .card-body {
+  padding-bottom: 2rem;
+  padding-top: 0rem !important;
+}
+
+.card img {
+  height: 260px !important;
+}`,
       },
 
       init() {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() { },
+      onAttributesChange() {},
     },
   });
 
@@ -4935,7 +5090,7 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() { },
+      onAttributesChange() {},
     },
   });
 };
