@@ -521,6 +521,48 @@ export default (editor, options) => {
     },
   });
 
+  editor.Components.addType("profile-image", {
+    model: {
+      defaults: {
+        tagName: "div",
+        draggable: true,
+        droppable: false,
+        // Tailwind classes for circle wrapper
+        attributes: {
+          class: "w-40 h-40 rounded-full overflow-hidden flex justify-center items-center",
+        },
+        components: [
+          {
+            type: "custom-image",
+            attributes: {
+              src: "",
+              imagesrc: "",
+              alt: "",
+              // no class or style overrides here — we set classes dynamically
+            },
+          },
+        ],
+      },
+  
+      init() {
+        this.on("change:components", this.updateImageClasses);
+        this.updateImageClasses();
+      },
+  
+      updateImageClasses() {
+        const image = this.get("components").at(0);
+        if (image) {
+          image.set("attributes", {
+            ...image.get("attributes"),
+            class: "w-full h-full object-cover object-center block",
+          });
+        }
+      },
+    },
+  });
+  
+  
+
   editor.Components.addType("custom-image", {
     model: {
       defaults: {
@@ -980,98 +1022,6 @@ export default (editor, options) => {
       onEditButtonClick() {
         this.model.EditComponent("desktop");
       },
-
-      onRender() {
-        console.log("2. About to create bottom button");
-        const buttonRow2 = this.createBottomButton();
-
-        console.log("3. Bottom button created:", buttonRow2);
-        console.log("4. this.el:", this.el);
-
-        this.el.appendChild(buttonRow2);
-        this.updateEditButton();
-      },
-      createBottomButton() {
-        console.log("A. createBottomButton called");
-
-        const row = document.createElement("div");
-        row.className =
-          "gjs-component-buttons2 absolute -bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-[99]";
-
-        console.log("B. About to create add button");
-        const addBtn = this.createAddButton();
-        console.log("C. Add button created:", addBtn);
-
-        row.appendChild(addBtn);
-        this.buttonRow2 = row;
-
-        console.log("D. Returning row:", row);
-        return row;
-      },
-      createAddButton() {
-        console.log("X. createAddButton called");
-
-        const btn = document.createElement("button");
-
-        btn.className =
-          "relative overflow-hidden z-[99]  hover:text-rose-400 flex z-100 items-center group flex-row relative rounded-md py-1 px-3 text-md leading-6 text-white bg-black ring-1 ring-gray-900/10 hover:ring-gray-900/20";
-
-        btn.innerHTML = `
-        
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 my-1">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-      </svg>
-      
-
-      <div class="ml-3 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out block">
-      Add Section
-      </div>
-          `;
-
-        btn.addEventListener("click", () => {
-          showAddComponentModal(this.model);
-        });
-
-        this.addButton = btn;
-        console.log("Y. Button created:", btn);
-        return btn;
-      },
-      createButtonRow() {
-        if (this.buttonRow) return this.buttonRow;
-
-        const row = document.createElement("div");
-        row.className =
-          "gjs-component-buttons absolute bottom-6 left-2 md:left-14 m-2 flex space-x-2 z-50";
-
-        this.buttonRow = row;
-        return row;
-      },
-
-      handleSelect(selectedComponent) {
-        if (selectedComponent !== this.model) {
-          this.removeButtonRow();
-          return;
-        }
-
-        const buttonRow = this.createButtonRow();
-        this.el.appendChild(buttonRow);
-      },
-
-      handleDeselect() {
-        this.removeButtonRow();
-      },
-
-      removeButtonRow() {
-        if (this.buttonRow) {
-          this.buttonRow.remove();
-          this.buttonRow = null;
-        }
-      },
-      updateEditButton() {
-        const editor = this.em.get("Editor");
-        editor.on("component:select", this.handleSelect.bind(this));
-        editor.on("component:deselect", this.handleDeselect.bind(this));
-      },
     },
   });
 
@@ -1121,6 +1071,36 @@ export default (editor, options) => {
 
 .image-section > img {
   height: 100%;
+}
+  /* Media Query for MD+ (768px and above) */
+@media (min-width: 768px) {
+  .image-section {
+    max-height: 75vh;
+  }
+  .sections-contained.theme-rounded-md .image-section{
+    border-radius: 4rem !important;
+    overflow: hidden !important;
+     max-width: 64rem;
+    margin: auto;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+  }
+  .sections-contained.theme-rounded-full .image-section{
+    border-radius: 3rem;
+    overflow: hidden !important;
+     max-width: 64rem;
+    margin: auto;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+  }
+  .sections-contained.shadows .image-section{
+    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+  }
+      
+  .item-section>.item-container{
+    overflow-y: auto;
+    flex: 1; 
+  }
 }
         `,
       },
@@ -1239,64 +1219,13 @@ export default (editor, options) => {
 
       onRender() {
         console.log("2. About to create bottom button");
-        const buttonRow2 = this.createBottomButton();
         const buttonRowCenter = this.createMiddleButton();
-
-        console.log("3. Bottom button created:", buttonRow2);
-        console.log("4. this.el:", this.el);
-
-        this.el.appendChild(buttonRow2);
         this.el.appendChild(buttonRowCenter);
         this.updateEditButton();
 
         // Add color swatches to the top right
         const colorSwatches = this.createColorSwatches();
         this.el.appendChild(colorSwatches);
-      },
-      createBottomButton() {
-        console.log("A. createBottomButton called");
-
-        const row = document.createElement("div");
-        row.className =
-          "gjs-component-buttons2 absolute -bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-[99]";
-
-        console.log("B. About to create add button");
-        const addBtn = this.createAddButton();
-        console.log("C. Add button created:", addBtn);
-
-        row.appendChild(addBtn);
-        this.buttonRow2 = row;
-
-        console.log("D. Returning row:", row);
-        return row;
-      },
-      createAddButton() {
-        console.log("X. createAddButton called");
-
-        const btn = document.createElement("button");
-
-        btn.className =
-          "relative overflow-hidden z-[99]  hover:text-rose-400 flex z-100 items-center group flex-row relative rounded-md py-1 px-3 text-md leading-6 text-white bg-black ring-1 ring-gray-900/10 hover:ring-gray-900/20";
-
-        btn.innerHTML = `
-        
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 my-1">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-      </svg>
-      
-
-      <div class="ml-3 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out block">
-      Add Section
-      </div>
-          `;
-
-        btn.addEventListener("click", () => {
-          showAddComponentModal(this.model);
-        });
-
-        this.addButton = btn;
-        console.log("Y. Button created:", btn);
-        return btn;
       },
 
       createMiddleButton() {
@@ -1605,63 +1534,12 @@ export default (editor, options) => {
     },
     view: {
       onRender() {
-        console.log("2. About to create bottom button");
-        const buttonRow2 = this.createBottomButton();
-
-        console.log("3. Bottom button created:", buttonRow2);
-        console.log("4. this.el:", this.el);
-
-        this.el.appendChild(buttonRow2);
+       
         this.updateEditButton();
 
         // Add color swatches to the top right
         const colorSwatches = this.createColorSwatches();
         this.el.appendChild(colorSwatches);
-      },
-      createBottomButton() {
-        console.log("A. createBottomButton called");
-
-        const row = document.createElement("div");
-        row.className =
-          "gjs-component-buttons2 absolute -bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-[99]";
-
-        console.log("B. About to create add button");
-        const addBtn = this.createAddButton();
-        console.log("C. Add button created:", addBtn);
-
-        row.appendChild(addBtn);
-        this.buttonRow2 = row;
-
-        console.log("D. Returning row:", row);
-        return row;
-      },
-      createAddButton() {
-        console.log("X. createAddButton called");
-
-        const btn = document.createElement("button");
-
-        btn.className =
-          "relative overflow-hidden z-[99]  hover:text-rose-400 flex z-100 items-center group flex-row relative rounded-md py-1 px-3 text-md leading-6 text-white bg-black ring-1 ring-gray-900/10 hover:ring-gray-900/20";
-
-        btn.innerHTML = `
-        
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 my-1">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-      </svg>
-      
-
-      <div class="ml-3 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out block">
-      Add Section
-      </div>
-          `;
-
-        btn.addEventListener("click", () => {
-          showAddComponentModal(this.model);
-        });
-
-        this.addButton = btn;
-        console.log("Y. Button created:", btn);
-        return btn;
       },
 
       createButtonRow() {
@@ -1773,7 +1651,7 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "min-h-screen flex items-center justify-center bg-cover bg-center p-4 pt-20 hero-section",
+            "min-h-screen flex items-center justify-center bg-cover overflow-hidden bg-center p-4 pt-20 hero-section",
           sectiontype: "normal",
         },
         traits: [
@@ -1840,64 +1718,14 @@ export default (editor, options) => {
     },
     view: {
       onRender() {
-        console.log("2. About to create bottom button");
-        const buttonRow2 = this.createBottomButton();
-
-        console.log("3. Bottom button created:", buttonRow2);
-        console.log("4. this.el:", this.el);
-
-        this.el.appendChild(buttonRow2);
+       
         this.updateEditButton();
 
         // Add color swatches to the top right
         const colorSwatches = this.createColorSwatches();
         this.el.appendChild(colorSwatches);
       },
-      createBottomButton() {
-        console.log("A. createBottomButton called");
-
-        const row = document.createElement("div");
-        row.className =
-          "gjs-component-buttons2 absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-[99]";
-
-        console.log("B. About to create add button");
-        const addBtn = this.createAddButton();
-        console.log("C. Add button created:", addBtn);
-
-        row.appendChild(addBtn);
-        this.buttonRow2 = row;
-
-        console.log("D. Returning row:", row);
-        return row;
-      },
-      createAddButton() {
-        console.log("X. createAddButton called");
-
-        const btn = document.createElement("button");
-
-        btn.className =
-          "relative overflow-hidden z-[99]  hover:text-rose-400 flex z-100 items-center group flex-row relative rounded-md py-1 px-3 text-md leading-6 text-white bg-black ring-1 ring-gray-900/10 hover:ring-gray-900/20";
-
-        btn.innerHTML = `
-        
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 my-1">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-      </svg>
       
-
-      <div class="ml-3 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out block">
-      Add Section
-      </div>
-          `;
-
-        btn.addEventListener("click", () => {
-          showAddComponentModal(this.model);
-        });
-
-        this.addButton = btn;
-        console.log("Y. Button created:", btn);
-        return btn;
-      },
 
       createButtonRow() {
         if (this.buttonRow) return this.buttonRow;
@@ -2006,7 +1834,7 @@ export default (editor, options) => {
         tagName: "div",
         attributes: {
           class:
-            "lg:max-w-5xl mx-auto text-center flex flex-col items-center px-2 container",
+            "lg:max-w-5xl mx-auto flex flex-col gap-4 px-3 container",
         },
 
         content: "Heading",
@@ -2056,7 +1884,7 @@ export default (editor, options) => {
     },
   });
 
-  editor.DomComponents.addType("capsule-text", {
+  editor.DomComponents.addType("badge", {
     extend: "text",
     model: {
       defaults: {
@@ -2110,69 +1938,147 @@ export default (editor, options) => {
             "overflow-x-hidden scroll-smooth antialiased min-h-screen w-full",
         },
         styles: `
-        .highlight {
-  color: var(--color-primary) !important;
+        .highlight-gradient-color-text h1 .highlight,
+        .highlight-gradient-color-text h2 .highlight,
+        .highlight-gradient-color-text h3 .highlight,
+        .highlight-gradient-color-text h4 .highlight,
+        .highlight-gradient-color-text h5 .highlight {
+          background-image: var(--color-primary-gradient);
+         background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+          
+        }
+
+        p .highlight{
+          color: var(--color-primary);
+        }
+
+        .highlight-primary-color-text h1 .highlight,
+        .highlight-primary-color-text h2 .highlight,
+        .highlight-primary-color-text h3 .highlight,
+        .highlight-primary-color-text h4 .highlight,
+        .highlight-primary-color-text h5 .highlight {
+          color: var(--color-primary);
+        }
+
+        .highlight-primary-bg h1 .highlight,
+        .highlight-primary-bg h2 .highlight,
+        .highlight-primary-bg h3 .highlight,
+        .highlight-primary-bg h4 .highlight,
+        .highlight-primary-bg h5 .highlight {
+          background-image: linear-gradient(120deg, var(--color-primary) 0%, var(--color-primary-light)100%);
+          background-repeat: no-repeat;
+          background-size: 100% 30%;
+          background-position: 0 90%;
+        }
+
+        /* Gradient Highlight Text with Creative Underline */
+        .highlight-creative-underline h1 .highlight,
+        .highlight-creative-underline h2 .highlight,
+        .highlight-creative-underline h3 .highlight,
+        .highlight-creative-underline h4 .highlight,
+        .highlight-creative-underline h5 .highlight {
+          display: inline-block;
+          position: relative;
+          font-weight: bold;
+          text-decoration: none;
+        }
+
+        .highlight-creative-underline h1 .highlight::after,
+        .highlight-creative-underline h2 .highlight::after,
+        .highlight-creative-underline h3 .highlight::after,
+        .highlight-creative-underline h4 .highlight::after,
+        .highlight-creative-underline h5 .highlight::after {
+          content: "";
+          z-index: -1;
+          position: absolute;
+          left: 0;
+          bottom: -6px; /* Adjust for desired distance */
+          width: 106%;
+          height: 200%;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 150' preserveAspectRatio='none'%3E%3Cpath d='M15.2,133.3L15.2,133.3c121.9-7.6,244-9.9,366.1-6.8c34.6,0.9,69.1,2.3,103.7,4' fill='none' stroke='%23fff' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center;
+          background-color: var(--color-primary); /* Color controlled by CSS variable */
+          background-size: contain;
+          pointer-events: none;
+          display: inline-block;
+          transform: rotate(-3deg); /* Slight rotation */
+        }
+
+        body {
+          color: var(--color-text-secondary);
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          color: var(--color-text-primary);
+        }
+
+        .font-primary {
+          font-family: var(--font-primary) !important;
+        }
+
+        .font-heading {
+          font-family: var(--font-heading) !important;
+        }
+
+        .theme-dark {
+          background-color: var(--color-section-dark) !important;
+          color: var(--color-text-light) !important;
+        }
+
+        .theme-dark h1,
+        .theme-dark h2,
+        .theme-dark h3,
+        .theme-dark h4,
+        .theme-dark h5,
+        .theme-dark h6 {
+          color: white;
+        }
+
+        .theme-dark .bg-section-light {
+          background-color: var(--color-section-dark) !important;
+        }
+
+        .theme-dark .bg-accent-1,
+        .theme-dark .bg-accent-2 {
+          background-color: var(--color-section-dark-accent) !important;
+        }
+
+        .theme-rounded-md .button-primary {
+          border-radius: 8px;
+        }
+
+        .shadows .button-primary{
+         transition: all 0.3s ease;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 
+              0 4px 6px rgba(0, 0, 0, 0.05);
+
+        }
+        .shadows    .button-primary:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15), 
+              0 8px 12px rgba(0, 0, 0, 0.05);
 }
 
-body {
-  color: var(--color-text-secondary);
-}
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: var(--color-text-primary);
-}
+        .theme-rounded-md .button-secondary {
+          border-radius: 8px;
+        }
 
-.font-primary {
-  font-family: var(--font-primary) !important;
-}
+        .theme-rounded-full .button-primary {
+          border-radius: 9999px;
+        }
 
-.font-heading {
-  font-family: var(--font-heading) !important;
-}
-
-.theme-dark {
-  background-color: var(--color-section-dark) !important;
-  color: var(--color-text-light) !important;
-}
-
-.theme-dark h1,
-.theme-dark h2,
-.theme-dark h3,
-.theme-dark h4,
-.theme-dark h5,
-.theme-dark h6 {
-  color: white;
-}
-
-.theme-dark .bg-section-light {
-  background-color: var(--color-section-dark) !important;
-}
-
-.theme-dark .bg-accent-1,
-.theme-dark .bg-accent-2 {
-  background-color: var(--color-section-dark-accent) !important;
-}
-
-.theme-rounded-md .button-primary {
-  border-radius: 8px;
-}
-
-.theme-rounded-md .button-secondary {
-  border-radius: 8px;
-}
-
-.theme-rounded-full .button-primary {
-  border-radius: 9999px;
-}
-
-.theme-rounded-full .button-secondary {
-  border-radius: 9999px;
-}         
+        .theme-rounded-full .button-secondary {
+          border-radius: 9999px;
+        }         
         `,
         content: "Hero Subtitle",
       },
@@ -2786,6 +2692,7 @@ h6 {
   text-transform: uppercase;
   letter-spacing: 2px;
   box-shadow: inset 0px 0px 0px 1px currentcolor;
+  width: max-content;
 }
 
 .button-secondary:hover {
@@ -4327,13 +4234,6 @@ h6 {
       },
 
       onRender() {
-        console.log("2. About to create bottom button");
-        const buttonRow2 = this.createBottomButton();
-
-        console.log("3. Bottom button created:", buttonRow2);
-        console.log("4. this.el:", this.el);
-
-        this.el.appendChild(buttonRow2);
         this.updateEditButton();
       },
 
@@ -4452,52 +4352,6 @@ h6 {
           this.buttonRow.remove();
           this.buttonRow = null;
         }
-      },
-
-      createBottomButton() {
-        console.log("A. createBottomButton called");
-
-        const row = document.createElement("div");
-        row.className =
-          "gjs-component-buttons2 absolute -bottom-6 m-2 flex space-x-2 z-500";
-
-        console.log("B. About to create add button");
-        const addBtn = this.createAddButton();
-        console.log("C. Add button created:", addBtn);
-
-        row.appendChild(addBtn);
-        this.buttonRow2 = row;
-
-        console.log("D. Returning row:", row);
-        return row;
-      },
-      createAddButton() {
-        console.log("X. createAddButton called");
-
-        const btn = document.createElement("button");
-
-        btn.className =
-          "relative overflow-hidden   hover:text-rose-400 flex z-100 items-center group flex-row relative rounded-md py-1 px-3 text-md leading-6 text-gray-600 bg-black ring-1 ring-gray-900/10 hover:ring-gray-900/20";
-
-        btn.innerHTML = `
-        
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 my-1">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-      </svg>
-      
-  
-      <div class="ml-3 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out block">
-      Add Section
-      </div>
-          `;
-
-        btn.addEventListener("click", () => {
-          showAddComponentModal(this.model);
-        });
-
-        this.addButton = btn;
-        console.log("Y. Button created:", btn);
-        return btn;
       },
 
       createEditButton() {
@@ -4673,338 +4527,6 @@ h6 {
             </div>
 
           `,
-      },
-    },
-  });
-
-  editor.Components.addType("card-list", {
-    model: {
-      defaults: {
-        tagName: "div",
-        draggable: false,
-        droppable: false,
-        attributes: {
-          class: "flex flex-wrap space-x-4 p-4", // Default class for scrolling list
-        },
-        traits: [
-          {
-            type: "select",
-            label: "Layout",
-            name: "layout",
-            options: [
-              { id: "auto", name: "Auto" },
-              { id: "grid", name: "Grid" },
-            ],
-            changeProp: 1, // Indicate a change will occur
-          },
-        ],
-      },
-
-      init() {
-        this.on("change:layout", this.updateLayout);
-        this.updateLayout(); // Initial layout update
-      },
-
-      updateLayout() {
-        const layout = this.get("attributes")["layout"] || "grid"; // Default to scroll layout
-        let classes;
-
-        if (layout === "grid") {
-          // Update classes for grid layout
-          classes =
-            "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center justify-around gap-6 p-4";
-        } else {
-          // Default to horizontal scrolling
-          classes = "flex flex-wrap justify-center space-x-4 p-4";
-        }
-
-        this.set({ attributes: { class: classes } }); // Set the updated classes
-      },
-    },
-    view: {
-      init() {
-        this.componentEditHandlers = {
-          // Default handler for generic components
-          default: {
-            createModalContent(component) {
-              const container = document.createElement("div");
-              container.innerHTML = `
-                          <div class="space-y-4">
-                              <div>
-                                  <label class="block mb-2">Component Type</label>
-                                  <input type="text" value="${component.get(
-                                    "type",
-                                  )}" class="w-full border p-2 rounded" disabled>
-                              </div>
-                              <div>
-                                  <label class="block mb-2">Attributes</label>
-                                  <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                                    component.getAttributes(),
-                                    null,
-                                    2,
-                                  )}</textarea>
-                              </div>
-                          </div>
-                      `;
-
-              return {
-                container,
-                getData() {
-                  try {
-                    const attrs = JSON.parse(
-                      container.querySelector(".component-attributes").value,
-                    );
-                    return { attributes: attrs };
-                  } catch (e) {
-                    alert("Invalid JSON for attributes");
-                    return null;
-                  }
-                },
-              };
-            },
-          },
-        };
-      },
-
-      onRender() {
-        console.log("2. About to create bottom button");
-        const buttonRow2 = this.createBottomButton();
-        const buttonRowCenter = this.createMiddleButton();
-
-        console.log("3. Bottom button created:", buttonRow2);
-        console.log("4. this.el:", this.el);
-
-        this.el.appendChild(buttonRow2);
-        this.el.appendChild(buttonRowCenter);
-        this.updateEditButton();
-      },
-      createBottomButton() {
-        console.log("A. createBottomButton called");
-
-        const row = document.createElement("div");
-        row.className =
-          "gjs-component-buttons2 absolute -bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-[99]";
-
-        console.log("B. About to create add button");
-        const addBtn = this.createAddButton();
-        console.log("C. Add button created:", addBtn);
-
-        row.appendChild(addBtn);
-        this.buttonRow2 = row;
-
-        console.log("D. Returning row:", row);
-        return row;
-      },
-      createAddButton() {
-        console.log("X. createAddButton called");
-
-        const btn = document.createElement("button");
-
-        btn.className =
-          "relative overflow-hidden z-[99]  hover:text-rose-400 flex z-100 items-center group flex-row relative rounded-md py-1 px-3 text-md leading-6 text-white bg-black ring-1 ring-gray-900/10 hover:ring-gray-900/20";
-
-        btn.innerHTML = `
-        
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 my-1">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-      </svg>
-      
-
-      <div class="ml-3 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out block">
-      Add Section
-      </div>
-          `;
-
-        btn.addEventListener("click", () => {
-          showAddComponentModal(this.model);
-        });
-
-        this.addButton = btn;
-        console.log("Y. Button created:", btn);
-        return btn;
-      },
-
-      createMiddleButton() {
-        const row = document.createElement("div");
-        row.className =
-          "gjs-component-buttons2 h-auto flex items-center justify-center w-full p-6 mx-auto border-2 border-blue-500 border-dashed bg-blue-500 bg-opacity-5 hover:bg-opacity-20 text-center z-[99]";
-
-        const addBtn = this.createSwapButton();
-
-        row.appendChild(addBtn);
-        this.buttonRowCenter = row;
-
-        return row;
-      },
-
-      createMiddleButton2() {
-        const row = document.createElement("div");
-        row.className =
-          "gjs-component-buttons2 mx-auto my-3 text-center z-[99]";
-
-        const addBtn = this.createSwapButton();
-
-        row.appendChild(addBtn);
-        this.buttonRowCenter = row;
-
-        return row;
-      },
-
-      createSwapButton() {
-        console.log("X. createAddButton called");
-
-        const btn = document.createElement("button");
-
-        btn.className =
-          "relative overflow-hidden mx-auto my-auto text-rose-400 flex z-100 items-center group flex-row relative rounded-full py-1 px-3 text-md leading-6 text-gray-600 bg-white ring-1 ring-gray-900/10 hover:ring-gray-900/20";
-
-        btn.innerHTML = `
-        
-      
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-      </svg>
-      
-
-
-      <div class="lg:absolute lg:group-hover:relative lg:left-10  lg:group-hover:left-1 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out hidden lg:block opacity-0 lg:group-hover:opacity-100">
-        Add Card
-      </div>
-          `;
-
-        btn.addEventListener("click", () => {
-          // Get the current component
-          const currentComponent = this.model;
-
-          // Get the children of the current component
-          const children = currentComponent.components();
-
-          // Check if there are any children
-          if (children.length > 0) {
-            // Get the first child component
-            const firstChild = children.at(0);
-
-            // Clone the first child component
-            const clonedChild = firstChild.clone();
-
-            // Append the cloned child to the end of the current component's children
-            currentComponent.append(clonedChild);
-
-            console.log(
-              "First child component duplicated and appended to the end.",
-            );
-          } else {
-            console.log("No children to duplicate.");
-          }
-        });
-
-        this.swapButton = btn;
-        console.log("Y. Button created:", btn);
-        return btn;
-      },
-
-      createButtonRow() {
-        if (this.buttonRow) return this.buttonRow;
-
-        const row = document.createElement("div");
-        row.className =
-          "gjs-component-buttons absolute bottom-6 left-2 md:left-14 m-2 flex space-x-2 z-50";
-
-        // Edit Button
-        const aiBtn = this.createAiButton();
-        row.appendChild(aiBtn);
-
-        // Delete Button
-        // const deleteBtn = document.createElement("button");
-        // deleteBtn.className =
-        //   "text-gray-900 border-gray-300 bg-white bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px]";
-        // deleteBtn.innerHTML = `
-        //       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
-        //           <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.26 51.26 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.227a49.18 49.18 0 00-6 0v-.227c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd" />
-        //       </svg>
-        //   `;
-        // deleteBtn.addEventListener("click", () => {
-        //   if (confirm("Are you sure you want to delete this component?")) {
-        //     this.model.remove();
-        //   }
-        // });
-        // row.appendChild(deleteBtn);
-
-        // Duplicate Button
-        // const duplicateBtn = document.createElement("button");
-        // duplicateBtn.className =
-        //   "text-gray-900 border-gray-300 bg-white bg-opacity-10 bg-blur-md bg-clip-padding backdrop-blur-md border rounded-3xl shadow-lg h-[30px] w-[30px]";
-        // duplicateBtn.innerHTML = `
-        //       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 md:w-4 h-3 md:h-4 mx-auto">
-        //           <path d="M7.5 3.375c0-1.036.84-1.875 1.875-1.875h.375a3.75 3.75 0 013.75 3.75v1.875C13.5 8.161 14.34 9 15.375 9h1.875A3.75 3.75 0 0121 12.75v3.375C21 17.16 20.16 18 19.125 18h-9.75A1.875 1.875 0 017.5 16.125V3.375z" />
-        //           <path d="M15 5.25a5.23 5.23 0 00-1.279-3.434 9.768 9.768 0 016.963 6.963A5.23 5.23 0 0017.25 7.5h-1.875A.375.375 0 0115 7.125V5.25zM4.875 6H6.75a.75.75 0 00.75-.75V3.375c0-1.036-.84-1.875-1.875-1.875h-1.5A1.875 1.875 0 000 3.375v9.75C0 14.16.84 15 1.875 15H3v-3.75a3.75 3.75 0 013.75-3.75h4.125A3.75 3.75 0 0114.625 9h3.375v-.375A1.875 1.875 0 0016.125 6h-1.5a.75.75 0 01-.75-.75V3.375C13.875 2.025 12.85 1 11.5 1h-1.875a.75.75 0 01-.75-.75V1c0-1.036-.84-1.875-1.875-1.875H4.875C3.839 0 3 .84 3 1.875V4.5a.75.75 0 00.75.75z" />
-        //       </svg>
-        //   `;
-        // duplicateBtn.addEventListener("click", () => {
-        //   const newComponent = this.model.clone();
-        //   this.model.parent.add(newComponent);
-        // });
-        // row.appendChild(duplicateBtn);
-
-        this.buttonRow = row;
-        return row;
-      },
-
-      handleSelect(selectedComponent) {
-        if (selectedComponent !== this.model) {
-          this.removeButtonRow();
-          return;
-        }
-
-        const buttonRow = this.createButtonRow();
-        this.el.appendChild(buttonRow);
-      },
-
-      handleDeselect() {
-        this.removeButtonRow();
-      },
-
-      removeButtonRow() {
-        if (this.buttonRow) {
-          this.buttonRow.remove();
-          this.buttonRow = null;
-        }
-      },
-
-      createAiButton() {
-        if (this.aiButton) return this.aiButton;
-
-        const btn = document.createElement("button");
-
-        btn.className =
-          "relative overflow-hidden text-rose-400 flex z-100 items-center group flex-row relative rounded-full py-1 px-3 text-md leading-6 text-gray-600 bg-white ring-1 ring-gray-900/10 hover:ring-gray-900/20";
-
-        btn.innerHTML = `
-        
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-      </svg>
-      
-
-      <div class="lg:absolute lg:group-hover:relative lg:left-10  lg:group-hover:left-1 whitespace-nowrap overflow-hidden text-sm transition-all duration-300 ease-in-out hidden lg:block opacity-0 lg:group-hover:opacity-100">
-        Regenerate Section
-      </div>
-          `;
-        btn.addEventListener("click", () => {
-          editor.runCommand("regenerate-section", {
-            // You can pass options here if needed
-            // websiteId: 123
-          });
-        });
-
-        this.aiButton = btn;
-        return btn;
-      },
-
-      updateEditButton() {
-        const editor = this.em.get("Editor");
-        editor.on("component:select", this.handleSelect.bind(this));
-        editor.on("component:deselect", this.handleDeselect.bind(this));
       },
     },
   });

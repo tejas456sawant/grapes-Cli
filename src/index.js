@@ -208,18 +208,7 @@ export default (editor, opts = {}) => {
     const isOnlyChild = true;
 
     const parent = component.parent();
-    // if (parent) {
-    //   const siblings = parent.components().models;
-    //   const index = siblings.indexOf(component);
-    //   const isFirst = index === 0;
-    //   const isLast = index === siblings.length - 1;
-    //   const isOnlyChild = siblings.length === 1;
-    // } else {
-    //   // Handle the case where there's no parent (e.g., root-level component)
-    //   const isFirst = true; // or false depending on the desired behavior
-    //   const isLast = true; // or false
-    //   const isOnlyChild = true; // or false
-    // }
+
 
     // Add movement buttons if movement is NOT disabled and it's not the only child
     if (!component.get("disableMovement")) {
@@ -268,9 +257,19 @@ export default (editor, opts = {}) => {
       }
     }
 
-    // Apply the updated toolbar
-    component.set({ toolbar });
-    editor.refresh();
+     // Add new add-button by default
+     toolbar.push({
+      id: "add-button",
+      label: `<svg viewBox="0 0 24 24" width="16" height="16" style="stroke: white; fill: none; stroke-width: 2;">
+  <path d="M12 5v14m7-7H5"></path>
+</svg>
+`,
+      attributes: { title: "Add" },
+      command: () => { /* No action for now */ }
+  });
+
+  component.set({ toolbar });
+  editor.refresh();
   });
 
   /**
@@ -439,6 +438,56 @@ export default (editor, opts = {}) => {
       sel && rte.insertHTML(`<span class="highlight">${sel}</span>`);
     };
   });
+
+  editor.on('component:type:register', (type) => {
+    const componentList = ['container'];
+    console.log("GGs")
+    if (componentList.includes(type.id)) {
+      const model = type.model;
+
+      // Modify defaults to include layout trait
+      const originalDefaults = model.prototype.defaults;
+      model.prototype.defaults = {
+        ...originalDefaults,
+        traits: [
+          ...(originalDefaults.traits || []),
+          {
+            type: 'select',
+            name: 'layout',
+            label: 'Layout',
+            options: [
+              { value: 'left', name: 'Left' },
+              { value: 'center', name: 'Center' }
+            ],
+            default: 'left'
+          }
+        ],
+      };
+
+      // Override initialize method to setup layout logic
+      const originalInit = model.prototype.init;
+      model.prototype.init = function() {
+        originalInit && originalInit.apply(this, arguments);
+        this.on('change:layout', this.updateLayoutClasses);
+        this.updateLayoutClasses();
+      };
+
+      // Add layout class update logic
+      model.prototype.updateLayoutClasses = function() {
+        const layout = this.get('layout') || 'left';
+        const classes = this.getClasses().filter(cls => !['text-left', 'text-center', 'items-center'].includes(cls));
+
+        if (layout === 'center') {
+          classes.push('text-center', 'items-center');
+        } else {
+          classes.push('text-left');
+        }
+
+        this.setClass(classes);
+      };
+    }
+  });
+
 
   // Hook into editor load
   editor.on("load", () => {
