@@ -1531,6 +1531,9 @@ export default (editor, options) => {
 
         this.setClass(classes); // Set the classes dynamically
       },
+      getName() {
+        return "#" + this.getId(); // Show the component's ID
+      },
     },
     view: {
       onRender() {
