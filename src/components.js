@@ -4423,14 +4423,14 @@ export default (editor, options) => {
         attributes: { class: "bg-section-dark light-text" },
         content: `
             <div class="mx-auto px-4 pt-16 sm:max-w-xl md:max-w-full md:px-24 lg:max-w-screen-xl lg:px-8">
-              <div class="row-gap-6 mb-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+              <div class="row-gap-6 mb-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
                 <div class="sm:col-span-2">
                   <div class="flex flex-shrink-0 items-center">
                     <a class="inline-flex" href="/"><img class="brandimg block h-9 w-auto sm:h-8" src="" /></a>
                     <h5 class="ml-1 text-xl font-bold tracking-wide"><span class="business-name"> Company</span> </h5>
                   </div>
 
-                  <div class="mt-6 lg:max-w-sm">
+                  <div class="lg:max-w-sm">
                     <p data-gjs-type="text-content" class=" mt-4 text-sm">
                       <p class="business-description"></p>
                     
@@ -4476,43 +4476,42 @@ export default (editor, options) => {
                 </div>
 
                 <!-- Social -->
-                <div>
+                <div class="icon-container">
                   <h5 class="text-base font-bold tracking-wide">Social</h5>
-                  <div class="mt-6 flex space-x-4">
-                    <a href="#" class="flex h-8 w-8 items-center justify-center rounded-full border hover:text-[var(--primary-color)]">
+                  <div class="social-links flex space-x-4">
+                    <a href="#" class="flex h-8 w-8 items-center justify-center rounded-full border hover:text-[var(--color-primary)]">
                       <!-- Facebook Icon SVG (wrapped in border) -->
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                         <!-- (Insert Facebook icon path here) -->
                       </svg>
                     </a>
-                    <a href="#" class="flex h-8 w-8 items-center justify-center rounded-full border hover:text-[var(--primary-color)]">
+                    <a href="#" class="flex h-8 w-8 items-center justify-center rounded-full border hover:text-[var(--color-primary)]">
                       <!-- Twitter Icon SVG (wrapped in border) -->
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                         <!-- (Insert Twitter icon path here) -->
                       </svg>
                     </a>
-                    <a href="#" class="flex h-8 w-8 items-center justify-center rounded-full border hover:text-[var(--primary-color)]">
+                    <a href="#" class="flex h-8 w-8 items-center justify-center rounded-full border hover:text-[var(--color-primary)]">
                       <!-- LinkedIn Icon SVG (wrapped in border) -->
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                         <!-- (Insert LinkedIn icon path here) -->
                       </svg>
                     </a>
                   </div>
-                  <p class="mt-4 text-sm">Follow our socials !</p>
                 </div>
               </div>
 
-              <div class="flex flex-col-reverse justify-between border-t pt-5 pb-10 lg:flex-row">
+              <div class="flex flex-col-reverse px-4 lg:px-8 justify-between border-t pt-5 pb-10 lg:flex-row">
                 <p class="text-sm">© <span id="year"></span>  <span class="business-name">Lorem</span> All rights reserved.</p>
                 <ul class="mb-3 flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-5 lg:mb-0">
                   <li>
-                    <a href="/contact" class="text-sm transition-colors duration-300 hover:text-[var(--primary-color)]">Contact Us</a>
+                    <a href="/contact" class="text-sm transition-colors duration-300 hover:text-[var(--color-primary)]">Contact Us</a>
                   </li>
                   <li>
-                    <a href="/" class="text-sm transition-colors duration-300 hover:text-[var(--primary-color)]">Privacy Policy</a>
+                    <a href="/" class="text-sm transition-colors duration-300 hover:text-[var(--color-primary)]">Privacy Policy</a>
                   </li>
                   <li>
-                    <a href="/" class="text-sm transition-colors duration-300 hover:text-[var(--primary-color)]">Terms &amp; Conditions</a>
+                    <a href="/" class="text-sm transition-colors duration-300 hover:text-[var(--color-primary)]">Terms &amp; Conditions</a>
                   </li>
                 </ul>
               </div>
