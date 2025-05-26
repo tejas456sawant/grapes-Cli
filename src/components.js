@@ -525,11 +525,11 @@ export default (editor, options) => {
     model: {
       defaults: {
         tagName: "div",
-        draggable: true,
+        draggable: false,
         droppable: false,
         // Tailwind classes for circle wrapper
         attributes: {
-          class: "w-40 h-40 rounded-full overflow-hidden flex justify-center items-center",
+          class: "w-20 h-20 rounded-full overflow-hidden flex justify-center items-center",
         },
         components: [
           {
@@ -561,16 +561,173 @@ export default (editor, options) => {
     },
   });
   
-  
+  const defaultRatios = [
+    { value: 'aspect-square', name: 'Square (1:1)' },
+    { value: 'aspect-[4/3]',  name: 'Standard (4:3)' },
+    { value: 'aspect-video',  name: 'Wide (16:9)' },      // Tailwind’s aspect-video = 16/9
+    { value: 'aspect-[9/16]', name: 'Portrait (9:16)' },
+    { value: 'custom',        name: 'Custom…' }
+  ];
+
+// 2. Register the img-wrapper component
+editor.DomComponents.addType('img-wrapper', {
+  isComponent: el =>
+    el.tagName === 'DIV' && el.classList.contains('img-wrapper'),
+
+  model: {
+    defaults: {
+      tagName: 'div',
+      classes: [
+        'img-wrapper', 'w-full', 'flex', 'items-center',
+        'justify-center', 'overflow-hidden', 'relative', 'aspect-video'
+      ],
+      attributes: { 'aspect-ratio': '1.77' },
+      droppable: false,
+      draggable: false,
+      showEditButton: true,
+      style: {
+        'aspect-ratio': '1.77'
+      },
+      traits: [
+        {
+          type: 'select',
+          name: 'aspect-ratio',
+          label: 'Aspect Ratio',
+          options: defaultRatios,
+          changeProp: 1,
+        }
+      ]
+    },
+
+    init() {
+      this.updateClasses();
+      this.listenTo(this, "change:attributes", this.updateClasses);
+    },
+
+    setClass(name, value) {
+      const cls = this.get('classes').slice();
+      const clsNew = value ? [...cls, name] : cls.filter(c => c !== name);
+      this.set('classes', clsNew, { silent: true });
+      this.trigger('change:classes');
+      return this;
+    },
+    updateClasses() {
+      const ratio = parseFloat(this.getAttributes()['aspect-ratio']) || 1.77;
+      this.addStyle({ 'aspect-ratio': ratio });
+    },
+
+    // opens the floating menu
+    EditComponent() {
+      // Clean up any old menu
+      document.querySelectorAll('.aspect-ratio-menu').forEach(el => el.remove());
+    
+      // Get the associated view and element
+      const view = this.getView();
+      const el = view.el;
+      const currentRatio = parseFloat(this.getAttributes()['aspect-ratio'] || '1.77');
+      
+      // Store original ratio for cancellation
+      const originalRatio = currentRatio;
+      
+      // Calculate initial slider position (reversed mapping)
+      const minVal = 0.5;
+      const maxVal = 3;
+      const initialSliderValue = maxVal + minVal - currentRatio;
+    
+      // Build menu
+      const menu = document.createElement('div');
+      menu.className = 'aspect-ratio-menu absolute z-[99999] p-4 bg-white left-[5rem] bottom-32 shadow-md rounded border text-sm w-64';
+      menu.style.position = "absolute";
+      menu.style.left = "3.5rem";
+      menu.style.bottom = "4rem";
+      document.body.appendChild(menu);
+    
+      // Heading + close button
+      const header = document.createElement('div');
+      header.className = 'flex justify-between items-center mb-3';
+    
+      const heading = document.createElement('h3');
+      heading.textContent = 'Adjust Image Size';
+      heading.className = 'font-semibold';
+    
+      const close = document.createElement('button');
+      close.innerHTML = '&times;';
+      close.className = 'text-gray-600 text-xl hover:text-black';
+      close.onclick = () => {
+        // Revert to original ratio when closing without applying
+        el.style.aspectRatio = originalRatio;
+        menu.remove();
+      };
+    
+      header.append(heading, close);
+      menu.appendChild(header);
+    
+      // Slider container
+      const sliderContainer = document.createElement('div');
+      sliderContainer.className = 'mb-2';
+    
+      // Create slider (normal left-to-right appearance)
+      const slider = document.createElement('input');
+      slider.type = 'range';
+      slider.min = minVal;
+      slider.max = maxVal;
+      slider.step = '0.01';
+      slider.value = initialSliderValue;
+      slider.className = 'w-full';
+    
+      sliderContainer.append(slider);
+      menu.append(sliderContainer);
+    
+      // Apply button
+      const btn = document.createElement('button');
+      btn.textContent = 'Apply';
+      btn.className = 'w-full px-3 py-1 bg-rose-600 text-white rounded mt-2';
+      menu.append(btn);
+    
+      // Update actual element in real-time while sliding
+      slider.addEventListener('input', () => {
+        // Calculate reversed value for aspect ratio
+        const sliderValue = parseFloat(slider.value);
+        const aspectValue = (maxVal + minVal - sliderValue).toFixed(2);
+        el.style.aspectRatio = aspectValue;
+      });
+    
+      // Apply changes when button is clicked
+      btn.onclick = () => {
+        const sliderValue = parseFloat(slider.value);
+        const finalRatio = (maxVal + minVal - sliderValue).toFixed(2);
+        this.setAttributes({ 'aspect-ratio': finalRatio });
+        menu.remove();
+      };
+    }
+  },
+
+  view: {
+    init() {
+      this.listenTo(this.model, 'change:classes', () => {
+        // nothing needed here—Grapes will re-render the class list
+      });
+    },
+
+    onEditButtonClick() {
+      this.model.EditComponent();
+    }
+  }
+});
+
+
 
   editor.Components.addType("custom-image", {
     model: {
       defaults: {
+        selectable: false,
+        disableMovement: true,
+        disableToolbar: true,
         draggable: false,
         droppable: false,
         tagName: "img", // Image element
         attributes: {
-          class: "w-full h-auto object-cover", // Default styling
+          class: "w-full h-full object-cover", // Default styling
           src: "", // Initially empty src
           imagesrc: "", // We will use cardimage as the source URL for the image
           alt: "", // Default alt text
@@ -604,6 +761,7 @@ export default (editor, options) => {
   editor.DomComponents.addType("grid-layout", {
     model: {
       defaults: {
+        draggable: false,
         tagName: "div",
         showEditButton: true,
         classes: ["grid", "gap-2", "items-start", "justify-start"],
@@ -1075,10 +1233,10 @@ export default (editor, options) => {
   /* Media Query for MD+ (768px and above) */
 @media (min-width: 768px) {
   .image-section {
-    max-height: 75vh;
+    max-height: 84vh;
   }
   .sections-contained.theme-rounded-md .image-section{
-    border-radius: 4rem !important;
+    border-radius: 2rem !important;
     overflow: hidden !important;
      max-width: 64rem;
     margin: auto;
@@ -2602,7 +2760,7 @@ export default (editor, options) => {
               <div class="modal-body"></div>
               <div class="mt-4 flex justify-end space-x-2">
                 <button class="cancel-modal px-4 py-2 bg-gray-200 rounded">Cancel</button>
-                <button class="save-modal px-4 py-2 !bg-rose-500 text-white rounded">Save</button>
+                <button class="save-modal px-4 py-2 bg-rose-500 text-white rounded">Save</button>
               </div>
             </div>
           `;
@@ -2874,7 +3032,7 @@ export default (editor, options) => {
               <div class="modal-body"></div>
               <div class="mt-4 flex justify-end space-x-2">
                 <button class="cancel-modal px-4 py-2 bg-gray-200 rounded">Cancel</button>
-                <button class="save-modal px-4 py-2 !bg-rose-500 text-white rounded">Save</button>
+                <button class="save-modal px-4 py-2 bg-rose-500 text-white rounded">Save</button>
               </div>
             </div>
           `;
@@ -3744,7 +3902,8 @@ export default (editor, options) => {
 .hero-section {
   z-index: 2;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
+  height: min-content;
   position: relative;
   background-size: cover;
   background-position: center;
@@ -4537,23 +4696,23 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "max-w-xs w-full text-left card", // Default class for scrolling list
+          class: "max-w-xs w-full card", // Default class for scrolling list
           sectiontype: "normal",
         },
         traits: [],
         styles: `
-.card .card-body {
-  padding-bottom: 2rem;
-  padding-top: 0.5rem;
-}
+          .card .card-body {
+            padding-bottom: 2rem;
+            padding-top: 2rem;
+          }
 
-.card h5 {
-  font-weight: 600;
-}
+          .card h5 {
+            font-weight: 600;
+          }
 
-.card img {
-  height: 260px !important;
-}`,
+          .card img {
+            height: 260px !important;
+          }`,
       },
 
       init() {
