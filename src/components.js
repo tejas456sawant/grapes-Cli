@@ -4994,10 +4994,10 @@ editor.DomComponents.addType('img-wrapper', {
 
             <div class="align-center align-center flex flex-col content-center content-center justify-between bg-slate-300 px-3 pt-5 pb-6 text-black md:flex-row lg:flex-row">
               <div class="flex flex-shrink-0 items-center">
-                <a class="inline-flex" href="https://www.bytesites.ai/"><img class="block h-7 w-auto px-2 sm:h-7" src="https://www.bytesites.ai/bytesites.png" alt="ByteSites" /></a>
+                <a class="inline-flex" href="https://www.bytesites.ai"><img class="block h-7 w-auto px-2 sm:h-7" src="https://www.bytesites.ai/bytesites.png" alt="ByteSites" /></a>
               </div>
 
-              <p class="text-xs fw-600 px-2">Made Using Bytesites AI Website Builder</p>
+              <p class="text-xs fw-600 px-2">Crafted with <a href="https://www.bytesites.ai" target="_blank">bytesites.ai</a></p>
             </div>
 
           `,
