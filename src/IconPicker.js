@@ -7,7 +7,7 @@ import * as AiIcons from "react-icons/ai";
 import * as BiIcons from "react-icons/bi";
 import * as IoIcons from "react-icons/io";
 import * as MdIcons from "react-icons/md";
-
+import * as CiIcons from  "react-icons/ci";
 const IconPickerWrapper = styled.div`
   width: 100%;
   background: white;
@@ -81,6 +81,7 @@ const IconPicker = ({ onSelectIcon }) => {
     ...BiIcons,
     ...IoIcons,
     ...MdIcons,
+    ...CiIcons
   }), []);
 
   // Memoize the filtered icons

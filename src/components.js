@@ -980,8 +980,8 @@ editor.DomComponents.addType('img-wrapper', {
   editor.DomComponents.addType("flex", {
     model: {
       defaults: {
-        draggable: "false",
-        droppable: "false",
+        draggable: false,
+        droppable: false,
         tagName: "div",
         showEditButton: true,
         classes: [
@@ -1989,58 +1989,169 @@ editor.DomComponents.addType('img-wrapper', {
 
   editor.DomComponents.addType("container", {
     model: {
+      textalign: true,
       defaults: {
         draggable: false,
         droppable: false,
         tagName: "div",
         attributes: {
-          class:
-            "lg:max-w-5xl mx-auto flex flex-col gap-4 px-3 container",
+          class: "lg:max-w-5xl mx-auto flex flex-col gap-4 px-3 container",
+          textalign: "left",
         },
-
         content: "Heading",
+        traits: [
+          {
+            type: "select",
+            name: "textalign",
+            label: "Text Align",
+            options: [
+              { value: "left", name: "Left" },
+              { value: "center", name: "Center" },
+              { value: "right", name: "Right" },
+            ],
+          },
+        ],
+      },
+  
+      init() {
+        this.listenTo(this, "change:attributes", this.updateTextAlign);
+        this.updateTextAlign();
+      },
+  
+      updateTextAlign() {
+        const attrs = this.getAttributes();
+        const align = attrs.textalign || "left";
+  
+        let cls = this.getClasses().filter(
+          (c) =>
+            !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+        );
+  
+        if (align === "left") {
+          cls.push("text-left");
+        } else if (align === "center") {
+          cls.push("text-center", "items-center");
+        } else if (align === "right") {
+          cls.push("text-right", "items-end");
+        }
+  
+        this.setClass(cls);
       },
     },
   });
+  
 
   editor.DomComponents.addType("content-title", {
     extend: "text",
     model: {
+      textalign: true,
       defaults: {
         draggable: false,
         droppable: false,
         tagName: "h2",
-        draggable: false,
-        droppable: false,
-        handlerType: "text", // Specify handler type
+        handlerType: "text",
         attributes: {
           class:
             "text-3xl max-w-xl lg:text-5xl mb-2 font-bold capitalize font-heading",
+          textalign: "left",
         },
-
         content: "Hero Subtitle",
+        traits: [
+          {
+            type: "select",
+            name: "textalign",
+            label: "Text Align",
+            options: [
+              { value: "left", name: "Left" },
+              { value: "center", name: "Center" },
+              { value: "right", name: "Right" },
+            ],
+          },
+        ],
+      },
+  
+      init() {
+        this.listenTo(this, "change:attributes", this.updateTextAlign);
+        this.updateTextAlign();
+      },
+  
+      updateTextAlign() {
+        const attrs = this.getAttributes();
+        const align = attrs.textalign || "left";
+  
+        let cls = this.getClasses().filter(
+          (c) => !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+        );
+  
+        if (align === "left") {
+          cls.push("text-left");
+        } else if (align === "center") {
+          cls.push("text-center", "items-center");
+        } else if (align === "right") {
+          cls.push("text-right", "items-end");
+        }
+  
+        this.setClass(cls);
       },
     },
   });
 
+
   editor.DomComponents.addType("content-subtitle", {
     extend: "text",
     model: {
+      textalign: true,
       defaults: {
         tagName: "h5",
-
         draggable: false,
         droppable: false,
         attributes: {
           class: "text-lg lg:text-xl mb-1 font-primary content-subtitle",
+          textalign: "left",
         },
         styles: `
-        .content-subtitle {
-          color: var(--color-primary-light) !important;
-          text-transform: capitalize;
-        }
-          `,
+          .content-subtitle {
+            color: var(--color-primary-light) !important;
+            text-transform: capitalize;
+          }
+        `,
         content: "Hero Subtitle",
+        traits: [
+          {
+            type: "select",
+            name: "textalign",
+            label: "Text Align",
+            options: [
+              { value: "left", name: "Left" },
+              { value: "center", name: "Center" },
+              { value: "right", name: "Right" },
+            ],
+          },
+        ],
+      },
+  
+      init() {
+        this.listenTo(this, "change:attributes", this.updateTextAlign);
+        this.updateTextAlign();
+      },
+  
+      updateTextAlign() {
+        const attrs = this.getAttributes();
+        const align = attrs.textalign || "left";
+  
+        let cls = this.getClasses().filter(
+          (c) => !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+        );
+  
+        if (align === "left") {
+          cls.push("text-left");
+        } else if (align === "center") {
+          cls.push("text-center", "items-center");
+        } else if (align === "right") {
+          cls.push("text-right", "items-end");
+        }
+  
+        this.setClass(cls);
       },
     },
   });
@@ -2070,19 +2181,56 @@ editor.DomComponents.addType('img-wrapper', {
     },
   });
 
+
   editor.DomComponents.addType("content-heading", {
     extend: "text",
     model: {
+      textalign: true,
       defaults: {
         tagName: "h5",
-
         draggable: false,
         droppable: false,
         attributes: {
           class: "text-xl lg:text-2xl font-bold font-primary pt-1 mb-2",
+          textalign: "left",
         },
-
         content: "Hero Subtitle",
+        traits: [
+          {
+            type: "select",
+            name: "textalign",
+            label: "Text Align",
+            options: [
+              { value: "left", name: "Left" },
+              { value: "center", name: "Center" },
+              { value: "right", name: "Right" },
+            ],
+          },
+        ],
+      },
+  
+      init() {
+        this.listenTo(this, "change:attributes", this.updateTextAlign);
+        this.updateTextAlign();
+      },
+  
+      updateTextAlign() {
+        const attrs = this.getAttributes();
+        const align = attrs.textalign || "left";
+  
+        let cls = this.getClasses().filter(
+          (c) => !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+        );
+  
+        if (align === "left") {
+          cls.push("text-left");
+        } else if (align === "center") {
+          cls.push("text-center", "items-center");
+        } else if (align === "right") {
+          cls.push("text-right", "items-end");
+        }
+  
+        this.setClass(cls);
       },
     },
   });
@@ -2193,7 +2341,15 @@ editor.DomComponents.addType('img-wrapper', {
           background-color: var(--color-section-dark) !important;
           color: var(--color-text-light) !important;
         }
-
+        .theme-dark .card-background{
+          background-color: var(--color-section-dark-accent);
+        }
+        .theme-dark .bg-accent-1 .card-background{
+          background-color: var(--color-section-dark) !important;
+        }
+        .shadows .card-background{
+          box-shadow:rgb(0 0 0 / 7%) 0px 4px 8px 0px;
+        }
         .theme-dark h1,
         .theme-dark h2,
         .theme-dark h3,
@@ -2249,16 +2405,52 @@ editor.DomComponents.addType('img-wrapper', {
   editor.DomComponents.addType("small-text", {
     extend: "text",
     model: {
+      textalign: true,
       defaults: {
         tagName: "p",
-
         draggable: false,
         droppable: false,
         attributes: {
           class: "text-xs font-primary opacity-75 pt-1 mb-1",
+          textalign: "left",
         },
-
         content: "Hero Subtitle",
+        traits: [
+          {
+            type: "select",
+            name: "textalign",
+            label: "Text Align",
+            options: [
+              { value: "left", name: "Left" },
+              { value: "center", name: "Center" },
+              { value: "right", name: "Right" },
+            ],
+          },
+        ],
+      },
+  
+      init() {
+        this.listenTo(this, "change:attributes", this.updateTextAlign);
+        this.updateTextAlign();
+      },
+  
+      updateTextAlign() {
+        const attrs = this.getAttributes();
+        const align = attrs.textalign || "left";
+  
+        let cls = this.getClasses().filter(
+          (c) => !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+        );
+  
+        if (align === "left") {
+          cls.push("text-left");
+        } else if (align === "center") {
+          cls.push("text-center", "items-center");
+        } else if (align === "right") {
+          cls.push("text-right", "items-end");
+        }
+  
+        this.setClass(cls);
       },
     },
   });
@@ -2266,6 +2458,7 @@ editor.DomComponents.addType('img-wrapper', {
   editor.DomComponents.addType("hero-text-title", {
     extend: "text",
     model: {
+      textalign: true,
       defaults: {
         tagName: "h1",
         movement: true,
@@ -2274,23 +2467,61 @@ editor.DomComponents.addType('img-wrapper', {
         attributes: {
           class:
             "hero-text-title md:max-w-2xl text-4xl lg:text-6xl pb-4 font-heading",
+          textalign: "left",
         },
         styles: `
-    .hero-text-title {
-  text-transform: capitalize;
-  text-decoration: none;
-  white-space: normal;
-  font-weight: 600;
-}
+          .hero-text-title {
+            text-transform: capitalize;
+            text-decoration: none;
+            white-space: normal;
+            font-weight: 600;
+          }
         `,
         content: "Hero Title",
+        traits: [
+          {
+            type: "select",
+            name: "textalign",
+            label: "Text Align",
+            options: [
+              { value: "left", name: "Left" },
+              { value: "center", name: "Center" },
+              { value: "right", name: "Right" },
+            ],
+          },
+        ],
+      },
+  
+      init() {
+        this.listenTo(this, "change:attributes", this.updateTextAlign);
+        this.updateTextAlign();
+      },
+  
+      updateTextAlign() {
+        const attrs = this.getAttributes();
+        const align = attrs.textalign || "left";
+  
+        let cls = this.getClasses().filter(
+          (c) => !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+        );
+  
+        if (align === "left") {
+          cls.push("text-left");
+        } else if (align === "center") {
+          cls.push("text-center", "items-center");
+        } else if (align === "right") {
+          cls.push("text-right", "items-end");
+        }
+  
+        this.setClass(cls);
       },
     },
   });
-
+  
   editor.DomComponents.addType("hero-text-subtitle", {
     extend: "text",
     model: {
+      textalign: true,
       defaults: {
         tagName: "h3",
         draggable: false,
@@ -2298,16 +2529,53 @@ editor.DomComponents.addType('img-wrapper', {
         attributes: {
           class:
             "hero-text-subtitle font-primary md:max-w-2xl text-md lg:text-lg leading-relaxed pb-4",
+          textalign: "left",
         },
         styles: `
-.hero-text-subtitle {
-  text-transform: capitalize;
-  text-decoration: none;
-  white-space: normal;
-  font-weight: 500;
-}
+          .hero-text-subtitle {
+            text-transform: capitalize;
+            text-decoration: none;
+            white-space: normal;
+            font-weight: 500;
+          }
         `,
         content: "Hero Subtitle",
+        traits: [
+          {
+            type: "select",
+            name: "textalign",
+            label: "Text Align",
+            options: [
+              { value: "left", name: "Left" },
+              { value: "center", name: "Center" },
+              { value: "right", name: "Right" },
+            ],
+          },
+        ],
+      },
+  
+      init() {
+        this.listenTo(this, "change:attributes", this.updateTextAlign);
+        this.updateTextAlign();
+      },
+  
+      updateTextAlign() {
+        const attrs = this.getAttributes();
+        const align = attrs.textalign || "left";
+  
+        let cls = this.getClasses().filter(
+          (c) => !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+        );
+  
+        if (align === "left") {
+          cls.push("text-left");
+        } else if (align === "center") {
+          cls.push("text-center", "items-center");
+        } else if (align === "right") {
+          cls.push("text-right", "items-end");
+        }
+  
+        this.setClass(cls);
       },
     },
   });
@@ -3382,6 +3650,7 @@ editor.DomComponents.addType('img-wrapper', {
   });
 
   editor.Components.addType("text-content", {
+    textalign: true,
     extend: "text",
     model: {
       defaults: {
@@ -3390,10 +3659,54 @@ editor.DomComponents.addType('img-wrapper', {
         tagName: "div",
         attributes: {
           class: "mb-3 para",
+          textalign: "left",
         },
+        traits: [
+          {
+            type: "select",
+            name: "textalign",
+            label: "Text Align",
+            options: [
+              { value: "left", name: "Left" },
+              { value: "center", name: "Center" },
+              { value: "right", name: "Right" },
+            ],
+          },
+        ],
       },
+  
+      init() {
+        
+        this.listenTo(this, "change:attributes", this.updateTextAlign);
+        this.updateTextAlign();
+        
+      },
+  
+      updateTextAlign() {
+        const attrs = this.getAttributes();
+        const align = attrs.textalign || "left";
+        
+        // Remove previous alignment-related classes
+        let cls = this.getClasses().filter(
+          (c) => !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+        );
+        
+        console.log("Bob " + align)
+        // Add new alignment classes
+        if (align === "left") {
+          cls.push("text-left");
+        } else if (align === "center") {
+          cls.push("text-center", "items-center");
+        } else if (align === "right") {
+          cls.push("text-right", "items-end");
+        }
+      
+        this.setClass(cls);
+      },
+      
     },
   });
+  
 
   editor.Components.addType("title-text-container", {
     model: {
@@ -4699,32 +5012,93 @@ editor.DomComponents.addType('img-wrapper', {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "max-w-xs w-full card", // Default class for scrolling list
+          class: "max-w-xs w-full gap-2 card",
           sectiontype: "normal",
+          background: "false",
+          bordered: "false"
         },
-        traits: [],
+        traits: [
+          {
+            type: "checkbox",
+            label: "Bordered",
+            name: "bordered",
+            changeProp: 1,
+          },
+          {
+            type: "checkbox",
+            label: "Background",
+            name: "background",
+            changeProp: 1,
+          },
+        ],
         styles: `
-          .card .card-body {
-            padding-bottom: 2rem;
-            padding-top: 2rem;
+
+          .card-bordered .card-body{
+            padding: 20px;
+          }
+
+          .card-bordered {
+            border-width: 1px;
+            border-style: solid;
+            border-color: #E1E1E1;
+          }
+
+          .card-background {
+            background-color: var(--color-section-light);
+          }
+
+          .bg-section-dark .card-background {
+            background-color: var(--color-section-dark-accent);
+          }
+          .theme-rounded-md .card{
+            overflow: hidden;
+            border-radius: 14px;
+          }
+          .theme-rounded-full .card{
+            overflow: hidden;
+            border-radius: 20px;
+          }
+          .card-bordered:hover{
+            border-color:var(--color-primary) !important;
+          }
+
+          .theme-dark .card-bordered{
+            border-color:rgba(42, 42, 42, 0) !important;
+          }
+
+          .card-background .card-body{
+            padding: 20px;
           }
 
           .card h5 {
             font-weight: 600;
-          }
-
-          .card img {
-            height: 260px !important;
           }`,
       },
-
+  
       init() {
-        this.listenTo(this, "change:attributes", this.onAttributesChange);
+        this.listenTo(this, "change:attributes", this.updateClassFromAttributes);
+        this.updateClassFromAttributes();
       },
-
-      onAttributesChange() {},
+  
+      updateClassFromAttributes() {
+        const classes = this.getClasses();
+        const bordered =  this.get("attributes")["bordered"];
+        const background =  this.get("attributes")["background"];
+  
+        // Remove any previous class
+        const updatedClasses = classes
+          .filter(cls => cls !== "card-bordered" && cls !== "card-background");
+  
+        // Add based on trait values
+        if (bordered === "true") updatedClasses.push("card-bordered");
+        if (background === "true") updatedClasses.push("card-background");
+  
+        this.setClass(updatedClasses);
+        console.log("rode " + bordered + background);
+      },
     },
   });
+  
 
   editor.Components.addType("card-horizontal", {
     model: {

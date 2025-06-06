@@ -327,6 +327,441 @@ export default (editor, opts = {}) => {
     },
   });
 
+
+    // Register the command
+    editor.Commands.add('open-insert-component-modal', {
+      run: (editor, sender, options = {}) => {
+       
+        const selectedComponent = editor.getSelected();
+        if (!selectedComponent) {
+          editor.Modal.alert({
+            title: 'No Selection',
+            content: 'Please select a component first',
+            attributes: { class: 'bg-rose-50 text-rose-900' }
+          });
+          return;
+        }
+  
+        // Create the main modal container
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-rose-900/30 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn';
+        modal.id = 'insert-component-modal';
+  
+        // Create the modal content
+        const modalContent = document.createElement('div');
+        modalContent.className = 'bg-white rounded-xl shadow-2xl w-[90vw] max-w-5xl h-[85vh] flex flex-col overflow-hidden border border-rose-100 animate-scaleIn';
+        modalContent.style.transformOrigin = 'center center';
+  
+        // Create the initial options modal
+        const initialOptions = createInitialOptions(editor, selectedComponent);
+        modalContent.appendChild(initialOptions);
+  
+        // Append to document
+        modal.appendChild(modalContent);
+        document.body.appendChild(modal);
+        
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            modal.classList.add('animate-fadeOut');
+            modalContent.classList.add('animate-scaleOut');
+            setTimeout(() => {
+              document.body.removeChild(modal);
+            }, 200);
+          }
+        });
+      }
+    });
+  
+    // Helper to create the initial options modal
+    function createInitialOptions(editor, selectedComponent) {
+      const container = document.createElement('div');
+      container.className = 'p-8 flex flex-col h-[500px] overflow-scroll bg-gradient-to-br from-rose-50 to-rose-100/50';
+      container.style.height = '500px';
+
+      const header = document.createElement('div');
+      header.className = 'mb-8 text-center';
+      
+      const title = document.createElement('h3');
+      title.className = 'text-2xl font-bold text-rose-900 mb-2';
+      title.textContent = 'Insert Component';
+      
+      const subtitle = document.createElement('p');
+      subtitle.className = 'text-rose-700/80 max-w-md mx-auto';
+      subtitle.textContent = `Selected: ${selectedComponent.getName() || selectedComponent.get('type')}`;
+      
+      header.appendChild(title);
+      header.appendChild(subtitle);
+      container.appendChild(header);
+  
+      const optionsContainer = document.createElement('div');
+      optionsContainer.className = 'grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow';
+  
+      const options = [
+        { 
+          name: 'Before', 
+          icon: '↑', 
+          desc: 'Add before current component',
+          class: 'hover:border-rose-300 hover:bg-rose-50'
+        },
+        { 
+          name: 'After', 
+          icon: '↓', 
+          desc: 'Add after current component',
+          class: 'hover:border-rose-300 hover:bg-rose-50'
+        },
+        { 
+          name: 'Inside', 
+          icon: '→', 
+          desc: 'Add inside current component',
+          class: 'hover:border-rose-400 hover:bg-rose-100/30 border-rose-200 bg-rose-50/50'
+        }
+      ];
+  
+      options.forEach(option => {
+        const card = document.createElement('button');
+        card.className = `bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-all border-2 ${option.class} flex flex-col items-center justify-center group`;
+        
+        const icon = document.createElement('span');
+        icon.className = 'text-3xl mb-3 text-rose-600 group-hover:text-rose-800 transition-colors';
+        icon.textContent = option.icon;
+        
+        const name = document.createElement('h4');
+        name.className = 'text-lg font-semibold text-rose-900 mb-2';
+        name.textContent = option.name;
+        
+        const desc = document.createElement('p');
+        desc.className = 'text-sm text-rose-700/70 text-center';
+        desc.textContent = option.desc;
+        
+        card.appendChild(icon);
+        card.appendChild(name);
+        card.appendChild(desc);
+        
+        card.addEventListener('click', () => {
+          card.classList.add('scale-95', 'bg-rose-100');
+          setTimeout(() => {
+            // Remove the initial options
+            while (container.firstChild) {
+              container.removeChild(container.firstChild);
+            }
+            
+            // Show the component selector
+            const componentSelector = createComponentSelector(editor, selectedComponent, option.name.toLowerCase());
+            container.appendChild(componentSelector);
+          }, 150);
+        });
+        
+        optionsContainer.appendChild(card);
+      });
+  
+      container.appendChild(optionsContainer);
+  
+      // Add footer with close button
+      const footer = document.createElement('div');
+      footer.className = 'mt-6 flex justify-end';
+      
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'px-4 py-2 text-sm text-rose-700 hover:text-rose-900 font-medium rounded-lg hover:bg-rose-200/50 transition-colors flex items-center gap-1';
+      closeBtn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        Cancel
+      `;
+      closeBtn.addEventListener('click', () => {
+        const modal = document.getElementById('insert-component-modal');
+        if (modal) {
+          modal.classList.add('animate-fadeOut');
+          modal.querySelector('div').classList.add('animate-scaleOut');
+          setTimeout(() => {
+            document.body.removeChild(modal);
+          }, 200);
+        }
+      });
+      
+      footer.appendChild(closeBtn);
+      container.appendChild(footer);
+  
+      return container;
+    }
+  
+    // Helper to create the component selector
+    function createComponentSelector(editor, selectedComponent, insertPosition) {
+      const container = document.createElement('div');
+      container.className = 'flex h-96 bg-gradient-to-b from-rose-50 to-white';
+      container.style.overflow = 'scroll'
+      // Create sidebar with categories
+      const sidebar = document.createElement('div');
+      sidebar.className = 'w-64 bg-white/80 p-4 border-r border-rose-200 overflow-y-auto backdrop-blur-sm flex flex-col';
+      
+      const sidebarHeader = document.createElement('div');
+      sidebarHeader.className = 'mb-6';
+      
+      const backBtn = document.createElement('button');
+      backBtn.className = 'flex items-center text-sm text-rose-700 hover:text-rose-900 mb-4 transition-colors';
+      backBtn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back
+      `;
+      backBtn.addEventListener('click', () => {
+        const modalContent = document.querySelector('#insert-component-modal > div');
+        while (modalContent.firstChild) {
+          modalContent.removeChild(modalContent.firstChild);
+        }
+        modalContent.appendChild(createInitialOptions(editor, selectedComponent));
+      });
+      
+      const sidebarTitle = document.createElement('h4');
+      sidebarTitle.className = 'font-bold text-lg text-rose-900';
+      sidebarTitle.textContent = 'Categories';
+      
+      sidebarHeader.appendChild(backBtn);
+      sidebarHeader.appendChild(sidebarTitle);
+      sidebar.appendChild(sidebarHeader);
+  
+      // Search input
+      const searchContainer = document.createElement('div');
+      searchContainer.className = 'mb-6 relative';
+      
+      const searchInput = document.createElement('input');
+      searchInput.type = 'text';
+      searchInput.placeholder = 'Search components...';
+      searchInput.className = 'w-full px-3 py-2 pr-8 text-sm border border-rose-200 rounded-lg focus:ring-2 focus:ring-rose-300 focus:border-rose-300 outline-none transition-all';
+      
+      searchContainer.appendChild(searchInput);
+      sidebar.appendChild(searchContainer);
+  
+      // Dummy categories with icons
+      const categories = [
+        { name: 'All', icon: '🌟', active: true },
+        { name: 'Basic', icon: '🧩' },
+        { name: 'Forms', icon: '📝' },
+        { name: 'Media', icon: '🖼️' },
+        { name: 'Layout', icon: '📐' },
+        { name: 'Typography', icon: '🔤' }
+      ];
+      
+      const categoryContainer = document.createElement('div');
+      categoryContainer.className = 'flex-1 overflow-y-auto';
+      
+      categories.forEach(cat => {
+        const catBtn = document.createElement('button');
+        catBtn.className = `flex items-center w-full text-left py-3 px-3 mb-1 rounded-lg transition-colors text-rose-800 group ${cat.active ? 'bg-rose-100/70 font-medium' : 'hover:bg-rose-100/50'}`;
+        catBtn.innerHTML = `
+          <span class="text-xl mr-3 opacity-70 group-hover:opacity-100 transition-opacity">${cat.icon}</span>
+          <span>${cat.name}</span>
+        `;
+        categoryContainer.appendChild(catBtn);
+      });
+  
+      sidebar.appendChild(categoryContainer);
+      container.appendChild(sidebar);
+  
+      // Create component grid
+      const componentGrid = document.createElement('div');
+      componentGrid.className = 'flex-1 p-6 overflow-y-auto flex flex-col';
+  
+      const gridHeader = document.createElement('div');
+      gridHeader.className = 'mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4';
+      
+      const gridTitle = document.createElement('h4');
+      gridTitle.className = 'font-bold text-xl text-rose-900';
+      gridTitle.textContent = 'Available Components';
+      
+      const headerRight = document.createElement('div');
+      headerRight.className = 'flex items-center gap-3';
+      
+      const positionBadge = document.createElement('span');
+      positionBadge.className = 'bg-rose-100 text-rose-800 text-xs font-medium px-3 py-1 rounded-full capitalize';
+      positionBadge.textContent = insertPosition;
+      
+      const countBadge = document.createElement('span');
+      countBadge.className = 'bg-white border border-rose-200 text-rose-700 text-xs font-medium px-2.5 py-1 rounded-full';
+      
+      headerRight.appendChild(positionBadge);
+      headerRight.appendChild(countBadge);
+      
+      gridHeader.appendChild(gridTitle);
+      gridHeader.appendChild(headerRight);
+      componentGrid.appendChild(gridHeader);
+  
+      // Grid container
+      const gridContainer = document.createElement('div');
+      gridContainer.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 flex-1 content-start';
+  
+      // Preview container (initially hidden)
+      const previewContainer = document.createElement('div');
+      previewContainer.className = 'hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[1001] flex items-center justify-center p-4 animate-fadeIn';
+      previewContainer.id = 'component-preview-modal';
+      
+      const previewContent = document.createElement('div');
+      previewContent.className = 'bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-auto animate-scaleIn p-6';
+      previewContent.style.transformOrigin = 'center center';
+      
+      const previewHeader = document.createElement('div');
+      previewHeader.className = 'flex justify-between items-center mb-4 pb-2 border-b border-rose-100';
+      
+      const previewTitle = document.createElement('h3');
+      previewTitle.className = 'text-lg font-bold text-rose-900';
+      
+      const closePreviewBtn = document.createElement('button');
+      closePreviewBtn.className = 'text-rose-700 hover:text-rose-900 p-1 rounded-full hover:bg-rose-100';
+      closePreviewBtn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      `;
+      closePreviewBtn.addEventListener('click', () => {
+        previewContainer.classList.add('animate-fadeOut');
+        previewContent.classList.add('animate-scaleOut');
+        setTimeout(() => {
+          document.body.removeChild(previewContainer);
+        }, 200);
+      });
+      
+      previewHeader.appendChild(previewTitle);
+      previewHeader.appendChild(closePreviewBtn);
+      previewContent.appendChild(previewHeader);
+      
+      const previewBody = document.createElement('div');
+      previewBody.className = 'prose prose-rose max-w-none';
+      previewContent.appendChild(previewBody);
+      
+      previewContainer.appendChild(previewContent);
+      document.body.appendChild(previewContainer);
+  
+      // Get all component types from the editor
+      const componentTypes = editor.Components.getTypes();
+      countBadge.textContent = `${componentTypes.length} components`;
+      
+      componentTypes.forEach(compType => {
+        const compCard = document.createElement('button');
+        compCard.className = 'border border-rose-200 bg-white rounded-xl p-4 hover:shadow-md transition-all cursor-pointer flex flex-col text-left hover:border-rose-300 hover:bg-rose-50/50 group h-full';
+        
+        const cardHeader = document.createElement('div');
+        cardHeader.className = 'flex items-start mb-3';
+        
+        const icon = document.createElement('div');
+        icon.className = 'w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center text-rose-600 mr-3 group-hover:bg-rose-200 transition-colors flex-shrink-0';
+        icon.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+        `;
+        
+        const textContainer = document.createElement('div');
+        textContainer.className = 'flex-1';
+        
+        const name = document.createElement('h5');
+        name.className = 'font-medium text-rose-900 mb-1';
+        const typeName = typeof compType === 'string'
+  ? compType
+  : compType.id || compType.type || compType.name || 'Unknown';
+
+name.textContent = typeName;
+        
+        const type = document.createElement('span');
+        type.className = 'text-xs text-rose-600/70 block';
+        type.textContent = 'component';
+        
+        textContainer.appendChild(name);
+        textContainer.appendChild(type);
+        cardHeader.appendChild(icon);
+        cardHeader.appendChild(textContainer);
+        
+        const previewBtn = document.createElement('button');
+        previewBtn.className = 'absolute top-2 right-2 p-1 text-rose-600/50 hover:text-rose-700 rounded-full hover:bg-rose-100 transition-colors opacity-0 group-hover:opacity-100';
+        previewBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+        `;
+        previewBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          previewTitle.textContent = compType;
+          previewBody.innerHTML = `
+            <h4 class="text-rose-800">Component Preview</h4>
+            <p class="text-rose-700/80">This would show a live preview of the ${compType} component.</p>
+            <div class="mt-4 p-4 border border-rose-200 rounded-lg bg-rose-50/50">
+              <p class="text-sm text-rose-700">In a real implementation, this would render an actual preview of the component.</p>
+            </div>
+          `;
+          previewContainer.classList.remove('hidden');
+        });
+        
+        compCard.appendChild(cardHeader);
+        compCard.appendChild(previewBtn);
+        
+        compCard.addEventListener('click', () => {
+          // Add insertion animation feedback
+          compCard.classList.add('scale-95', 'bg-rose-100');
+          setTimeout(() => {
+            compCard.classList.remove('scale-95', 'bg-rose-100');
+          }, 150);
+          
+          // Insert the component based on the selected position
+          const component = { type: typeName };
+          
+          switch (insertPosition) {
+            case 'before':
+              editor.getSelected().before(component);
+              break;
+            case 'after':
+              editor.getSelected().after(component);
+              break;
+            case 'inside':
+              const selected = editor.getSelected();
+              if (selected) {
+                selected.components().add(component); // adds to the end
+              }
+              break;
+          }
+          
+          // Close the modal with animation
+          const modal = document.getElementById('insert-component-modal');
+          if (modal) {
+            modal.classList.add('animate-fadeOut');
+            modal.querySelector('div').classList.add('animate-scaleOut');
+            setTimeout(() => {
+              document.body.removeChild(modal);
+            }, 200);
+          }
+        });
+        
+        gridContainer.appendChild(compCard);
+      });
+  
+      // Add search functionality
+      searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const cards = gridContainer.querySelectorAll('button');
+        let visibleCount = 0;
+        
+        cards.forEach(card => {
+          const name = card.querySelector('h5').textContent.toLowerCase();
+          if (name.includes(searchTerm)) {
+            card.style.display = 'block';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+        
+        countBadge.textContent = `${visibleCount} of ${componentTypes.length} components`;
+      });
+  
+      componentGrid.appendChild(gridContainer);
+      container.appendChild(componentGrid);
+      return container;
+    }
+  
+
+  
   editor.on("component:add", (component) => {
     if (component.get("disableToolbar")) {
       component.set({ toolbar: [] });
@@ -343,6 +778,36 @@ export default (editor, opts = {}) => {
 
     const parent = component.parent();
 
+    if (component.get("attributes")?.textalign) {
+      const hasTextAlignButton = toolbar.some((btn) => btn.id === "textalign-toggle");
+    
+      if (!hasTextAlignButton) {
+        toolbar.push({
+          id: "textalign-toggle",
+          label: `
+            <svg viewBox="0 0 24 24" width="16" height="16" style="fill: currentColor;">
+              <path d="M4 6h16v2H4V6zm4 5h8v2H8v-2zm-4 5h16v2H4v-2z" fill="currentColor"/>
+            </svg>
+          `,
+          command(editor) {
+            const component = editor.getSelected();
+            if (!component) return;
+    
+            const attrs = component.get("attributes") || {};
+            const currentAlign = attrs.textalign || "left";
+            const nextAlign = {
+              left: "center",
+              center: "right",
+              right: "left",
+            }[currentAlign];
+    
+            component.addAttributes({ textalign: nextAlign });
+          },
+          attributes: { title: "Toggle Text Alignment" },
+        });
+      }
+    }
+    
 
     // Add movement buttons if movement is NOT disabled and it's not the only child
     if (!component.get("disableMovement")) {
@@ -390,16 +855,17 @@ export default (editor, opts = {}) => {
         });
       }
     }
-
+    
+    
      // Add new add-button by default
      toolbar.push({
       id: "add-button",
       label: `<svg viewBox="0 0 24 24" width="16" height="16" style="stroke: white; fill: none; stroke-width: 2;">
-  <path d="M12 5v14m7-7H5"></path>
-</svg>
-`,
+        <path d="M12 5v14m7-7H5"></path>
+      </svg> `,
+      
       attributes: { title: "Add" },
-      command: () => { /* No action for now */ }
+      command: "open-insert-component-modal",
   });
 
   component.set({ toolbar });
