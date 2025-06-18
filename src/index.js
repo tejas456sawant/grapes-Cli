@@ -14,6 +14,10 @@ export default (editor, opts = {}) => {
   const themeOptions = opts.theme_options || {};
   console.log("config", config);
 
+
+  editor.formsList = opts.forms;
+  console.log("forms ", editor.formsList);
+
   loadComponents(editor);
 
   // Add blocks
@@ -42,7 +46,7 @@ export default (editor, opts = {}) => {
       const name = options?.business_name || defaultName;
       const brandimg = options?.brandimg || "";
       const businessdescription = options?.business_description || "";
-  
+
       // Social media links from options
       const socialLinks = {
         facebook_url: options?.facebook_url || "",
@@ -51,20 +55,20 @@ export default (editor, opts = {}) => {
         youtube_url: options?.youtube_url || "",
         linkedin_url: options?.linkedin_url || ""
       };
-  
+
       // Check if all social links are empty
       const allSocialLinksEmpty = Object.values(socialLinks).every(link => !link.trim());
-  
+
       // Track how many elements we've updated
       let updatedCount = 0;
-  
+
       // Get all pages
       const pages = editor.Pages.getAll();
-  
+
       // Process each page
       pages.forEach((page) => {
         const frames = page.get("frames") || [];
-  
+
         frames.forEach((frame) => {
           const rootComponent = frame.get("component");
           if (rootComponent) {
@@ -73,7 +77,7 @@ export default (editor, opts = {}) => {
           }
         });
       });
-  
+
       /**
        * Generates social media icons HTML based on provided links
        * @returns {string} - HTML string for social icons
@@ -82,7 +86,7 @@ export default (editor, opts = {}) => {
         if (allSocialLinksEmpty) {
           return ""; // Return empty string if no social links
         }
-  
+
         const iconSVGs = {
           facebook_url: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 fb-icon" fill="currentColor" viewBox="0 0 24 24">
             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -100,9 +104,9 @@ export default (editor, opts = {}) => {
             <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
           </svg>`
         };
-  
+
         const icons = [];
-        
+
         // Generate icons only for platforms with links
         Object.entries(socialLinks).forEach(([platform, link]) => {
           console.log("Social Media", link, platform)
@@ -122,50 +126,50 @@ export default (editor, opts = {}) => {
             `);
           }
         });
-  
+
         return icons.length > 0 ? `<div class="mt-6 flex space-x-4">${icons.join('')}</div>` : '';
       }
-  
+
       /**
        * Recursively traverses component tree and updates elements
        * @param {Object} component - GrapesJS component
        */
       function traverseAndUpdate(component) {
         const classes = component.getClasses ? component.getClasses() : [];
-  
+
         // Update phone number
         if (classes.includes("phone-number")) {
           component.addAttributes({ href: `tel:${phoneDigits}` });
           component.set({ content: phoneDigits });
           updatedCount++;
         }
-  
+
         // Update email
         if (classes.includes("email")) {
           component.addAttributes({ href: `mailto:${email}` });
           component.set({ content: email });
           updatedCount++;
         }
-  
+
         // Update address
         if (classes.includes("address")) {
           component.set({ content: address });
           updatedCount++;
         }
-  
+
         // Update branding image
         if (classes.includes("brandimg") && brandimg) {
           component.addAttributes({ src: brandimg });
           updatedCount++;
         }
-  
+
         // Update social links
         if (classes.includes("social-links")) {
           const socialIconsHTML = generateSocialIconsHTML();
           component.set({ content: socialIconsHTML });
           updatedCount++;
         }
-  
+
         // Check if component has content property with HTML
         const content = component.get("content");
         if (content && typeof content === "string" && content.includes("<")) {
@@ -176,14 +180,14 @@ export default (editor, opts = {}) => {
             updatedCount++;
           }
         }
-  
+
         // Recurse through children
         const children = component.components();
         if (children && children.length) {
           children.forEach((child) => traverseAndUpdate(child));
         }
       }
-  
+
       /**
        * Updates HTML content with new information
        * @param {string} htmlString - HTML content to update
@@ -191,7 +195,7 @@ export default (editor, opts = {}) => {
        */
       function updateHTMLContent(htmlString) {
         if (!htmlString) return htmlString;
-  
+
         try {
           // Update phone numbers
           const phoneRegex =
@@ -201,14 +205,14 @@ export default (editor, opts = {}) => {
             phoneRegex,
             `<a href="tel:${phoneDigits}" class="phone-number ml-3">${phoneDigits}</a>`,
           );
-  
+
           // Update emails - replace entire <a> tag
           const emailRegex = /<a[^>]*class="[^"]*email[^"]*"[^>]*>.*?<\/a>/g;
           htmlString = htmlString.replace(
             emailRegex,
             `<a href="mailto:${email}" class="email ml-3">${email}</a>`,
           );
-  
+
           // Update addresses
           const addressRegex =
             /<[^>]*class="[^"]*address[^"]*"[^>]*>(.*?)<\/[^>]*>/g;
@@ -216,7 +220,7 @@ export default (editor, opts = {}) => {
             addressRegex,
             `<span class="address">${address}</span>`,
           );
-  
+
           // Update branding images
           if (brandimg) {
             const brandRegex = /<img[^>]*class="[^"]*brandimg[^"]*"[^>]*>/g;
@@ -225,39 +229,39 @@ export default (editor, opts = {}) => {
               `<img src="${brandimg}" class="brandimg block h-9 w-auto sm:h-8" alt="${name}"/>`,
             );
           }
-  
+
           // Update social links containers
           const socialLinksRegex = /<div[^>]*class="[^"]*social-links[^"]*"[^>]*>(.*?)<\/div>/gs;
           const socialIconsHTML = generateSocialIconsHTML();
-          
+
           // Replace social-links div content
           htmlString = htmlString.replace(socialLinksRegex, (match) => {
             // Extract existing classes from the matched div
             const classMatch = match.match(/class="([^"]*)"/);
             let existingClasses = classMatch ? classMatch[1] : 'social-links';
-            
+
             // Ensure social-links class is present
             if (!existingClasses.includes('social-links')) {
               existingClasses += ' social-links';
             }
-            
+
             return `<div class="${existingClasses}">${socialIconsHTML}</div>`;
           });
-  
+
           // Handle icon-container visibility based on whether icons exist
           const iconContainerRegex = /<div([^>]*class="[^"]*icon-container[^"]*"[^>]*)>/g;
           htmlString = htmlString.replace(iconContainerRegex, (match, attributes) => {
             console.log("GJKL", socialLinks)
             let updatedAttributes = attributes;
-            
+
             if (allSocialLinksEmpty) {
               // Add hidden class if not present
               if (!updatedAttributes.includes('hidden')) {
                 const classMatch = updatedAttributes.match(/class="([^"]*)"/);
                 if (classMatch) {
                   const existingClasses = classMatch[1];
-                  const newClasses = existingClasses.includes('hidden') 
-                    ? existingClasses 
+                  const newClasses = existingClasses.includes('hidden')
+                    ? existingClasses
                     : `${existingClasses} hidden`.trim();
                   updatedAttributes = updatedAttributes.replace(/class="[^"]*"/, `class="${newClasses}"`);
                 } else {
@@ -281,10 +285,10 @@ export default (editor, opts = {}) => {
                 }
               }
             }
-            
+
             return `<div${updatedAttributes}>`;
           });
-  
+
           // Update business hours, name, and other content
           if (businessHours) {
             const hoursRegex =
@@ -294,7 +298,7 @@ export default (editor, opts = {}) => {
               `<span class="business-hours"> Open ${businessHours}</span>`,
             );
           }
-  
+
           if (name) {
             const nameRegex =
               /<[^>]*class="[^"]*business-name[^"]*"[^>]*>(.*?)<\/[^>]*>/g;
@@ -303,7 +307,7 @@ export default (editor, opts = {}) => {
               `<span class="business-name">${name}</span>`,
             );
           }
-  
+
           if (businessdescription) {
             const descRegex =
               /<[^>]*class="[^"]*business-description[^"]*"[^>]*>(.*?)<\/[^>]*>/g;
@@ -312,456 +316,715 @@ export default (editor, opts = {}) => {
               `<p class="business-description">${businessdescription}</p>`,
             );
           }
-  
+
           return htmlString;
         } catch (err) {
           console.error("Error updating HTML content:", err);
           return htmlString; // Return original if something fails
         }
       }
-  
+
       // Log whether all social links are empty for debugging
       console.log("All social links empty:", allSocialLinksEmpty);
-  
+
       return updatedCount;
     },
   });
 
+  editor.Commands.add("open-insert-component-modal", {
+    run(editor) {
+      const selected = editor.getSelected();
+      if (!selected) return;
 
-    // Register the command
-    editor.Commands.add('open-insert-component-modal', {
-      run: (editor, sender, options = {}) => {
-       
-        const selectedComponent = editor.getSelected();
-        if (!selectedComponent) {
-          editor.Modal.alert({
-            title: 'No Selection',
-            content: 'Please select a component first',
-            attributes: { class: 'bg-rose-50 text-rose-900' }
-          });
-          return;
+      // Clean existing
+      document.querySelector(".custom-context-menu")?.remove();
+
+      const toolbarButton = document.querySelector('[title="Add"]');
+      if (!toolbarButton) return;
+
+      const btnRect = toolbarButton.getBoundingClientRect();
+
+      // Create modern horizontal menu
+      const contextMenu = document.createElement("div");
+      contextMenu.className =
+        "custom-context-menu fixed z-[9999] text-xs flex items-center gap-2 bg-white backdrop-blur-md shadow-2xl p-2 rounded-md transition-all duration-200";
+
+      contextMenu.innerHTML = `
+        <span class="text-xs">Add Item</span>
+        <button data-pos="before" class="menu-btn flex items-center gap-1 px-1 py-2 text-xs rounded-md hover:bg-rose-100 transition">
+          <svg class="w-4 h-4" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" height="1em" width="1em"><path d="M208 144h-56c-4.4 0-8 3.6-8 8v720c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V152c0-4.4-3.6-8-8-8zm166 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm498 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm166 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM540 310h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 166h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm332 332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM374 808h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm332 332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path</svg>
+          <span>Before</span>
+        </button>
+        <button data-pos="after" class="menu-btn flex items-center gap-1 px-1 py-2 text-xs rounded-md hover:bg-rose-100 transition">
+          <svg class="w-4 h-4" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" height="1em" width="1em">
+         <path d="M872 144h-56c-4.4 0-8 3.6-8 8v720c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V152c0-4.4-3.6-8-8-8zm-166 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-498 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-166 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm166 166h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 166h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM208 808h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm498 332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM374 808h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path></svg>
+
+          <span>After</span>
+        </button>
+        ${selected.get("addInside")
+          ? `<button data-pos="inside" class="menu-btn flex items-center gap-1 px-1 py-2 text-xs rounded-md hover:bg-rose-100 transition">
+          <svg class="w-4 h-4" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" height="1em" width="1em">
+         <path d="M872 476H548V144h-72v332H152c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h324v332h72V548h324c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-166h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 498h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-664h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 498h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM650 216h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm56 592h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-56-592h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-166 0h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm56 592h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-56-426h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm56 260h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path></svg>
+          <span>Inside</span>
+        </button>`
+          : ""
         }
-  
-        // Create the main modal container
-        const modal = document.createElement('div');
-        modal.className = 'fixed inset-0 bg-rose-900/30 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn';
-        modal.id = 'insert-component-modal';
-  
-        // Create the modal content
-        const modalContent = document.createElement('div');
-        modalContent.className = 'bg-white rounded-xl shadow-2xl w-[90vw] max-w-5xl h-[85vh] flex flex-col overflow-hidden border border-rose-100 animate-scaleIn';
-        modalContent.style.transformOrigin = 'center center';
-  
-        // Create the initial options modal
-        const initialOptions = createInitialOptions(editor, selectedComponent);
-        modalContent.appendChild(initialOptions);
-  
-        // Append to document
-        modal.appendChild(modalContent);
-        document.body.appendChild(modal);
-        
+        <button class="close-context ml-2 text-gray-400 hover:text-black text-lg px-2">&times;</button>
+      `;
 
-        // Close modal when clicking outside
-        modal.addEventListener('click', (e) => {
-          if (e.target === modal) {
-            modal.classList.add('animate-fadeOut');
-            modalContent.classList.add('animate-scaleOut');
-            setTimeout(() => {
-              document.body.removeChild(modal);
-            }, 200);
-          }
-        });
+      document.body.appendChild(contextMenu);
+
+      // Position smartly
+      const menuRect = contextMenu.getBoundingClientRect();
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+
+      let top = btnRect.bottom + 10;
+      let left = btnRect.left - 20;
+
+      if (top + menuRect.height > screenHeight - 10) {
+        top = btnRect.top - menuRect.height - 10;
       }
+
+      if (left + menuRect.width > screenWidth - 10) {
+        left = screenWidth - menuRect.width - 10;
+      }
+
+      contextMenu.style.top = `${top}px`;
+      contextMenu.style.left = `${left}px`;
+
+      // Handle clicks
+      contextMenu.querySelectorAll(".menu-btn").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          const position = e.currentTarget.dataset.pos;
+          contextMenu.remove();
+          openBlockPickerModal(editor, selected, position);
+        });
+      });
+
+      contextMenu.querySelector(".close-context").addEventListener("click", () => {
+        contextMenu.remove();
+      });
+
+      const onClickOutside = (e) => {
+        if (!contextMenu.contains(e.target) && !toolbarButton.contains(e.target)) {
+          contextMenu.remove();
+          document.removeEventListener("mousedown", onClickOutside);
+        }
+      };
+      setTimeout(() => {
+        document.addEventListener("mousedown", onClickOutside);
+      }, 50);
+    },
+  });
+  function openBlockPickerModal(editor, targetComponent, insertPosition) {
+    const tags = ['Layout', 'Typography', 'Buttons', 'Visuals', 'Form', 'Misc', 'Templates'];
+  
+    const blocks = editor.BlockManager.getAll().filter((block) => {
+      if (
+        (insertPosition === 'before' || insertPosition === 'after') &&
+        targetComponent?.is('section')
+      ) {
+        return block.get('sectionBlocks');
+      }
+      return true;
     });
   
-    // Helper to create the initial options modal
-    function createInitialOptions(editor, selectedComponent) {
-      const container = document.createElement('div');
-      container.className = 'p-8 flex flex-col h-[500px] overflow-scroll bg-gradient-to-br from-rose-50 to-rose-100/50';
-      container.style.height = '500px';
-
-      const header = document.createElement('div');
-      header.className = 'mb-8 text-center';
-      
-      const title = document.createElement('h3');
-      title.className = 'text-2xl font-bold text-rose-900 mb-2';
-      title.textContent = 'Insert Component';
-      
-      const subtitle = document.createElement('p');
-      subtitle.className = 'text-rose-700/80 max-w-md mx-auto';
-      subtitle.textContent = `Selected: ${selectedComponent.getName() || selectedComponent.get('type')}`;
-      
-      header.appendChild(title);
-      header.appendChild(subtitle);
-      container.appendChild(header);
+    document.querySelector('.custom-block-modal')?.remove();
   
-      const optionsContainer = document.createElement('div');
-      optionsContainer.className = 'grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow';
+    const overlay = document.createElement('div');
+    overlay.className =
+      'custom-block-modal fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center';
   
-      const options = [
-        { 
-          name: 'Before', 
-          icon: '↑', 
-          desc: 'Add before current component',
-          class: 'hover:border-rose-300 hover:bg-rose-50'
-        },
-        { 
-          name: 'After', 
-          icon: '↓', 
-          desc: 'Add after current component',
-          class: 'hover:border-rose-300 hover:bg-rose-50'
-        },
-        { 
-          name: 'Inside', 
-          icon: '→', 
-          desc: 'Add inside current component',
-          class: 'hover:border-rose-400 hover:bg-rose-100/30 border-rose-200 bg-rose-50/50'
-        }
-      ];
+    const modal = document.createElement('div');
+    modal.className =
+      'bg-white w-[90vw] max-w-6xl rounded-xl shadow-xl flex flex-col';
+    modal.style.height = '536px'
+    // Header
+    const header = document.createElement('div');
+    header.className =
+      'flex justify-between items-center px-4 py-2 border-b border-gray-200';
+    const title = document.createElement('div');
+    title.className = 'text-gray-700 text-sm font-semibold';
+    title.textContent = 'Insert Block';
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = '×';
+    closeBtn.className = 'text-2xl text-gray-500 hover:text-black';
+    closeBtn.onclick = () => history.back();
+    header.append(title, closeBtn);
   
-      options.forEach(option => {
-        const card = document.createElement('button');
-        card.className = `bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-all border-2 ${option.class} flex flex-col items-center justify-center group`;
-        
-        const icon = document.createElement('span');
-        icon.className = 'text-3xl mb-3 text-rose-600 group-hover:text-rose-800 transition-colors';
-        icon.textContent = option.icon;
-        
-        const name = document.createElement('h4');
-        name.className = 'text-lg font-semibold text-rose-900 mb-2';
-        name.textContent = option.name;
-        
-        const desc = document.createElement('p');
-        desc.className = 'text-sm text-rose-700/70 text-center';
-        desc.textContent = option.desc;
-        
-        card.appendChild(icon);
-        card.appendChild(name);
-        card.appendChild(desc);
-        
+    // Body layout: Sidebar + Grid
+    const body = document.createElement('div');
+    body.className = 'flex flex-1 overflow-hidden';
+  
+    const sidebar = document.createElement('div');
+    sidebar.className =
+      'hidden md:flex flex-col w-48 border-r border-gray-200 bg-gray-50 overflow-y-auto';
+  
+    tags.forEach((tag) => {
+      const btn = document.createElement('button');
+      btn.textContent = tag;
+      btn.className =
+        'px-4 py-3 text-left text-capitalize text-sm text-gray-700 hover:bg-gray-200 transition';
+      btn.addEventListener('click', () => {
+        [...sidebar.children].forEach((c) =>
+          c.classList.remove('bg-gray-200', 'font-bold')
+        );
+        btn.classList.add('bg-gray-200', 'font-bold');
+        // renderGrid(tag);
+      });
+      sidebar.appendChild(btn);
+    });
+  
+    // Grid container
+    const gridWrapper = document.createElement('div');
+    gridWrapper.className = 'flex-1 overflow-y-auto p-4';
+  
+    const grid = document.createElement('div');
+    grid.className =
+      'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4';
+  
+    gridWrapper.appendChild(grid);
+  
+    function renderGrid(tagFilter) {
+      grid.innerHTML = '';
+      blocks.forEach((block) => {
+        const category = block.get('category');
+        const blockTag =
+          typeof category === 'string'
+            ? category.toLowerCase()
+            : category?.id?.toLowerCase?.() || '';
+  
+        if (tagFilter && blockTag !== tagFilter) return;
+  
+        const card = document.createElement('div');
+        card.className =
+          'bg-white border rounded-lg shadow-sm hover:shadow-md hover:scale-[1.02] transition transform cursor-pointer overflow-hidden flex flex-col aspect-video';
+  
+        const imgSrc = block.get('media')?.match(/src="(.*?)"/)?.[1] || '';
+        card.innerHTML = `
+          <div class="flex-1">
+            <img src="${imgSrc}" class="w-full h-full object-cover" />
+          </div>
+          <div class="p-2 text-center text-sm font-medium text-gray-700">${block.get(
+            'label'
+          )}</div>
+        `;
+  
         card.addEventListener('click', () => {
-          card.classList.add('scale-95', 'bg-rose-100');
-          setTimeout(() => {
-            // Remove the initial options
-            while (container.firstChild) {
-              container.removeChild(container.firstChild);
-            }
-            
-            // Show the component selector
-            const componentSelector = createComponentSelector(editor, selectedComponent, option.name.toLowerCase());
-            container.appendChild(componentSelector);
-          }, 150);
-        });
-        
-        optionsContainer.appendChild(card);
-      });
-  
-      container.appendChild(optionsContainer);
-  
-      // Add footer with close button
-      const footer = document.createElement('div');
-      footer.className = 'mt-6 flex justify-end';
-      
-      const closeBtn = document.createElement('button');
-      closeBtn.className = 'px-4 py-2 text-sm text-rose-700 hover:text-rose-900 font-medium rounded-lg hover:bg-rose-200/50 transition-colors flex items-center gap-1';
-      closeBtn.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-        Cancel
-      `;
-      closeBtn.addEventListener('click', () => {
-        const modal = document.getElementById('insert-component-modal');
-        if (modal) {
-          modal.classList.add('animate-fadeOut');
-          modal.querySelector('div').classList.add('animate-scaleOut');
-          setTimeout(() => {
-            document.body.removeChild(modal);
-          }, 200);
-        }
-      });
-      
-      footer.appendChild(closeBtn);
-      container.appendChild(footer);
-  
-      return container;
-    }
-  
-    // Helper to create the component selector
-    function createComponentSelector(editor, selectedComponent, insertPosition) {
-      const container = document.createElement('div');
-      container.className = 'flex h-96 bg-gradient-to-b from-rose-50 to-white';
-      container.style.overflow = 'scroll'
-      // Create sidebar with categories
-      const sidebar = document.createElement('div');
-      sidebar.className = 'w-64 bg-white/80 p-4 border-r border-rose-200 overflow-y-auto backdrop-blur-sm flex flex-col';
-      
-      const sidebarHeader = document.createElement('div');
-      sidebarHeader.className = 'mb-6';
-      
-      const backBtn = document.createElement('button');
-      backBtn.className = 'flex items-center text-sm text-rose-700 hover:text-rose-900 mb-4 transition-colors';
-      backBtn.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
-        Back
-      `;
-      backBtn.addEventListener('click', () => {
-        const modalContent = document.querySelector('#insert-component-modal > div');
-        while (modalContent.firstChild) {
-          modalContent.removeChild(modalContent.firstChild);
-        }
-        modalContent.appendChild(createInitialOptions(editor, selectedComponent));
-      });
-      
-      const sidebarTitle = document.createElement('h4');
-      sidebarTitle.className = 'font-bold text-lg text-rose-900';
-      sidebarTitle.textContent = 'Categories';
-      
-      sidebarHeader.appendChild(backBtn);
-      sidebarHeader.appendChild(sidebarTitle);
-      sidebar.appendChild(sidebarHeader);
-  
-      // Search input
-      const searchContainer = document.createElement('div');
-      searchContainer.className = 'mb-6 relative';
-      
-      const searchInput = document.createElement('input');
-      searchInput.type = 'text';
-      searchInput.placeholder = 'Search components...';
-      searchInput.className = 'w-full px-3 py-2 pr-8 text-sm border border-rose-200 rounded-lg focus:ring-2 focus:ring-rose-300 focus:border-rose-300 outline-none transition-all';
-      
-      searchContainer.appendChild(searchInput);
-      sidebar.appendChild(searchContainer);
-  
-      // Dummy categories with icons
-      const categories = [
-        { name: 'All', icon: '🌟', active: true },
-        { name: 'Basic', icon: '🧩' },
-        { name: 'Forms', icon: '📝' },
-        { name: 'Media', icon: '🖼️' },
-        { name: 'Layout', icon: '📐' },
-        { name: 'Typography', icon: '🔤' }
-      ];
-      
-      const categoryContainer = document.createElement('div');
-      categoryContainer.className = 'flex-1 overflow-y-auto';
-      
-      categories.forEach(cat => {
-        const catBtn = document.createElement('button');
-        catBtn.className = `flex items-center w-full text-left py-3 px-3 mb-1 rounded-lg transition-colors text-rose-800 group ${cat.active ? 'bg-rose-100/70 font-medium' : 'hover:bg-rose-100/50'}`;
-        catBtn.innerHTML = `
-          <span class="text-xl mr-3 opacity-70 group-hover:opacity-100 transition-opacity">${cat.icon}</span>
-          <span>${cat.name}</span>
-        `;
-        categoryContainer.appendChild(catBtn);
-      });
-  
-      sidebar.appendChild(categoryContainer);
-      container.appendChild(sidebar);
-  
-      // Create component grid
-      const componentGrid = document.createElement('div');
-      componentGrid.className = 'flex-1 p-6 overflow-y-auto flex flex-col';
-  
-      const gridHeader = document.createElement('div');
-      gridHeader.className = 'mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4';
-      
-      const gridTitle = document.createElement('h4');
-      gridTitle.className = 'font-bold text-xl text-rose-900';
-      gridTitle.textContent = 'Available Components';
-      
-      const headerRight = document.createElement('div');
-      headerRight.className = 'flex items-center gap-3';
-      
-      const positionBadge = document.createElement('span');
-      positionBadge.className = 'bg-rose-100 text-rose-800 text-xs font-medium px-3 py-1 rounded-full capitalize';
-      positionBadge.textContent = insertPosition;
-      
-      const countBadge = document.createElement('span');
-      countBadge.className = 'bg-white border border-rose-200 text-rose-700 text-xs font-medium px-2.5 py-1 rounded-full';
-      
-      headerRight.appendChild(positionBadge);
-      headerRight.appendChild(countBadge);
-      
-      gridHeader.appendChild(gridTitle);
-      gridHeader.appendChild(headerRight);
-      componentGrid.appendChild(gridHeader);
-  
-      // Grid container
-      const gridContainer = document.createElement('div');
-      gridContainer.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 flex-1 content-start';
-  
-      // Preview container (initially hidden)
-      const previewContainer = document.createElement('div');
-      previewContainer.className = 'hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[1001] flex items-center justify-center p-4 animate-fadeIn';
-      previewContainer.id = 'component-preview-modal';
-      
-      const previewContent = document.createElement('div');
-      previewContent.className = 'bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-auto animate-scaleIn p-6';
-      previewContent.style.transformOrigin = 'center center';
-      
-      const previewHeader = document.createElement('div');
-      previewHeader.className = 'flex justify-between items-center mb-4 pb-2 border-b border-rose-100';
-      
-      const previewTitle = document.createElement('h3');
-      previewTitle.className = 'text-lg font-bold text-rose-900';
-      
-      const closePreviewBtn = document.createElement('button');
-      closePreviewBtn.className = 'text-rose-700 hover:text-rose-900 p-1 rounded-full hover:bg-rose-100';
-      closePreviewBtn.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      `;
-      closePreviewBtn.addEventListener('click', () => {
-        previewContainer.classList.add('animate-fadeOut');
-        previewContent.classList.add('animate-scaleOut');
-        setTimeout(() => {
-          document.body.removeChild(previewContainer);
-        }, 200);
-      });
-      
-      previewHeader.appendChild(previewTitle);
-      previewHeader.appendChild(closePreviewBtn);
-      previewContent.appendChild(previewHeader);
-      
-      const previewBody = document.createElement('div');
-      previewBody.className = 'prose prose-rose max-w-none';
-      previewContent.appendChild(previewBody);
-      
-      previewContainer.appendChild(previewContent);
-      document.body.appendChild(previewContainer);
-  
-      // Get all component types from the editor
-      const componentTypes = editor.Components.getTypes();
-      countBadge.textContent = `${componentTypes.length} components`;
-      
-      componentTypes.forEach(compType => {
-        const compCard = document.createElement('button');
-        compCard.className = 'border border-rose-200 bg-white rounded-xl p-4 hover:shadow-md transition-all cursor-pointer flex flex-col text-left hover:border-rose-300 hover:bg-rose-50/50 group h-full';
-        
-        const cardHeader = document.createElement('div');
-        cardHeader.className = 'flex items-start mb-3';
-        
-        const icon = document.createElement('div');
-        icon.className = 'w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center text-rose-600 mr-3 group-hover:bg-rose-200 transition-colors flex-shrink-0';
-        icon.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-        `;
-        
-        const textContainer = document.createElement('div');
-        textContainer.className = 'flex-1';
-        
-        const name = document.createElement('h5');
-        name.className = 'font-medium text-rose-900 mb-1';
-        const typeName = typeof compType === 'string'
-  ? compType
-  : compType.id || compType.type || compType.name || 'Unknown';
-
-name.textContent = typeName;
-        
-        const type = document.createElement('span');
-        type.className = 'text-xs text-rose-600/70 block';
-        type.textContent = 'component';
-        
-        textContainer.appendChild(name);
-        textContainer.appendChild(type);
-        cardHeader.appendChild(icon);
-        cardHeader.appendChild(textContainer);
-        
-        const previewBtn = document.createElement('button');
-        previewBtn.className = 'absolute top-2 right-2 p-1 text-rose-600/50 hover:text-rose-700 rounded-full hover:bg-rose-100 transition-colors opacity-0 group-hover:opacity-100';
-        previewBtn.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-          </svg>
-        `;
-        previewBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          previewTitle.textContent = compType;
-          previewBody.innerHTML = `
-            <h4 class="text-rose-800">Component Preview</h4>
-            <p class="text-rose-700/80">This would show a live preview of the ${compType} component.</p>
-            <div class="mt-4 p-4 border border-rose-200 rounded-lg bg-rose-50/50">
-              <p class="text-sm text-rose-700">In a real implementation, this would render an actual preview of the component.</p>
-            </div>
-          `;
-          previewContainer.classList.remove('hidden');
-        });
-        
-        compCard.appendChild(cardHeader);
-        compCard.appendChild(previewBtn);
-        
-        compCard.addEventListener('click', () => {
-          // Add insertion animation feedback
-          compCard.classList.add('scale-95', 'bg-rose-100');
-          setTimeout(() => {
-            compCard.classList.remove('scale-95', 'bg-rose-100');
-          }, 150);
-          
-          // Insert the component based on the selected position
-          const component = { type: typeName };
-          
-          switch (insertPosition) {
-            case 'before':
-              editor.getSelected().before(component);
-              break;
-            case 'after':
-              editor.getSelected().after(component);
-              break;
-            case 'inside':
-              const selected = editor.getSelected();
-              if (selected) {
-                selected.components().add(component); // adds to the end
-              }
-              break;
-          }
-          
-          // Close the modal with animation
-          const modal = document.getElementById('insert-component-modal');
-          if (modal) {
-            modal.classList.add('animate-fadeOut');
-            modal.querySelector('div').classList.add('animate-scaleOut');
-            setTimeout(() => {
-              document.body.removeChild(modal);
-            }, 200);
-          }
-        });
-        
-        gridContainer.appendChild(compCard);
-      });
-  
-      // Add search functionality
-      searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        const cards = gridContainer.querySelectorAll('button');
-        let visibleCount = 0;
-        
-        cards.forEach(card => {
-          const name = card.querySelector('h5').textContent.toLowerCase();
-          if (name.includes(searchTerm)) {
-            card.style.display = 'block';
-            visibleCount++;
+          const comp = block.get('content');
+          if (insertPosition === 'before') {
+            targetComponent.parent().append(comp, {
+              at: targetComponent.index(),
+            });
+          } else if (insertPosition === 'after') {
+            targetComponent.parent().append(comp, {
+              at: targetComponent.index() + 1,
+            });
           } else {
-            card.style.display = 'none';
+            targetComponent.append(comp);
           }
+          history.back();
         });
-        
-        countBadge.textContent = `${visibleCount} of ${componentTypes.length} components`;
-      });
   
-      componentGrid.appendChild(gridContainer);
-      container.appendChild(componentGrid);
-      return container;
+        grid.appendChild(card);
+      });
     }
   
-
+    renderGrid(); // Initial
   
+    // Bottom tab bar on mobile
+    // const bottomBar = document.createElement('div');
+    // bottomBar.className =
+    //   'md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex justify-around p-2 z-50';
+    // tags.forEach((tag) => {
+    //   const btn = document.createElement('button');
+    //   btn.textContent = tag[0].toUpperCase();
+    //   btn.title = tag;
+    //   btn.className = 'px-3 py-2 text-gray-600 hover:text-black';
+    //   btn.onclick = () => {
+    //     [...bottomBar.children].forEach((c) =>
+    //       c.classList.remove('text-black')
+    //     );
+    //     btn.classList.add('text-black');
+    //     renderGrid(tag);
+    //   };
+    //   bottomBar.appendChild(btn);
+    // });
+  
+    // Combine and render
+    body.append(sidebar, gridWrapper);
+    modal.append(header, body);
+    overlay.appendChild(modal);
+    // overlay.appendChild(bottomBar);
+    document.body.appendChild(overlay);
+  
+    // Close on back
+    window.addEventListener('popstate', () => overlay.remove(), { once: true });
+    history.pushState(null, '');
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) history.back();
+    });
+  }
+  
+  
+  // Register the command
+  //     editor.Commands.add('open-insert-component-modal', {
+  //       run: (editor, sender, options = {}) => {
+
+  //         const selectedComponent = editor.getSelected();
+  //         if (!selectedComponent) {
+  //           editor.Modal.alert({
+  //             title: 'No Selection',
+  //             content: 'Please select a component first',
+  //             attributes: { class: 'bg-rose-50 text-rose-900' }
+  //           });
+  //           return;
+  //         }
+
+  //         // Create the main modal container
+  //         const modal = document.createElement('div');
+  //         modal.className = 'fixed inset-0 bg-rose-900/30 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn';
+  //         modal.id = 'insert-component-modal';
+
+  //         // Create the modal content
+  //         const modalContent = document.createElement('div');
+  //         modalContent.className = 'bg-white rounded-xl shadow-2xl w-[90vw] max-w-5xl h-[85vh] flex flex-col overflow-hidden border border-rose-100 animate-scaleIn';
+  //         modalContent.style.transformOrigin = 'center center';
+
+  //         // Create the initial options modal
+  //         const initialOptions = createInitialOptions(editor, selectedComponent);
+  //         modalContent.appendChild(initialOptions);
+
+  //         // Append to document
+  //         modal.appendChild(modalContent);
+  //         document.body.appendChild(modal);
+
+
+  //         // Close modal when clicking outside
+  //         modal.addEventListener('click', (e) => {
+  //           if (e.target === modal) {
+  //             modal.classList.add('animate-fadeOut');
+  //             modalContent.classList.add('animate-scaleOut');
+  //             setTimeout(() => {
+  //               document.body.removeChild(modal);
+  //             }, 200);
+  //           }
+  //         });
+  //       }
+  //     });
+
+  //     // Helper to create the initial options modal
+  //     function createInitialOptions(editor, selectedComponent) {
+  //       const container = document.createElement('div');
+  //       container.className = 'p-8 flex flex-col h-[500px] overflow-scroll bg-gradient-to-br from-rose-50 to-rose-100/50';
+  //       container.style.height = '500px';
+
+  //       const header = document.createElement('div');
+  //       header.className = 'mb-8 text-center';
+
+  //       const title = document.createElement('h3');
+  //       title.className = 'text-2xl font-bold text-rose-900 mb-2';
+  //       title.textContent = 'Insert Component';
+
+  //       const subtitle = document.createElement('p');
+  //       subtitle.className = 'text-rose-700/80 max-w-md mx-auto';
+  //       subtitle.textContent = `Selected: ${selectedComponent.getName() || selectedComponent.get('type')}`;
+
+  //       header.appendChild(title);
+  //       header.appendChild(subtitle);
+  //       container.appendChild(header);
+
+  //       const optionsContainer = document.createElement('div');
+  //       optionsContainer.className = 'grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow';
+
+  //       const options = [
+  //         { 
+  //           name: 'Before',
+  //           desc: 'Add before current component',
+  //           class: 'hover:border-rose-300 hover:bg-rose-50'
+  //         },
+  //         { 
+  //           name: 'After',
+  //           desc: 'Add after current component',
+  //           class: 'hover:border-rose-300 hover:bg-rose-50'
+  //         },
+  //         { 
+  //           name: 'Inside',
+  //           desc: 'Add inside current component',
+  //           class: 'hover:border-rose-400 hover:bg-rose-100/30 border-rose-200 bg-rose-50/50'
+  //         }
+  //       ];
+
+  //       options.forEach(option => {
+  //         const card = document.createElement('button');
+  //         card.className = `bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-all border-2 ${option.class} flex flex-col items-center justify-center group`;
+
+  //         const icon = document.createElement('div');
+  //         icon.className = 'mb-3 text-rose-600 group-hover:text-rose-800 transition-colors';
+
+  //         switch (option.name) {
+  //           case 'Before':
+  //             icon.innerHTML = `
+  //               <svg stroke="currentColor" class="w-10 h-10" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+  // <path d="M208 144h-56c-4.4 0-8 3.6-8 8v720c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V152c0-4.4-3.6-8-8-8zm166 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm498 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm166 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM540 310h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 166h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm332 332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM374 808h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm332 332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path></svg>
+  //             `;
+  //             break;
+  //           case 'After':
+  //             icon.innerHTML = `
+  //                <svg stroke="currentColor" class="w-10 h-10" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  //                <path d="M872 144h-56c-4.4 0-8 3.6-8 8v720c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V152c0-4.4-3.6-8-8-8zm-166 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-498 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-166 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm166 166h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 166h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM208 808h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm498 332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM374 808h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path></svg>
+
+  //             `;
+  //             break;
+  //           case 'Inside':
+  //             icon.innerHTML = `
+  //               <svg stroke="currentColor" class="w-10 h-10" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M872 476H548V144h-72v332H152c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h324v332h72V548h324c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-166h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 498h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-664h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 498h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM650 216h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm56 592h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-56-592h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-166 0h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm56 592h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-56-426h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm56 260h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path></svg>
+  //             `;
+  //             break;
+  //         }
+
+
+  //         const name = document.createElement('h4');
+  //         name.className = 'text-lg font-semibold text-rose-900 mb-2';
+  //         name.textContent = option.name;
+
+  //         const desc = document.createElement('p');
+  //         desc.className = 'text-sm text-rose-700/70 text-center';
+  //         desc.textContent = option.desc;
+
+  //         card.appendChild(icon);
+  //         card.appendChild(name);
+  //         card.appendChild(desc);
+
+  //         // card.addEventListener('click', () => {
+  //         //   card.classList.add('scale-95', 'bg-rose-100');
+
+  //         //   // setTimeout(() => {
+  //         //     // Clear only the content wrapper, not the whole modal container
+  //         //     // while (container.firstChild) {
+  //         //     //   container.removeChild(container.firstChild);
+  //         //     // }
+
+  //         //     // Show the component selector
+  //         //     // const componentSelector = createComponentSelector(editor, selectedComponent, option.name.toLowerCase());
+  //         //     // container.appendChild(componentSelector);
+
+  //         //     // Now add the component selector safely
+  //         //   //   const componentSelector = createComponentSelector(editor, selectedComponent, option.name.toLowerCase());
+  //         //   //   contentWrapper.appendChild(componentSelector);
+  //         //   // }, 150);
+  //         // });
+
+  //         optionsContainer.appendChild(card);
+  //       });
+
+  //       container.appendChild(optionsContainer);
+
+  //       // Add footer with close button
+  //       const footer = document.createElement('div');
+  //       footer.className = 'mt-6 flex justify-end';
+
+  //       const closeBtn = document.createElement('button');
+  //       closeBtn.className = 'px-4 py-2 text-sm text-rose-700 hover:text-rose-900 font-medium rounded-lg hover:bg-rose-200/50 transition-colors flex items-center gap-1';
+  //       closeBtn.innerHTML = `
+  //         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  //           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+  //         </svg>
+  //         Cancel
+  //       `;
+  //       closeBtn.addEventListener('click', () => {
+  //         const modal = document.getElementById('insert-component-modal');
+  //         if (modal) {
+  //           modal.classList.add('animate-fadeOut');
+  //           modal.querySelector('div').classList.add('animate-scaleOut');
+  //           setTimeout(() => {
+  //             document.body.removeChild(modal);
+  //           }, 200);
+  //         }
+  //       });
+
+  //       footer.appendChild(closeBtn);
+  //       container.appendChild(footer);
+
+  //       return container;
+  //     }
+
+  //     // Helper to create the component selector
+  //     function createComponentSelector(editor, selectedComponent, insertPosition) {
+  //       const container = document.createElement('div');
+  //       container.className = 'flex h-96 bg-gradient-to-b from-rose-50 to-white';
+  //       container.style.overflow = 'scroll'
+  //       // Create sidebar with categories
+  //       const sidebar = document.createElement('div');
+  //       sidebar.className = 'w-64 bg-white/80 p-4 border-r border-rose-200 overflow-y-auto backdrop-blur-sm flex flex-col';
+
+  //       const sidebarHeader = document.createElement('div');
+  //       sidebarHeader.className = 'mb-6';
+
+  //       const backBtn = document.createElement('button');
+  //       backBtn.className = 'flex items-center text-sm text-rose-700 hover:text-rose-900 mb-4 transition-colors';
+  //       backBtn.innerHTML = `
+  //         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  //           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+  //         </svg>
+  //         Back
+  //       `;
+  //       backBtn.addEventListener('click', () => {
+  //         const modalContent = document.querySelector('#insert-component-modal > div');
+  //         while (modalContent.firstChild) {
+  //           modalContent.removeChild(modalContent.firstChild);
+  //         }
+  //         modalContent.appendChild(createInitialOptions(editor, selectedComponent));
+  //       });
+
+  //       const sidebarTitle = document.createElement('h4');
+  //       sidebarTitle.className = 'font-bold text-lg text-rose-900';
+  //       sidebarTitle.textContent = 'Categories';
+
+  //       sidebarHeader.appendChild(backBtn);
+  //       sidebarHeader.appendChild(sidebarTitle);
+  //       sidebar.appendChild(sidebarHeader);
+
+  //       // Search input
+  //       const searchContainer = document.createElement('div');
+  //       searchContainer.className = 'mb-6 relative';
+
+  //       const searchInput = document.createElement('input');
+  //       searchInput.type = 'text';
+  //       searchInput.placeholder = 'Search components...';
+  //       searchInput.className = 'w-full px-3 py-2 pr-8 text-sm border border-rose-200 rounded-lg focus:ring-2 focus:ring-rose-300 focus:border-rose-300 outline-none transition-all';
+
+  //       searchContainer.appendChild(searchInput);
+  //       sidebar.appendChild(searchContainer);
+
+  //       // Dummy categories with icons
+  //       const categories = [
+  //         { name: 'All', icon: '🌟', active: true },
+  //         { name: 'Basic', icon: '🧩' },
+  //         { name: 'Forms', icon: '📝' },
+  //         { name: 'Media', icon: '🖼️' },
+  //         { name: 'Layout', icon: '📐' },
+  //         { name: 'Typography', icon: '🔤' }
+  //       ];
+
+  //       const categoryContainer = document.createElement('div');
+  //       categoryContainer.className = 'flex-1 overflow-y-auto';
+
+  //       categories.forEach(cat => {
+  //         const catBtn = document.createElement('button');
+  //         catBtn.className = `flex items-center w-full text-left py-3 px-3 mb-1 rounded-lg transition-colors text-rose-800 group ${cat.active ? 'bg-rose-100/70 font-medium' : 'hover:bg-rose-100/50'}`;
+  //         catBtn.innerHTML = `
+  //           <span class="text-xl mr-3 opacity-70 group-hover:opacity-100 transition-opacity">${cat.icon}</span>
+  //           <span>${cat.name}</span>
+  //         `;
+  //         categoryContainer.appendChild(catBtn);
+  //       });
+
+  //       sidebar.appendChild(categoryContainer);
+  //       container.appendChild(sidebar);
+
+  //       // Create component grid
+  //       const componentGrid = document.createElement('div');
+  //       componentGrid.className = 'flex-1 p-6 overflow-y-auto flex flex-col';
+
+  //       const gridHeader = document.createElement('div');
+  //       gridHeader.className = 'mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4';
+
+  //       const gridTitle = document.createElement('h4');
+  //       gridTitle.className = 'font-bold text-xl text-rose-900';
+  //       gridTitle.textContent = 'Available Components';
+
+  //       const headerRight = document.createElement('div');
+  //       headerRight.className = 'flex items-center gap-3';
+
+  //       const positionBadge = document.createElement('span');
+  //       positionBadge.className = 'bg-rose-100 text-rose-800 text-xs font-medium px-3 py-1 rounded-full capitalize';
+  //       positionBadge.textContent = insertPosition;
+
+  //       const countBadge = document.createElement('span');
+  //       countBadge.className = 'bg-white border border-rose-200 text-rose-700 text-xs font-medium px-2.5 py-1 rounded-full';
+
+  //       headerRight.appendChild(positionBadge);
+  //       headerRight.appendChild(countBadge);
+
+  //       gridHeader.appendChild(gridTitle);
+  //       gridHeader.appendChild(headerRight);
+  //       componentGrid.appendChild(gridHeader);
+
+  //       // Grid container
+  //       const gridContainer = document.createElement('div');
+  //       gridContainer.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 flex-1 content-start';
+
+  //       // Preview container (initially hidden)
+  //       const previewContainer = document.createElement('div');
+  //       previewContainer.className = 'hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[1001] flex items-center justify-center p-4 animate-fadeIn';
+  //       previewContainer.id = 'component-preview-modal';
+
+  //       const previewContent = document.createElement('div');
+  //       previewContent.className = 'bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-auto animate-scaleIn p-6';
+  //       previewContent.style.transformOrigin = 'center center';
+
+  //       const previewHeader = document.createElement('div');
+  //       previewHeader.className = 'flex justify-between items-center mb-4 pb-2 border-b border-rose-100';
+
+  //       const previewTitle = document.createElement('h3');
+  //       previewTitle.className = 'text-lg font-bold text-rose-900';
+
+  //       const closePreviewBtn = document.createElement('button');
+  //       closePreviewBtn.className = 'text-rose-700 hover:text-rose-900 p-1 rounded-full hover:bg-rose-100';
+  //       closePreviewBtn.innerHTML = `
+  //         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  //           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+  //         </svg>
+  //       `;
+  //       closePreviewBtn.addEventListener('click', () => {
+  //         previewContainer.classList.add('animate-fadeOut');
+  //         previewContent.classList.add('animate-scaleOut');
+  //         setTimeout(() => {
+  //           document.body.removeChild(previewContainer);
+  //         }, 200);
+  //       });
+
+  //       previewHeader.appendChild(previewTitle);
+  //       previewHeader.appendChild(closePreviewBtn);
+  //       previewContent.appendChild(previewHeader);
+
+  //       const previewBody = document.createElement('div');
+  //       previewBody.className = 'prose prose-rose max-w-none';
+  //       previewContent.appendChild(previewBody);
+
+  //       previewContainer.appendChild(previewContent);
+  //       document.body.appendChild(previewContainer);
+
+  //       // Get all component types from the editor
+  //       const componentTypes = editor.Components.getTypes();
+  //       countBadge.textContent = `${componentTypes.length} components`;
+
+  //       componentTypes.forEach(compType => {
+  //         const compCard = document.createElement('button');
+  //         compCard.className = 'border border-rose-200 bg-white rounded-xl p-4 hover:shadow-md transition-all cursor-pointer flex flex-col text-left hover:border-rose-300 hover:bg-rose-50/50 group h-full';
+
+  //         const cardHeader = document.createElement('div');
+  //         cardHeader.className = 'flex items-start mb-3';
+
+  //         const icon = document.createElement('div');
+  //         icon.className = 'w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center text-rose-600 mr-3 group-hover:bg-rose-200 transition-colors flex-shrink-0';
+  //         icon.innerHTML = `
+  //           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  //             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+  //           </svg>
+  //         `;
+
+  //         const textContainer = document.createElement('div');
+  //         textContainer.className = 'flex-1';
+
+  //         const name = document.createElement('h5');
+  //         name.className = 'font-medium text-rose-900 mb-1';
+  //         const typeName = typeof compType === 'string'
+  //   ? compType
+  //   : compType.id || compType.type || compType.name || 'Unknown';
+
+  // name.textContent = typeName;
+
+  //         const type = document.createElement('span');
+  //         type.className = 'text-xs text-rose-600/70 block';
+  //         type.textContent = 'component';
+
+  //         textContainer.appendChild(name);
+  //         textContainer.appendChild(type);
+  //         cardHeader.appendChild(icon);
+  //         cardHeader.appendChild(textContainer);
+
+  //         const previewBtn = document.createElement('button');
+  //         previewBtn.className = 'absolute top-2 right-2 p-1 text-rose-600/50 hover:text-rose-700 rounded-full hover:bg-rose-100 transition-colors opacity-0 group-hover:opacity-100';
+  //         previewBtn.innerHTML = `
+  //           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  //             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+  //             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+  //           </svg>
+  //         `;
+  //         previewBtn.addEventListener('click', (e) => {
+  //           e.stopPropagation();
+  //           previewTitle.textContent = compType;
+  //           previewBody.innerHTML = `
+  //             <h4 class="text-rose-800">Component Preview</h4>
+  //             <p class="text-rose-700/80">This would show a live preview of the ${compType} component.</p>
+  //             <div class="mt-4 p-4 border border-rose-200 rounded-lg bg-rose-50/50">
+  //               <p class="text-sm text-rose-700">In a real implementation, this would render an actual preview of the component.</p>
+  //             </div>
+  //           `;
+  //           previewContainer.classList.remove('hidden');
+  //         });
+
+  //         compCard.appendChild(cardHeader);
+  //         compCard.appendChild(previewBtn);
+
+  //         compCard.addEventListener('click', () => {
+  //           // Add insertion animation feedback
+  //           compCard.classList.add('scale-95', 'bg-rose-100');
+  //           setTimeout(() => {
+  //             compCard.classList.remove('scale-95', 'bg-rose-100');
+  //           }, 150);
+
+  //           // Insert the component based on the selected position
+  //           const component = { type: typeName };
+
+  //           switch (insertPosition) {
+  //             case 'before':
+  //               editor.getSelected().before(component);
+  //               break;
+  //             case 'after':
+  //               editor.getSelected().after(component);
+  //               break;
+  //             case 'inside':
+  //               const selected = editor.getSelected();
+  //               if (selected) {
+  //                 selected.components().add(component); // adds to the end
+  //               }
+  //               break;
+  //           }
+
+  //           // Close the modal with animation
+  //           const modal = document.getElementById('insert-component-modal');
+  //           if (modal) {
+  //             modal.classList.add('animate-fadeOut');
+  //             modal.querySelector('div').classList.add('animate-scaleOut');
+  //             setTimeout(() => {
+  //               document.body.removeChild(modal);
+  //             }, 200);
+  //           }
+  //         });
+
+  //         gridContainer.appendChild(compCard);
+  //       });
+
+  //       // Add search functionality
+  //       searchInput.addEventListener('input', (e) => {
+  //         const searchTerm = e.target.value.toLowerCase();
+  //         const cards = gridContainer.querySelectorAll('button');
+  //         let visibleCount = 0;
+
+  //         cards.forEach(card => {
+  //           const name = card.querySelector('h5').textContent.toLowerCase();
+  //           if (name.includes(searchTerm)) {
+  //             card.style.display = 'block';
+  //             visibleCount++;
+  //           } else {
+  //             card.style.display = 'none';
+  //           }
+  //         });
+
+  //         countBadge.textContent = `${visibleCount} of ${componentTypes.length} components`;
+  //       });
+
+  //       componentGrid.appendChild(gridContainer);
+  //       container.appendChild(componentGrid);
+  //       return container;
+  //     }
+
+
+
   editor.on("component:add", (component) => {
     if (component.get("disableToolbar")) {
       component.set({ toolbar: [] });
@@ -780,7 +1043,7 @@ name.textContent = typeName;
 
     if (component.get("attributes")?.textalign) {
       const hasTextAlignButton = toolbar.some((btn) => btn.id === "textalign-toggle");
-    
+
       if (!hasTextAlignButton) {
         toolbar.push({
           id: "textalign-toggle",
@@ -792,7 +1055,7 @@ name.textContent = typeName;
           command(editor) {
             const component = editor.getSelected();
             if (!component) return;
-    
+
             const attrs = component.get("attributes") || {};
             const currentAlign = attrs.textalign || "left";
             const nextAlign = {
@@ -800,14 +1063,14 @@ name.textContent = typeName;
               center: "right",
               right: "left",
             }[currentAlign];
-    
+
             component.addAttributes({ textalign: nextAlign });
           },
           attributes: { title: "Toggle Text Alignment" },
         });
       }
     }
-    
+
 
     // Add movement buttons if movement is NOT disabled and it's not the only child
     if (!component.get("disableMovement")) {
@@ -855,21 +1118,21 @@ name.textContent = typeName;
         });
       }
     }
-    
-    
-     // Add new add-button by default
-     toolbar.push({
+
+
+    // Add new add-button by default
+    toolbar.push({
       id: "add-button",
       label: `<svg viewBox="0 0 24 24" width="16" height="16" style="stroke: white; fill: none; stroke-width: 2;">
         <path d="M12 5v14m7-7H5"></path>
       </svg> `,
-      
+
       attributes: { title: "Add" },
       command: "open-insert-component-modal",
-  });
+    });
 
-  component.set({ toolbar });
-  editor.refresh();
+    component.set({ toolbar });
+    editor.refresh();
   });
 
   /**
@@ -962,7 +1225,7 @@ name.textContent = typeName;
       script.referrerPolicy = "no-referrer";
 
       script.onload = () => {
-        console.log("AOS loaded");
+
         frameWin.AOS.init({
           once: true,
           duration: 600,
@@ -985,6 +1248,9 @@ name.textContent = typeName;
           refreshAOS,
         );
         editor.on("canvas:resize", refreshAOS);
+        console.log("AOS loaded 3");
+        // editor.refresh(); // Refresh canvas
+        // editor.Canvas.getFrameEl().contentWindow.location.reload(); // Optional force reload
       };
 
       frameDoc.body.appendChild(script);
@@ -1066,14 +1332,14 @@ name.textContent = typeName;
 
       // Override initialize method to setup layout logic
       const originalInit = model.prototype.init;
-      model.prototype.init = function() {
+      model.prototype.init = function () {
         originalInit && originalInit.apply(this, arguments);
         this.on('change:layout', this.updateLayoutClasses);
         this.updateLayoutClasses();
       };
 
       // Add layout class update logic
-      model.prototype.updateLayoutClasses = function() {
+      model.prototype.updateLayoutClasses = function () {
         const layout = this.get('layout') || 'left';
         const classes = this.getClasses().filter(cls => !['text-left', 'text-center', 'items-center'].includes(cls));
 
