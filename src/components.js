@@ -5678,12 +5678,7 @@ export default (editor, options) => {
                   <li>
                     <a href="/contact" class="text-sm transition-colors duration-300 hover:text-[var(--color-primary)]">Contact Us</a>
                   </li>
-                  <li>
-                    <a href="/" class="text-sm transition-colors duration-300 hover:text-[var(--color-primary)]">Privacy Policy</a>
-                  </li>
-                  <li>
-                    <a href="/" class="text-sm transition-colors duration-300 hover:text-[var(--color-primary)]">Terms &amp; Conditions</a>
-                  </li>
+                  
                 </ul>
               </div>
             </div>
