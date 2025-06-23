@@ -24,4 +24,5 @@ export default (editor, opts = {}) => {
     content: { type: "video-section" },
     category: "Theme",
   });
+  
 };

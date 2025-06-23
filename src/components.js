@@ -13,6 +13,50 @@ const getRegisteredBlocks = () => [
   { id: "form", name: "Contact Form", icon: "📋" },
 ];
 
+
+function setupEmptyPlaceholder(ctx) {
+  const el = ctx.el;
+  const comps = ctx.model.components();
+
+  const render = () => {
+    const isEmpty = comps.length === 0;
+
+    if (isEmpty) {
+      el.classList.add('relative', 'min-h-[32px]', 'min-w-[32px]');
+
+      if (!ctx.placeholderEl) {
+        const placeholder = document.createElement('div');
+        placeholder.className = `
+          absolute inset-0 flex items-center justify-center
+          text-sm text-blue-400 border border-dashed border-blue-300
+          bg-[repeating-linear-gradient(45deg,rgba(59,130,246,0.1)_0_10px,rgba(59,130,246,0.05)_10px_20px)]
+          pointer-events-none
+        `;
+        placeholder.innerHTML = `
+      <div class="flex flex-col items-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="16" />
+          <line x1="8" y1="12" x2="16" y2="12" />
+        </svg>
+      </div>`
+        el.appendChild(placeholder);
+        ctx.placeholderEl = placeholder;
+      }
+    } else {
+      el.classList.remove('min-h-[32px]', 'min-w-[32px]');
+      if (ctx.placeholderEl) {
+        ctx.placeholderEl.remove();
+        ctx.placeholderEl = null;
+      }
+    }
+  };
+
+  render();
+  ctx.listenTo(comps, 'add remove reset', render);
+}
+
+
 // Simulate API call with 3 second delay
 async function fetchComponentConfig(type, description) {
   return new Promise((resolve) => {
@@ -564,11 +608,11 @@ export default (editor, options) => {
 
     view: {
       init() {
-        
+
       },
 
 
-  
+
       onEditButtonClick() {
         const component = this.model;
 
@@ -577,7 +621,7 @@ export default (editor, options) => {
           (editor.formsList && editor.formsList.length > 0)
             ? editor.formsList
             : [
-              
+
             ];
 
         // Modal wrapper
@@ -601,7 +645,7 @@ export default (editor, options) => {
           `
           )
           .join('');
-          const websiteId = new URLSearchParams(window.location.search).get("website_id") || 4;
+        const websiteId = new URLSearchParams(window.location.search).get("website_id") || 4;
 
         container.innerHTML = `
           <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-black text-xl">&times;</button>
@@ -1079,30 +1123,30 @@ export default (editor, options) => {
       EditComponent() {
         // Clean up any old menu
         document.querySelectorAll('.aspect-ratio-menu').forEach(el => el.remove());
-      
+
         const view = this.getView();
         const el = view.el;
         const currentRatio = parseFloat(this.getAttributes()['aspect-ratio'] || '1.77');
         const originalRatio = currentRatio;
-      
+
         const minVal = 0.5;
         const maxVal = 3;
         const initialSliderValue = maxVal + minVal - currentRatio;
-      
+
         const menu = document.createElement('div');
         menu.className = 'aspect-ratio-menu absolute z-[99999] p-4 bg-white left-[5rem] bottom-32 shadow-md rounded border text-sm w-64';
         menu.style.position = "absolute";
         menu.style.left = "3.5rem";
         menu.style.bottom = "4rem";
         document.body.appendChild(menu);
-      
+
         const header = document.createElement('div');
         header.className = 'flex justify-between items-center mb-3';
-      
+
         const heading = document.createElement('h3');
         heading.textContent = 'Adjust Image Size';
         heading.className = 'font-semibold';
-      
+
         const close = document.createElement('button');
         close.innerHTML = '&times;';
         close.className = 'text-gray-600 text-xl hover:text-black';
@@ -1110,13 +1154,13 @@ export default (editor, options) => {
           el.style.aspectRatio = originalRatio;
           menu.remove();
         };
-      
+
         header.append(heading, close);
         menu.appendChild(header);
-      
+
         const sliderContainer = document.createElement('div');
         sliderContainer.className = 'mb-2';
-      
+
         const slider = document.createElement('input');
         slider.type = 'range';
         slider.min = minVal;
@@ -1124,26 +1168,26 @@ export default (editor, options) => {
         slider.step = '0.01';
         slider.value = initialSliderValue;
         slider.className = 'w-full';
-      
+
         const ratioDisplay = document.createElement('div');
         ratioDisplay.className = 'text-center text-sm mt-1 text-gray-700';
         ratioDisplay.textContent = `Aspect Ratio: ${currentRatio.toFixed(2)}`;
-      
+
         sliderContainer.append(slider, ratioDisplay);
         menu.append(sliderContainer);
-      
+
         const btn = document.createElement('button');
         btn.textContent = 'Apply';
         btn.className = 'w-full px-3 py-1 bg-rose-600 text-white rounded mt-2';
         menu.append(btn);
-      
+
         slider.addEventListener('input', () => {
           const sliderValue = parseFloat(slider.value);
           const aspectValue = (maxVal + minVal - sliderValue).toFixed(2);
           el.style.aspectRatio = aspectValue;
           ratioDisplay.textContent = `Aspect Ratio: ${aspectValue}`;
         });
-      
+
         btn.onclick = () => {
           const sliderValue = parseFloat(slider.value);
           const finalRatio = (maxVal + minVal - sliderValue).toFixed(2);
@@ -1151,7 +1195,7 @@ export default (editor, options) => {
           menu.remove();
         };
       }
-      
+
     },
 
     view: {
@@ -1718,6 +1762,9 @@ export default (editor, options) => {
     },
 
     view: {
+      init() {
+        setupEmptyPlaceholder(this);
+      },
       onEditButtonClick() {
         this.model.EditComponent("desktop");
       },
@@ -1925,11 +1972,16 @@ export default (editor, options) => {
     },
 
     view: {
+      init() {
+        setupEmptyPlaceholder(this);
+      },
+
       onEditButtonClick() {
         this.model.EditComponent("desktop");
       },
     },
   });
+
 
   editor.DomComponents.addType("image-section", {
     model: {
@@ -1952,7 +2004,7 @@ export default (editor, options) => {
             options: [
               { id: "normal", name: "normal" },
               { id: "accent-1", name: "accent-1" },
-              { id: "accent-2", name: "accent-2" },
+              { id: "primary", name: "primary" },
               { id: "dark", name: "dark" },
             ],
             changeProp: 1,
@@ -2073,6 +2125,9 @@ export default (editor, options) => {
         switch (sectionType) {
           case "accent-1":
             classes.push("bg-accent-1"); // Add specific class for accent-1
+            break;
+          case "primary":
+            classes.push("bg-section-primary");
             break;
           case "dark":
             classes.push("bg-section-dark");
@@ -2322,6 +2377,7 @@ export default (editor, options) => {
         console.log("mainFrame", frame);
         const colors = [
           { type: "normal", color: "bg-section-light" },
+          { type: "primary", color: "bg-section-primary" },
           { type: "accent-1", color: "bg-accent-1" },
           { type: "dark", color: "bg-section-dark" },
         ];
@@ -2373,7 +2429,7 @@ export default (editor, options) => {
             options: [
               { id: "normal", name: "normal" },
               { id: "accent-1", name: "accent-1" },
-              { id: "accent-2", name: "accent-2" },
+              { id: "primary", name: "primary" },
               { id: "dark", name: "dark" },
             ],
             changeProp: 1,
@@ -2392,7 +2448,34 @@ export default (editor, options) => {
 .bg-section-dark {
   background-color: var(--color-section-dark);
 }
+.bg-section-primary {
+  background-color: var(--color-primary);
+  color: var(--color-text-primary-section-text);
+}
 
+.bg-section-primary .button-primary {
+  background-color: var(--color-text-primary-section-button) !important;
+  color: var(--color-primary); !important;
+}
+
+.bg-section-primary .button-primary:hover {
+  background-color: var(--color-text-primary-section-button) !important;
+  color: var(--color-primary); !important;
+}
+
+.bg-section-primary h1,
+.bg-section-primary h2,
+.bg-section-primary h3,
+.bg-section-primary h4,{
+   color: var(--color-text-primary-section-text) !important;
+   filter: invert(1) !important;
+}
+.bg-section-primary .content-subtitle {
+   color: var(--color-text-primary-section-text) !important;
+}
+.bg-section-primary .content-heading {
+   color: var(--color-text-primary-section-text) !important;
+}
 .bg-section-light {
   background-color: var(--color-section-light);
 }
@@ -2435,6 +2518,9 @@ export default (editor, options) => {
           case "accent-1":
             classes.push("bg-accent-1"); // Add specific class for accent-1
             break;
+          case "primary":
+            classes.push("bg-section-primary");
+            break;
           case "dark":
             classes.push("bg-section-dark");
             classes.push("light-text"); // Change to a dark background
@@ -2452,6 +2538,9 @@ export default (editor, options) => {
       },
     },
     view: {
+      init(){
+        setupEmptyPlaceholder(this);
+      },
       onRender() {
 
         this.updateEditButton();
@@ -2534,6 +2623,7 @@ export default (editor, options) => {
 
         const colors = [
           { type: "normal", color: "bg-section-light" },
+          { type: "primary", color: "bg-section-primary" },
           { type: "accent-1", color: "bg-accent-1" },
           { type: "dark", color: "bg-section-dark" },
         ];
@@ -2582,7 +2672,7 @@ export default (editor, options) => {
             options: [
               { id: "normal", name: "normal" },
               { id: "accent-1", name: "accent-1" },
-              { id: "accent-2", name: "accent-2" },
+              { id: "primary", name: "primary" },
               { id: "dark", name: "dark" },
             ],
             changeProp: 1,
@@ -2622,6 +2712,9 @@ export default (editor, options) => {
         switch (sectionType) {
           case "accent-1":
             classes.push("bg-accent-1"); // Add specific class for accent-1
+            break;
+          case "primary":
+            classes.push("bg-section-primary");
             break;
           case "dark":
             classes.push("bg-section-dark");
@@ -2720,6 +2813,7 @@ export default (editor, options) => {
 
         const colors = [
           { type: "normal", color: "bg-section-light" },
+          { type: "primary", color: "bg-section-primary" },
           { type: "accent-1", color: "bg-accent-1" },
           { type: "dark", color: "bg-section-dark" },
         ];
@@ -2750,7 +2844,7 @@ export default (editor, options) => {
     model: {
       defaults: {
         textalign: true,
-      addInside: true,
+        addInside: true,
         draggable: false,
         droppable: false,
         tagName: "div",
@@ -2758,7 +2852,6 @@ export default (editor, options) => {
           class: "lg:max-w-5xl mx-auto flex flex-col gap-4 px-3 container",
           textalign: "left",
         },
-        content: "Heading",
         traits: [
           {
             type: "select",
@@ -2774,6 +2867,7 @@ export default (editor, options) => {
       },
 
       init() {
+       
         this.listenTo(this, "change:attributes", this.updateTextAlign);
         this.updateTextAlign();
       },
@@ -2796,6 +2890,11 @@ export default (editor, options) => {
         }
 
         this.setClass(cls);
+      },
+    },
+    view: {
+      init() {
+        setupEmptyPlaceholder(this);
       },
     },
   });
@@ -3118,6 +3217,9 @@ export default (editor, options) => {
         .theme-dark .card-background{
           background-color: var(--color-section-dark-accent);
         }
+        .theme-dark .bg-section-primary .card-background{
+          background-color: var(--color-primary-dark);
+        }
         .theme-dark .bg-accent-1 .card-background{
           background-color: var(--color-section-dark) !important;
         }
@@ -3367,6 +3469,11 @@ export default (editor, options) => {
         },
       },
     },
+    view: {
+      init() {
+        setupEmptyPlaceholder(this);
+      },
+    },
   });
 
   editor.Components.addType("spacer", {
@@ -3431,7 +3538,7 @@ export default (editor, options) => {
   text-transform: uppercase;
   letter-spacing: 2px;
   background-color: var(--color-primary);
-  color: white !important;
+  color: white;
   text-decoration: none;
   cursor: pointer;
   width: max-content;
@@ -4429,7 +4536,7 @@ export default (editor, options) => {
         style.background = `url('${url}') no-repeat center center/cover`;
 
         this.set({ style });
-        console.log("bgbox" )
+        console.log("bgbox")
       },
 
       // This method updates DOM classes when the view is available
@@ -4466,6 +4573,7 @@ export default (editor, options) => {
     },
     view: {
       init() {
+        setupEmptyPlaceholder(this);
         this.componentEditHandlers = {
           // Default handler for generic components
           default: {
@@ -4743,7 +4851,7 @@ export default (editor, options) => {
           },
         };
       },
-      
+
       onRender() {
         this.updateEditButton();
       },
@@ -4861,7 +4969,7 @@ export default (editor, options) => {
         editor.on("component:deselect", this.handleDeselect.bind(this));
       },
 
-       handleSelect(selectedComponent) {
+      handleSelect(selectedComponent) {
         if (selectedComponent !== this.model) {
           this.removeButtonRow();
           return;
@@ -4917,7 +5025,6 @@ export default (editor, options) => {
   z-index: 2;
   width: 100%;
   min-height: 100vh;
-  height: min-content;
   position: relative;
   background-size: cover;
   background-position: center;
@@ -5732,7 +5839,7 @@ export default (editor, options) => {
           .card-bordered {
             border-width: 1px;
             border-style: solid;
-            border-color: #E1E1E1;
+            border-color: var(--color-text-primary)
           }
 
           .card-background {
@@ -5741,6 +5848,9 @@ export default (editor, options) => {
 
           .bg-section-dark .card-background {
             background-color: var(--color-section-dark-accent);
+          }
+          .bg-section-primary .card-background {
+            background-color: var(--color-primary-dark);
           }
           .theme-rounded-md .card{
             overflow: hidden;
@@ -5753,8 +5863,20 @@ export default (editor, options) => {
           .card-bordered:hover{
             border-color:var(--color-primary) !important;
           }
+          
+          .bg-section-dark .card-bordered{
+            border-width: 0px !important;
+            border-style: solid !important;
+          }
+
+          .bg-section-primary .card-bordered{
+            border-width: 0px !important;
+            border-style: solid !important;
+          }
 
           .theme-dark .card-bordered{
+            border-width: 0px !important;
+            border-style: solid !important;
             border-color:rgba(42, 42, 42, 0) !important;
           }
 
@@ -5787,6 +5909,11 @@ export default (editor, options) => {
 
         this.setClass(updatedClasses);
         console.log("rode " + bordered + background);
+      },
+    },
+    view: {
+      init() {
+        setupEmptyPlaceholder(this);
       },
     },
   });
@@ -5840,6 +5967,11 @@ export default (editor, options) => {
       },
 
       onAttributesChange() { },
+    },
+    view: {
+      init() {
+        setupEmptyPlaceholder(this);
+      },
     },
   });
 };
