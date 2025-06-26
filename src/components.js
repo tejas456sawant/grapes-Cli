@@ -570,8 +570,8 @@ export default (editor, options) => {
       </div>`,
         styles: `
         .form-wrapper{
-          min-width: 450px;
-          max-width: 580px;
+          min-width: 250px;
+          max-width: 520px;
           aspect-ratio: 4/5;
         }
         .form-wrapper iframe{
@@ -588,22 +588,13 @@ export default (editor, options) => {
       },
 
       updateIframe() {
-        const rawcontent = `<div class="
-        relative min-h-[120px] border border-dashed border-blue-400 bg-blue-200/30  flex items-center justify-center text-center text-gray-500 text-sm rounded-md
-      ">
-        <div>
-          <p class="mb-1 text-blue-400">No form selected</p>
-          <p class="text-xs text-gray-400">Click ✏️ to choose a form</p>
-        </div>
-      </div>`;
+        const rawcontent = ``;
         const rawIframe = this.getAttributes().formsrc;
         if (rawIframe) {
           this.set('content', rawIframe);
           console.log(rawIframe)
-        } else {
-          this.set('content', rawcontent);
         }
-      }
+        }
     },
 
     view: {

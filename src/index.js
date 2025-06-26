@@ -419,7 +419,7 @@ export default (editor, opts = {}) => {
   });
   function openBlockPickerModal(editor, targetComponent, insertPosition) {
     const tags = ['Layout', 'Typography', 'Buttons', 'Visuals', 'Form', 'Misc', 'Templates'];
-  
+
     const blocks = editor.BlockManager.getAll().filter((block) => {
       if (
         (insertPosition === 'before' || insertPosition === 'after') &&
@@ -429,13 +429,13 @@ export default (editor, opts = {}) => {
       }
       return true;
     });
-  
+
     document.querySelector('.custom-block-modal')?.remove();
-  
+
     const overlay = document.createElement('div');
     overlay.className =
       'custom-block-modal fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center';
-  
+
     const modal = document.createElement('div');
     modal.className =
       'bg-white w-[90vw] max-w-6xl rounded-xl shadow-xl flex flex-col';
@@ -452,15 +452,15 @@ export default (editor, opts = {}) => {
     closeBtn.className = 'text-2xl text-gray-500 hover:text-black';
     closeBtn.onclick = () => history.back();
     header.append(title, closeBtn);
-  
+
     // Body layout: Sidebar + Grid
     const body = document.createElement('div');
     body.className = 'flex flex-1 overflow-hidden';
-  
+
     const sidebar = document.createElement('div');
     sidebar.className =
       'hidden md:flex flex-col w-48 border-r border-gray-200 bg-gray-50 overflow-y-auto';
-  
+
     tags.forEach((tag) => {
       const btn = document.createElement('button');
       btn.textContent = tag;
@@ -475,25 +475,25 @@ export default (editor, opts = {}) => {
       });
       sidebar.appendChild(btn);
     });
-    
+
     if (
       (insertPosition === 'before' || insertPosition === 'after') &&
       targetComponent?.is('section')
-    ){
+    ) {
       sidebar.innerHTML = '';
       sidebar.className =
-      'hidden';
+        'hidden';
     }
     // Grid container
     const gridWrapper = document.createElement('div');
     gridWrapper.className = 'flex-1 overflow-y-auto p-4';
-  
+
     const grid = document.createElement('div');
     grid.className =
       'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4';
-  
+
     gridWrapper.appendChild(grid);
-  
+
     function renderGrid(tagFilter) {
       grid.innerHTML = '';
       blocks.forEach((block) => {
@@ -502,23 +502,23 @@ export default (editor, opts = {}) => {
           typeof category === 'string'
             ? category.toLowerCase()
             : category?.id?.toLowerCase?.() || '';
-  
+
         if (tagFilter && blockTag !== tagFilter) return;
-  
+
         const card = document.createElement('div');
         card.className =
           'bg-white border rounded-lg shadow-sm hover:shadow-md hover:scale-[1.02] transition transform cursor-pointer overflow-hidden flex flex-col aspect-video';
-  
+
         const imgSrc = block.get('media')?.match(/src="(.*?)"/)?.[1] || '';
         card.innerHTML = `
           <div class="flex-1">
             <img src="${imgSrc}" class="w-full h-full object-cover" />
           </div>
           <div class="p-2 text-center text-sm font-medium text-gray-700">${block.get(
-            'label'
-          )}</div>
+          'label'
+        )}</div>
         `;
-  
+
         card.addEventListener('click', () => {
           const comp = block.get('content');
           if (insertPosition === 'before') {
@@ -534,13 +534,13 @@ export default (editor, opts = {}) => {
           }
           history.back();
         });
-  
+
         grid.appendChild(card);
       });
     }
-  
+
     renderGrid(); // Initial
-  
+
     // Bottom tab bar on mobile
     // const bottomBar = document.createElement('div');
     // bottomBar.className =
@@ -559,14 +559,14 @@ export default (editor, opts = {}) => {
     //   };
     //   bottomBar.appendChild(btn);
     // });
-  
+
     // Combine and render
     body.append(sidebar, gridWrapper);
     modal.append(header, body);
     overlay.appendChild(modal);
     // overlay.appendChild(bottomBar);
     document.body.appendChild(overlay);
-  
+
     // Close on back
     window.addEventListener('popstate', () => overlay.remove(), { once: true });
     history.pushState(null, '');
@@ -574,8 +574,8 @@ export default (editor, opts = {}) => {
       if (e.target === overlay) history.back();
     });
   }
-  
-  
+
+
   // Register the command
   //     editor.Commands.add('open-insert-component-modal', {
   //       run: (editor, sender, options = {}) => {
@@ -1127,6 +1127,21 @@ export default (editor, opts = {}) => {
       }
     }
 
+    toolbar.push({
+      id: "width-button",
+      label: `
+        <svg viewBox="0 0 24 24" width="16" height="16" xmlns="http://www.w3.org/2000/svg" style="stroke: white; fill: none; stroke-width: 2;">
+        <polyline points="16 4 20 4 20 8" />
+        <line x1="14" y1="10" x2="20" y2="4" />
+        
+        <polyline points="8 20 4 20 4 16" />
+        <line x1="10" y1="14" x2="4" y2="20" />
+
+      </svg> `,
+
+      attributes: { title: "Resize" },
+      command: "open-width-resize-menu",
+    });
 
     // Add new add-button by default
     toolbar.push({
@@ -1138,6 +1153,8 @@ export default (editor, opts = {}) => {
       attributes: { title: "Add" },
       command: "open-insert-component-modal",
     });
+
+
 
     component.set({ toolbar });
     editor.refresh();
@@ -1361,6 +1378,193 @@ export default (editor, opts = {}) => {
       };
     }
   });
+
+
+  editor.Commands.add('open-width-resize-menu', {
+    run(editor) {
+      setTimeout(() => {
+        const selected = editor.getSelected();
+        if (!selected) return;
+  
+        const el = selected.view.el;
+  
+        document.getElementById('width-resize-menu')?.remove();
+  
+        const attrDesktop = selected.getAttributes()['desktop-width'] || '';
+        const attrMobile = selected.getAttributes()['mobile-width'] || '';
+  
+        const desktopParsed = parseWidth(attrDesktop);
+        const mobileParsed = parseWidth(attrMobile);
+  
+        const menu = document.createElement('div');
+        menu.id = 'width-resize-menu';
+        menu.className = `
+          fixed z-[9999] bg-white shadow-xl rounded-lg p-6 border border-gray-200 w-[280px]
+          text-sm space-y-4 font-sans
+        `;
+  
+        // Position it to the left side of the editor, vertically centered (but biased toward top)
+        const editorCanvas = editor.Canvas.getElement();
+        const canvasRect = editorCanvas.getBoundingClientRect();
+  
+        let top = canvasRect.top + canvasRect.height * 0.25;
+        let left = canvasRect.left - 300;
+  
+        if (left < 10) left = 60;
+        if (top < 10) top = 10;
+  
+        Object.assign(menu.style, {
+          top: `${top}px`,
+          left: `${left}px`,
+        });
+  
+        const closeButton = document.createElement('button');
+        closeButton.innerText = '✕';
+        closeButton.className = 'absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-sm';
+        closeButton.onclick = () => {
+          el.style.width = originalDesktopWidth;
+          menu.remove();
+          document.removeEventListener('mousedown', onOutsideClick);
+        };
+        menu.appendChild(closeButton);
+  
+        const title = document.createElement('div');
+        title.innerText = 'Adjust Width';
+        title.className = 'text-base font-semibold text-gray-800';
+        menu.appendChild(title);
+  
+        const originalDesktopWidth = el.style.width;
+  
+        const desktopField = buildField('Desktop', desktopParsed.value, desktopParsed.unit, el, !attrDesktop);
+        const mobileField = buildField('Mobile', mobileParsed.value, mobileParsed.unit, el, !attrMobile);
+  
+        menu.appendChild(desktopField.wrapper);
+        menu.appendChild(mobileField.wrapper);
+  
+        const saveBtn = document.createElement('button');
+        saveBtn.innerText = 'Save';
+        saveBtn.className = 'w-full bg-rose-600 text-white text-sm py-1.5 rounded hover:bg-rose-700';
+        saveBtn.onclick = () => {
+          const dval = desktopField.input.value();
+          const dunit = desktopField.unit.value;
+          const mval = mobileField.input.value();
+          const munit = mobileField.unit.value;
+  
+          selected.addStyle({ width: `${dval}${dunit}` });
+          selected.addStyle({ width: `${mval}${munit}` }, { mediaText: '@media (max-width: 768px)' });
+  
+          selected.addAttributes({
+            'desktop-width': `${dval}${dunit}`,
+            'mobile-width': `${mval}${munit}`,
+          });
+  
+          menu.remove();
+          document.removeEventListener('mousedown', onOutsideClick);
+        };
+        menu.appendChild(saveBtn);
+  
+        document.body.appendChild(menu);
+  
+        const onOutsideClick = (e) => {
+          if (!menu.contains(e.target)) {
+            el.style.width = originalDesktopWidth;
+            menu.remove();
+            document.removeEventListener('mousedown', onOutsideClick);
+          }
+        };
+  
+        setTimeout(() => {
+          document.addEventListener('mousedown', onOutsideClick);
+        }, 200);
+      }, 0);
+    }
+  });
+
+  function buildField(label, initialValue, initialUnit, el, showPlaceholder = false) {
+    const wrapper = document.createElement('div');
+
+    const title = document.createElement('div');
+    title.innerText = label;
+    title.className = 'text-xs text-gray-600 mb-1';
+
+    const row = document.createElement('div');
+    row.className = 'flex items-center gap-2';
+
+    const unitState = { value: initialUnit };
+
+    let input = createInput(initialValue, initialUnit, (newVal) => {
+      el.style.width = `${newVal}${unitState.value}`;
+    }, showPlaceholder);
+
+    const unitSelect = createUnitSelect(initialUnit, (unit) => {
+      const computed = getComputedStyle(el);
+      const px = parseFloat(computed.width);
+      unitState.value = unit;
+      const newInput = createInput(px, unit, (val) => {
+        el.style.width = `${val}${unit}`;
+      }, false);
+      row.replaceChild(newInput.el, input.el);
+      input = newInput;
+      el.style.width = `${input.value()}${unit}`;
+    });
+
+    row.appendChild(input.el);
+    row.appendChild(unitSelect);
+
+    wrapper.appendChild(title);
+    wrapper.appendChild(row);
+
+    return {
+      wrapper,
+      input,
+      unit: unitState,
+    };
+  }
+
+  function createInput(value, unit, onInputChange, showPlaceholder = false) {
+    const el = document.createElement('input');
+    el.type = 'number';
+    el.className = 'w-full border border-gray-300 rounded px-2 py-1 text-sm';
+    el.min = unit === '%' ? '0' : '';
+    el.max = unit === '%' ? '100' : '';
+    el.step = '1';
+    el.value = isNaN(value) ? '' : value;
+    if (showPlaceholder) el.placeholder = '—';
+
+    el.oninput = () => {
+      if (onInputChange && el.value !== '') onInputChange(parseFloat(el.value));
+    };
+
+    return {
+      el,
+      value: () => parseFloat(el.value),
+    };
+  }
+
+  function createUnitSelect(selectedUnit, onChange) {
+    const select = document.createElement('select');
+    select.className = 'border border-gray-300 rounded px-1 py-1 text-sm w-[60px]';
+    ['%', 'px', 'rem'].forEach((u) => {
+      const opt = document.createElement('option');
+      opt.value = u;
+      opt.textContent = u;
+      if (u === selectedUnit) opt.selected = true;
+      select.appendChild(opt);
+    });
+    select.addEventListener('change', (e) => onChange(e.target.value));
+    return select;
+  }
+
+  function parseWidth(str) {
+    const match = String(str).match(/^([\d.]+)(px|%|rem)?$/);
+    return {
+      value: match ? parseFloat(match[1]) : NaN,
+      unit: match ? match[2] || '%' : '%',
+    };
+  }
+
+
+
 
 
   // Hook into editor load
