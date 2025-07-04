@@ -12,13 +12,134 @@ export default (editor, opts = {}) => {
   const bname = opts.businessname || {};
   const bdescription = opts.description || {};
   const themeOptions = opts.theme_options || {};
-  console.log("config", config);
-
+  editor.backendUrl = opts.backendUrl;
 
   editor.formsList = opts.forms;
-  console.log("forms ", editor.formsList);
 
   loadComponents(editor);
+
+  // Responsive width mixin using Tailwind utility classes
+  setTimeout(() => {
+    const types = editor.DomComponents.getTypes();
+
+    types.forEach((typeObj) => {
+      const typeId = typeof typeObj === 'string' ? typeObj : typeObj.id;
+      const comp = editor.DomComponents.getType(typeId);
+      if (!comp || typeof comp.model !== 'function') return;
+
+      const model = comp.model;
+      const def = model.prototype.defaults;
+
+      if (def?.disableResponsiveResize) return;
+
+      const originalInit = model.prototype.init;
+      const originalGetAttrToHTML = model.prototype.getAttrToHTML || (() => ({}));
+
+      model.prototype.init = function (...args) {
+        originalInit && originalInit.apply(this, args);
+        const attrs = this.getAttributes();
+
+        // Apply on load
+        if (attrs['desktop-width']) applyTailwindDesktopWidth.call(this, attrs['desktop-width']);
+        if (attrs['mobile-width']) applyTailwindMobileWidth.call(this, attrs['mobile-width']);
+
+        // Watch for changes
+        this.listenTo(this, 'change:attributes:desktop-width', () => {
+          applyTailwindDesktopWidth.call(this, this.getAttributes()['desktop-width']);
+        });
+
+        this.listenTo(this, 'change:attributes:mobile-width', () => {
+          applyTailwindMobileWidth.call(this, this.getAttributes()['mobile-width']);
+        });
+
+          // Wait for component to be mounted before applying initial values
+        this.once('change:status', () => {
+          const attrs = this.getAttributes();
+          if (attrs['desktop-width']) applyTailwindDesktopWidth.call(this, attrs['desktop-width']);
+          if (attrs['mobile-width']) applyTailwindMobileWidth.call(this, attrs['mobile-width']);
+        });
+      };
+
+      model.prototype.getAttrToHTML = function () {
+        const out = originalGetAttrToHTML.call(this);
+        const attrs = this.getAttributes();
+        if (attrs['desktop-width']?.trim()) out['data-desktop-width'] = attrs['desktop-width'];
+        if (attrs['mobile-width']?.trim()) out['data-mobile-width'] = attrs['mobile-width'];
+        return out;
+      };
+
+      if (!def.attributes) def.attributes = {};
+      if (!def.traits) def.traits = [];
+
+      Object.assign(def.attributes, {
+        'desktop-width': '',
+        'mobile-width': '',
+      });
+
+      def.traits.push(
+        {
+          type: 'text',
+          name: 'mobile-width',
+          label: 'Mobile Width',
+          placeholder: 'e.g. 100%',
+        },
+        {
+          type: 'text',
+          name: 'desktop-width',
+          label: 'Desktop Width (md+)',
+          placeholder: 'e.g. 80%',
+        }
+      );
+    });
+  }, 0);
+
+
+  // Tailwind class for desktop width: md:w-[value]
+  function applyTailwindDesktopWidth(width) {
+    const classList = this.getClasses() || [];
+    const newClass = getTailwindWidthClass(width, true); // true = desktop
+
+    // Remove any old md:w-[...] class
+    const updated = classList.filter(c => {
+      return !/^md:w-[^[]/.test(c) && !/^md:w-\[.+\]$/.test(c) || /^max-w-/.test(c);
+    });
+
+    if (newClass) updated.push(newClass);
+
+    this.setClass(updated);
+    console.log("resize4 " + updated)
+  }
+
+  function applyTailwindMobileWidth(width) {
+    const classList = this.getClasses() || [];
+    const newClass = getTailwindWidthClass(width, false); // false = mobile
+
+    // Remove any old w-[...] class (excluding md:w-[...])
+    const updated = classList.filter(c => {
+      return !/^w-[^[]/.test(c) && !/^w-\[.+\]$/.test(c) || /^md:w-/.test(c) || /^max-w-/.test(c);
+    });
+
+    if (newClass) updated.push(newClass);
+
+    this.setClass(updated);
+  }
+
+  // Returns Tailwind class like `md:w-[80%]` or `w-[300px]`
+  function getTailwindWidthClass(width, isDesktop) {
+    if (!width || typeof width !== 'string') return null;
+
+    const trimmed = width.trim();
+    const match = trimmed.match(/^([\d.]+)(px|%|rem)?$/);
+
+    if (!match) return null;
+
+    const num = match[1];
+    const unit = match[2] || '%';
+    const safeValue = `${num}${unit}`;
+    const prefix = isDesktop ? 'md:' : '';
+    return `${prefix}w-[${safeValue}]`;
+  }
+
 
   // Add blocks
   loadBlocks(editor, options);
@@ -203,14 +324,14 @@ export default (editor, opts = {}) => {
           console.log("phone-number found");
           htmlString = htmlString.replace(
             phoneRegex,
-            `<a href="tel:${phoneDigits}" class="phone-number ml-3">${phoneDigits}</a>`,
+            `<a href="tel:${phoneDigits}" class="phone-number">${phoneDigits}</a>`,
           );
 
           // Update emails - replace entire <a> tag
           const emailRegex = /<a[^>]*class="[^"]*email[^"]*"[^>]*>.*?<\/a>/g;
           htmlString = htmlString.replace(
             emailRegex,
-            `<a href="mailto:${email}" class="email ml-3">${email}</a>`,
+            `<a href="mailto:${email}" class="email">${email}</a>`,
           );
 
           // Update addresses
@@ -576,463 +697,6 @@ export default (editor, opts = {}) => {
   }
 
 
-  // Register the command
-  //     editor.Commands.add('open-insert-component-modal', {
-  //       run: (editor, sender, options = {}) => {
-
-  //         const selectedComponent = editor.getSelected();
-  //         if (!selectedComponent) {
-  //           editor.Modal.alert({
-  //             title: 'No Selection',
-  //             content: 'Please select a component first',
-  //             attributes: { class: 'bg-rose-50 text-rose-900' }
-  //           });
-  //           return;
-  //         }
-
-  //         // Create the main modal container
-  //         const modal = document.createElement('div');
-  //         modal.className = 'fixed inset-0 bg-rose-900/30 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn';
-  //         modal.id = 'insert-component-modal';
-
-  //         // Create the modal content
-  //         const modalContent = document.createElement('div');
-  //         modalContent.className = 'bg-white rounded-xl shadow-2xl w-[90vw] max-w-5xl h-[85vh] flex flex-col overflow-hidden border border-rose-100 animate-scaleIn';
-  //         modalContent.style.transformOrigin = 'center center';
-
-  //         // Create the initial options modal
-  //         const initialOptions = createInitialOptions(editor, selectedComponent);
-  //         modalContent.appendChild(initialOptions);
-
-  //         // Append to document
-  //         modal.appendChild(modalContent);
-  //         document.body.appendChild(modal);
-
-
-  //         // Close modal when clicking outside
-  //         modal.addEventListener('click', (e) => {
-  //           if (e.target === modal) {
-  //             modal.classList.add('animate-fadeOut');
-  //             modalContent.classList.add('animate-scaleOut');
-  //             setTimeout(() => {
-  //               document.body.removeChild(modal);
-  //             }, 200);
-  //           }
-  //         });
-  //       }
-  //     });
-
-  //     // Helper to create the initial options modal
-  //     function createInitialOptions(editor, selectedComponent) {
-  //       const container = document.createElement('div');
-  //       container.className = 'p-8 flex flex-col h-[500px] overflow-scroll bg-gradient-to-br from-rose-50 to-rose-100/50';
-  //       container.style.height = '500px';
-
-  //       const header = document.createElement('div');
-  //       header.className = 'mb-8 text-center';
-
-  //       const title = document.createElement('h3');
-  //       title.className = 'text-2xl font-bold text-rose-900 mb-2';
-  //       title.textContent = 'Insert Component';
-
-  //       const subtitle = document.createElement('p');
-  //       subtitle.className = 'text-rose-700/80 max-w-md mx-auto';
-  //       subtitle.textContent = `Selected: ${selectedComponent.getName() || selectedComponent.get('type')}`;
-
-  //       header.appendChild(title);
-  //       header.appendChild(subtitle);
-  //       container.appendChild(header);
-
-  //       const optionsContainer = document.createElement('div');
-  //       optionsContainer.className = 'grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow';
-
-  //       const options = [
-  //         { 
-  //           name: 'Before',
-  //           desc: 'Add before current component',
-  //           class: 'hover:border-rose-300 hover:bg-rose-50'
-  //         },
-  //         { 
-  //           name: 'After',
-  //           desc: 'Add after current component',
-  //           class: 'hover:border-rose-300 hover:bg-rose-50'
-  //         },
-  //         { 
-  //           name: 'Inside',
-  //           desc: 'Add inside current component',
-  //           class: 'hover:border-rose-400 hover:bg-rose-100/30 border-rose-200 bg-rose-50/50'
-  //         }
-  //       ];
-
-  //       options.forEach(option => {
-  //         const card = document.createElement('button');
-  //         card.className = `bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-all border-2 ${option.class} flex flex-col items-center justify-center group`;
-
-  //         const icon = document.createElement('div');
-  //         icon.className = 'mb-3 text-rose-600 group-hover:text-rose-800 transition-colors';
-
-  //         switch (option.name) {
-  //           case 'Before':
-  //             icon.innerHTML = `
-  //               <svg stroke="currentColor" class="w-10 h-10" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-  // <path d="M208 144h-56c-4.4 0-8 3.6-8 8v720c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V152c0-4.4-3.6-8-8-8zm166 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm498 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm166 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM540 310h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 166h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm332 332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM374 808h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm332 332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path></svg>
-  //             `;
-  //             break;
-  //           case 'After':
-  //             icon.innerHTML = `
-  //                <svg stroke="currentColor" class="w-10 h-10" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-  //                <path d="M872 144h-56c-4.4 0-8 3.6-8 8v720c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V152c0-4.4-3.6-8-8-8zm-166 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-498 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-166 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm166 166h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 166h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM208 808h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm498 332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM374 808h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-332h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path></svg>
-
-  //             `;
-  //             break;
-  //           case 'Inside':
-  //             icon.innerHTML = `
-  //               <svg stroke="currentColor" class="w-10 h-10" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M872 476H548V144h-72v332H152c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h324v332h72V548h324c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-166h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 498h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0-664h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 498h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM650 216h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm56 592h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-332 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-56-592h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-166 0h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm56 592h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-56-426h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm56 260h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path></svg>
-  //             `;
-  //             break;
-  //         }
-
-
-  //         const name = document.createElement('h4');
-  //         name.className = 'text-lg font-semibold text-rose-900 mb-2';
-  //         name.textContent = option.name;
-
-  //         const desc = document.createElement('p');
-  //         desc.className = 'text-sm text-rose-700/70 text-center';
-  //         desc.textContent = option.desc;
-
-  //         card.appendChild(icon);
-  //         card.appendChild(name);
-  //         card.appendChild(desc);
-
-  //         // card.addEventListener('click', () => {
-  //         //   card.classList.add('scale-95', 'bg-rose-100');
-
-  //         //   // setTimeout(() => {
-  //         //     // Clear only the content wrapper, not the whole modal container
-  //         //     // while (container.firstChild) {
-  //         //     //   container.removeChild(container.firstChild);
-  //         //     // }
-
-  //         //     // Show the component selector
-  //         //     // const componentSelector = createComponentSelector(editor, selectedComponent, option.name.toLowerCase());
-  //         //     // container.appendChild(componentSelector);
-
-  //         //     // Now add the component selector safely
-  //         //   //   const componentSelector = createComponentSelector(editor, selectedComponent, option.name.toLowerCase());
-  //         //   //   contentWrapper.appendChild(componentSelector);
-  //         //   // }, 150);
-  //         // });
-
-  //         optionsContainer.appendChild(card);
-  //       });
-
-  //       container.appendChild(optionsContainer);
-
-  //       // Add footer with close button
-  //       const footer = document.createElement('div');
-  //       footer.className = 'mt-6 flex justify-end';
-
-  //       const closeBtn = document.createElement('button');
-  //       closeBtn.className = 'px-4 py-2 text-sm text-rose-700 hover:text-rose-900 font-medium rounded-lg hover:bg-rose-200/50 transition-colors flex items-center gap-1';
-  //       closeBtn.innerHTML = `
-  //         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-  //           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-  //         </svg>
-  //         Cancel
-  //       `;
-  //       closeBtn.addEventListener('click', () => {
-  //         const modal = document.getElementById('insert-component-modal');
-  //         if (modal) {
-  //           modal.classList.add('animate-fadeOut');
-  //           modal.querySelector('div').classList.add('animate-scaleOut');
-  //           setTimeout(() => {
-  //             document.body.removeChild(modal);
-  //           }, 200);
-  //         }
-  //       });
-
-  //       footer.appendChild(closeBtn);
-  //       container.appendChild(footer);
-
-  //       return container;
-  //     }
-
-  //     // Helper to create the component selector
-  //     function createComponentSelector(editor, selectedComponent, insertPosition) {
-  //       const container = document.createElement('div');
-  //       container.className = 'flex h-96 bg-gradient-to-b from-rose-50 to-white';
-  //       container.style.overflow = 'scroll'
-  //       // Create sidebar with categories
-  //       const sidebar = document.createElement('div');
-  //       sidebar.className = 'w-64 bg-white/80 p-4 border-r border-rose-200 overflow-y-auto backdrop-blur-sm flex flex-col';
-
-  //       const sidebarHeader = document.createElement('div');
-  //       sidebarHeader.className = 'mb-6';
-
-  //       const backBtn = document.createElement('button');
-  //       backBtn.className = 'flex items-center text-sm text-rose-700 hover:text-rose-900 mb-4 transition-colors';
-  //       backBtn.innerHTML = `
-  //         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-  //           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-  //         </svg>
-  //         Back
-  //       `;
-  //       backBtn.addEventListener('click', () => {
-  //         const modalContent = document.querySelector('#insert-component-modal > div');
-  //         while (modalContent.firstChild) {
-  //           modalContent.removeChild(modalContent.firstChild);
-  //         }
-  //         modalContent.appendChild(createInitialOptions(editor, selectedComponent));
-  //       });
-
-  //       const sidebarTitle = document.createElement('h4');
-  //       sidebarTitle.className = 'font-bold text-lg text-rose-900';
-  //       sidebarTitle.textContent = 'Categories';
-
-  //       sidebarHeader.appendChild(backBtn);
-  //       sidebarHeader.appendChild(sidebarTitle);
-  //       sidebar.appendChild(sidebarHeader);
-
-  //       // Search input
-  //       const searchContainer = document.createElement('div');
-  //       searchContainer.className = 'mb-6 relative';
-
-  //       const searchInput = document.createElement('input');
-  //       searchInput.type = 'text';
-  //       searchInput.placeholder = 'Search components...';
-  //       searchInput.className = 'w-full px-3 py-2 pr-8 text-sm border border-rose-200 rounded-lg focus:ring-2 focus:ring-rose-300 focus:border-rose-300 outline-none transition-all';
-
-  //       searchContainer.appendChild(searchInput);
-  //       sidebar.appendChild(searchContainer);
-
-  //       // Dummy categories with icons
-  //       const categories = [
-  //         { name: 'All', icon: '🌟', active: true },
-  //         { name: 'Basic', icon: '🧩' },
-  //         { name: 'Forms', icon: '📝' },
-  //         { name: 'Media', icon: '🖼️' },
-  //         { name: 'Layout', icon: '📐' },
-  //         { name: 'Typography', icon: '🔤' }
-  //       ];
-
-  //       const categoryContainer = document.createElement('div');
-  //       categoryContainer.className = 'flex-1 overflow-y-auto';
-
-  //       categories.forEach(cat => {
-  //         const catBtn = document.createElement('button');
-  //         catBtn.className = `flex items-center w-full text-left py-3 px-3 mb-1 rounded-lg transition-colors text-rose-800 group ${cat.active ? 'bg-rose-100/70 font-medium' : 'hover:bg-rose-100/50'}`;
-  //         catBtn.innerHTML = `
-  //           <span class="text-xl mr-3 opacity-70 group-hover:opacity-100 transition-opacity">${cat.icon}</span>
-  //           <span>${cat.name}</span>
-  //         `;
-  //         categoryContainer.appendChild(catBtn);
-  //       });
-
-  //       sidebar.appendChild(categoryContainer);
-  //       container.appendChild(sidebar);
-
-  //       // Create component grid
-  //       const componentGrid = document.createElement('div');
-  //       componentGrid.className = 'flex-1 p-6 overflow-y-auto flex flex-col';
-
-  //       const gridHeader = document.createElement('div');
-  //       gridHeader.className = 'mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4';
-
-  //       const gridTitle = document.createElement('h4');
-  //       gridTitle.className = 'font-bold text-xl text-rose-900';
-  //       gridTitle.textContent = 'Available Components';
-
-  //       const headerRight = document.createElement('div');
-  //       headerRight.className = 'flex items-center gap-3';
-
-  //       const positionBadge = document.createElement('span');
-  //       positionBadge.className = 'bg-rose-100 text-rose-800 text-xs font-medium px-3 py-1 rounded-full capitalize';
-  //       positionBadge.textContent = insertPosition;
-
-  //       const countBadge = document.createElement('span');
-  //       countBadge.className = 'bg-white border border-rose-200 text-rose-700 text-xs font-medium px-2.5 py-1 rounded-full';
-
-  //       headerRight.appendChild(positionBadge);
-  //       headerRight.appendChild(countBadge);
-
-  //       gridHeader.appendChild(gridTitle);
-  //       gridHeader.appendChild(headerRight);
-  //       componentGrid.appendChild(gridHeader);
-
-  //       // Grid container
-  //       const gridContainer = document.createElement('div');
-  //       gridContainer.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 flex-1 content-start';
-
-  //       // Preview container (initially hidden)
-  //       const previewContainer = document.createElement('div');
-  //       previewContainer.className = 'hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[1001] flex items-center justify-center p-4 animate-fadeIn';
-  //       previewContainer.id = 'component-preview-modal';
-
-  //       const previewContent = document.createElement('div');
-  //       previewContent.className = 'bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-auto animate-scaleIn p-6';
-  //       previewContent.style.transformOrigin = 'center center';
-
-  //       const previewHeader = document.createElement('div');
-  //       previewHeader.className = 'flex justify-between items-center mb-4 pb-2 border-b border-rose-100';
-
-  //       const previewTitle = document.createElement('h3');
-  //       previewTitle.className = 'text-lg font-bold text-rose-900';
-
-  //       const closePreviewBtn = document.createElement('button');
-  //       closePreviewBtn.className = 'text-rose-700 hover:text-rose-900 p-1 rounded-full hover:bg-rose-100';
-  //       closePreviewBtn.innerHTML = `
-  //         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-  //           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-  //         </svg>
-  //       `;
-  //       closePreviewBtn.addEventListener('click', () => {
-  //         previewContainer.classList.add('animate-fadeOut');
-  //         previewContent.classList.add('animate-scaleOut');
-  //         setTimeout(() => {
-  //           document.body.removeChild(previewContainer);
-  //         }, 200);
-  //       });
-
-  //       previewHeader.appendChild(previewTitle);
-  //       previewHeader.appendChild(closePreviewBtn);
-  //       previewContent.appendChild(previewHeader);
-
-  //       const previewBody = document.createElement('div');
-  //       previewBody.className = 'prose prose-rose max-w-none';
-  //       previewContent.appendChild(previewBody);
-
-  //       previewContainer.appendChild(previewContent);
-  //       document.body.appendChild(previewContainer);
-
-  //       // Get all component types from the editor
-  //       const componentTypes = editor.Components.getTypes();
-  //       countBadge.textContent = `${componentTypes.length} components`;
-
-  //       componentTypes.forEach(compType => {
-  //         const compCard = document.createElement('button');
-  //         compCard.className = 'border border-rose-200 bg-white rounded-xl p-4 hover:shadow-md transition-all cursor-pointer flex flex-col text-left hover:border-rose-300 hover:bg-rose-50/50 group h-full';
-
-  //         const cardHeader = document.createElement('div');
-  //         cardHeader.className = 'flex items-start mb-3';
-
-  //         const icon = document.createElement('div');
-  //         icon.className = 'w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center text-rose-600 mr-3 group-hover:bg-rose-200 transition-colors flex-shrink-0';
-  //         icon.innerHTML = `
-  //           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-  //             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-  //           </svg>
-  //         `;
-
-  //         const textContainer = document.createElement('div');
-  //         textContainer.className = 'flex-1';
-
-  //         const name = document.createElement('h5');
-  //         name.className = 'font-medium text-rose-900 mb-1';
-  //         const typeName = typeof compType === 'string'
-  //   ? compType
-  //   : compType.id || compType.type || compType.name || 'Unknown';
-
-  // name.textContent = typeName;
-
-  //         const type = document.createElement('span');
-  //         type.className = 'text-xs text-rose-600/70 block';
-  //         type.textContent = 'component';
-
-  //         textContainer.appendChild(name);
-  //         textContainer.appendChild(type);
-  //         cardHeader.appendChild(icon);
-  //         cardHeader.appendChild(textContainer);
-
-  //         const previewBtn = document.createElement('button');
-  //         previewBtn.className = 'absolute top-2 right-2 p-1 text-rose-600/50 hover:text-rose-700 rounded-full hover:bg-rose-200 bg-gray-200 transition-colors opacity-0 group-hover:opacity-100';
-  //         previewBtn.innerHTML = `
-  //           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-  //             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-  //             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-  //           </svg>
-  //         `;
-  //         previewBtn.addEventListener('click', (e) => {
-  //           e.stopPropagation();
-  //           previewTitle.textContent = compType;
-  //           previewBody.innerHTML = `
-  //             <h4 class="text-rose-800">Component Preview</h4>
-  //             <p class="text-rose-700/80">This would show a live preview of the ${compType} component.</p>
-  //             <div class="mt-4 p-4 border border-rose-200 rounded-lg bg-rose-50/50">
-  //               <p class="text-sm text-rose-700">In a real implementation, this would render an actual preview of the component.</p>
-  //             </div>
-  //           `;
-  //           previewContainer.classList.remove('hidden');
-  //         });
-
-  //         compCard.appendChild(cardHeader);
-  //         compCard.appendChild(previewBtn);
-
-  //         compCard.addEventListener('click', () => {
-  //           // Add insertion animation feedback
-  //           compCard.classList.add('scale-95', 'bg-rose-100');
-  //           setTimeout(() => {
-  //             compCard.classList.remove('scale-95', 'bg-rose-100');
-  //           }, 150);
-
-  //           // Insert the component based on the selected position
-  //           const component = { type: typeName };
-
-  //           switch (insertPosition) {
-  //             case 'before':
-  //               editor.getSelected().before(component);
-  //               break;
-  //             case 'after':
-  //               editor.getSelected().after(component);
-  //               break;
-  //             case 'inside':
-  //               const selected = editor.getSelected();
-  //               if (selected) {
-  //                 selected.components().add(component); // adds to the end
-  //               }
-  //               break;
-  //           }
-
-  //           // Close the modal with animation
-  //           const modal = document.getElementById('insert-component-modal');
-  //           if (modal) {
-  //             modal.classList.add('animate-fadeOut');
-  //             modal.querySelector('div').classList.add('animate-scaleOut');
-  //             setTimeout(() => {
-  //               document.body.removeChild(modal);
-  //             }, 200);
-  //           }
-  //         });
-
-  //         gridContainer.appendChild(compCard);
-  //       });
-
-  //       // Add search functionality
-  //       searchInput.addEventListener('input', (e) => {
-  //         const searchTerm = e.target.value.toLowerCase();
-  //         const cards = gridContainer.querySelectorAll('button');
-  //         let visibleCount = 0;
-
-  //         cards.forEach(card => {
-  //           const name = card.querySelector('h5').textContent.toLowerCase();
-  //           if (name.includes(searchTerm)) {
-  //             card.style.display = 'block';
-  //             visibleCount++;
-  //           } else {
-  //             card.style.display = 'none';
-  //           }
-  //         });
-
-  //         countBadge.textContent = `${visibleCount} of ${componentTypes.length} components`;
-  //       });
-
-  //       componentGrid.appendChild(gridContainer);
-  //       container.appendChild(componentGrid);
-  //       return container;
-  //     }
-
-
-
   editor.on("component:add", (component) => {
     if (component.get("disableToolbar")) {
       component.set({ toolbar: [] });
@@ -1205,6 +869,7 @@ export default (editor, opts = {}) => {
     editor.trigger("component:update", targetComponent);
   }
 
+
   // Define the command for the Edit button
   editor.Commands.add("edit-component", {
     run(editor, sender) {
@@ -1324,10 +989,74 @@ export default (editor, opts = {}) => {
   };
 
   editor.on("load", () => {
+
+  //   const iframe = editor.Canvas.getFrameEl();
+  // if (!iframe?.contentDocument) return;
+
+  // const script = iframe.contentDocument.createElement('script');
+  // script.type = 'text/javascript';
+  // script.innerHTML = `
+  //   (function() {
+  //     const ATTR_DESKTOP = 'desktop-width';
+  //     const ATTR_MOBILE = 'mobile-width';
+
+  //     function updateClasses(el) {
+  //       const mobile = el.getAttribute(ATTR_MOBILE);
+  //       const desktop = el.getAttribute(ATTR_DESKTOP);
+
+  //       // Remove previous Tailwind width classes (excluding max-w)
+  //       el.className = el.className
+  //         .split(' ')
+  //         .filter(c => !/^w-\\[.*\\]$/.test(c) && !/^md:w-\\[.*\\]$/.test(c))
+  //         .join(' ');
+
+  //       if (mobile) el.classList.add(\`w-[\${mobile}]\`);
+  //       if (desktop) el.classList.add(\`md:w-[\${desktop}]\`);
+  //     }
+
+  //     // Initial pass
+  //     document.querySelectorAll('[' + ATTR_MOBILE + '],[' + ATTR_DESKTOP + ']').forEach(updateClasses);
+
+  //     // Observe for any attribute changes
+  //     const observer = new MutationObserver((mutations) => {
+  //       mutations.forEach(m => {
+  //         if (
+  //           m.type === 'attributes' &&
+  //           (m.attributeName === ATTR_MOBILE || m.attributeName === ATTR_DESKTOP)
+  //         ) {
+  //           updateClasses(m.target);
+  //         }
+  //       });
+  //     });
+
+  //     document.querySelectorAll('[' + ATTR_MOBILE + '],[' + ATTR_DESKTOP + ']').forEach(el => {
+  //       observer.observe(el, { attributes: true });
+  //     });
+
+  //     // Listen for new nodes
+  //     const treeObserver = new MutationObserver(mutations => {
+  //       mutations.forEach(m => {
+  //         m.addedNodes.forEach(node => {
+  //           if (!(node instanceof HTMLElement)) return;
+  //           if (node.hasAttribute(ATTR_MOBILE) || node.hasAttribute(ATTR_DESKTOP)) {
+  //             updateClasses(node);
+  //             observer.observe(node, { attributes: true });
+  //           }
+  //         });
+  //       });
+  //     });
+
+  //     treeObserver.observe(document.body, { childList: true, subtree: true });
+  //   })();
+  // `;
+  // iframe.contentDocument.body.appendChild(script);
+
+
     editor.RichTextEditor.get("wrap").result = (rte) => {
       const sel = rte.selection();
       sel && rte.insertHTML(`<span class="highlight">${sel}</span>`);
     };
+
   });
 
   editor.on('component:type:register', (type) => {
@@ -1385,62 +1114,59 @@ export default (editor, opts = {}) => {
       setTimeout(() => {
         const selected = editor.getSelected();
         if (!selected) return;
-  
+
         const el = selected.view.el;
-  
+
         document.getElementById('width-resize-menu')?.remove();
-  
+
         const attrDesktop = selected.getAttributes()['desktop-width'] || '';
         const attrMobile = selected.getAttributes()['mobile-width'] || '';
-  
+
         const desktopParsed = parseWidth(attrDesktop);
         const mobileParsed = parseWidth(attrMobile);
-  
+
         const menu = document.createElement('div');
         menu.id = 'width-resize-menu';
         menu.className = `
           fixed z-[9999] bg-white shadow-xl rounded-lg p-6 border border-gray-200 w-[280px]
           text-sm space-y-4 font-sans
         `;
-  
-        // Position it to the left side of the editor, vertically centered (but biased toward top)
+
+        // Position near canvas
         const editorCanvas = editor.Canvas.getElement();
         const canvasRect = editorCanvas.getBoundingClientRect();
-  
+
         let top = canvasRect.top + canvasRect.height * 0.25;
         let left = canvasRect.left - 300;
-  
+
         if (left < 10) left = 60;
         if (top < 10) top = 10;
-  
+
         Object.assign(menu.style, {
           top: `${top}px`,
           left: `${left}px`,
         });
-  
+
         const closeButton = document.createElement('button');
         closeButton.innerText = '✕';
         closeButton.className = 'absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-sm';
         closeButton.onclick = () => {
-          el.style.width = originalDesktopWidth;
           menu.remove();
           document.removeEventListener('mousedown', onOutsideClick);
         };
         menu.appendChild(closeButton);
-  
+
         const title = document.createElement('div');
         title.innerText = 'Adjust Width';
         title.className = 'text-base font-semibold text-gray-800';
         menu.appendChild(title);
-  
-        const originalDesktopWidth = el.style.width;
-  
+
         const desktopField = buildField('Desktop', desktopParsed.value, desktopParsed.unit, el, !attrDesktop);
         const mobileField = buildField('Mobile', mobileParsed.value, mobileParsed.unit, el, !attrMobile);
-  
+
         menu.appendChild(desktopField.wrapper);
         menu.appendChild(mobileField.wrapper);
-  
+
         const saveBtn = document.createElement('button');
         saveBtn.innerText = 'Save';
         saveBtn.className = 'w-full bg-rose-600 text-white text-sm py-1.5 rounded hover:bg-rose-700';
@@ -1449,36 +1175,41 @@ export default (editor, opts = {}) => {
           const dunit = desktopField.unit.value;
           const mval = mobileField.input.value();
           const munit = mobileField.unit.value;
-  
-          selected.addStyle({ width: `${dval}${dunit}` });
-          selected.addStyle({ width: `${mval}${munit}` }, { mediaText: '@media (max-width: 768px)' });
-  
-          selected.addAttributes({
-            'desktop-width': `${dval}${dunit}`,
-            'mobile-width': `${mval}${munit}`,
-          });
-  
+
+          // Only update attributes if value is valid
+          const newAttrs = {};
+
+          if (!isNaN(dval)) {
+            newAttrs['desktop-width'] = `${dval}${dunit}`;
+          }
+
+          if (!isNaN(mval)) {
+            newAttrs['mobile-width'] = `${mval}${munit}`;
+          }
+
+          selected.setAttributes(newAttrs);
+
           menu.remove();
           document.removeEventListener('mousedown', onOutsideClick);
         };
         menu.appendChild(saveBtn);
-  
+
         document.body.appendChild(menu);
-  
+
         const onOutsideClick = (e) => {
           if (!menu.contains(e.target)) {
-            el.style.width = originalDesktopWidth;
             menu.remove();
             document.removeEventListener('mousedown', onOutsideClick);
           }
         };
-  
+
         setTimeout(() => {
           document.addEventListener('mousedown', onOutsideClick);
         }, 200);
       }, 0);
     }
   });
+
 
   function buildField(label, initialValue, initialUnit, el, showPlaceholder = false) {
     const wrapper = document.createElement('div');

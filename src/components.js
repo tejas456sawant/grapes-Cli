@@ -2,7 +2,7 @@ import IconPicker from "./IconPicker.js";
 import React, { useState, useCallback, useMemo } from "react";
 import ReactDOM from "react-dom/client"; // For React 18+
 
-const BACKEND_URL = "https://dev.byteai.bytesuite.io";
+
 // const BACKEND_URL = "http://127.0.0.1:5000";
 
 const getRegisteredBlocks = () => [
@@ -76,43 +76,7 @@ function addComponentAfter(targetComponent, newComponent) {
   parent.components().add(newComponent, { at: index + 1 });
 }
 
-/**
- * Replaces current selection with AI-generated component
- * @param {Object} aiData - AI-generated component JSON
- * @param {grapesjs.Editor} editor - GrapesJS instance
- */
-function replaceWithAISection(aiData, editor) {
-  const selected = editor.getSelected();
-  if (!selected) {
-    console.warn("No component selected");
-    return;
-  }
 
-  // Get parent and position - works for both Components and Component
-  const parent = selected.parent();
-  let position = 0;
-
-  if (parent && typeof parent.indexOf === "function") {
-    position = parent.indexOf(selected);
-  }
-
-  // Remove old component
-  selected.remove();
-
-  // Add new component - handles both append() and add()
-  let newComponent;
-  if (parent && typeof parent.append === "function") {
-    newComponent = parent.append(aiData, { at: position })[0];
-  } else {
-    // Handle case where parent is the canvas or root
-    newComponent = editor.getWrapper().append(aiData)[0];
-  }
-
-  // Select the new component
-  editor.select(newComponent);
-
-  return newComponent;
-}
 
 // Show modal and handle component addition
 function showAddComponentModal(targetComponent) {
@@ -296,128 +260,189 @@ function showAddComponentModal(targetComponent) {
 }
 
 export default (editor, options) => {
+  const BACKEND_URL = editor.backendUrl;
+
   editor.Commands.add("regenerate-section", {
     run: function (editor, sender, options = {}) {
       const selectedComponent = editor.getSelected();
-
+  
       if (!selectedComponent) {
         alert("Please select a component first");
         return;
       }
-
-      // Get website ID from URL
-      const websiteId = new URLSearchParams(window.location.search).get(
-        "website_id",
-      );
-      if (!websiteId) {
-        alert("Website ID not found in URL");
+  
+      // Get the original component ID
+      const componentId = selectedComponent.getAttributes().id;
+      if (!componentId) {
+        alert("Please select a component", selectedComponent.getAttributes().id);
         return;
       }
-
-      // Create modal using your preferred structure
+  
+      // Get website ID from URL
+      const websiteId = new URLSearchParams(window.location.search).get("website_id");
+      if (!websiteId) {
+        alert("Website ID not found");
+        return;
+      }
+  
+      // Create modal UI
       const modal = document.createElement("div");
       modal.className =
         "fixed inset-0 bg-black bg-opacity-50 z-[50] flex items-center justify-center";
-
+  
       modal.innerHTML = `
-      <div class="bg-white p-6 rounded-lg max-w-md w-full relative">
-        <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-gray-900">
-          &times;
-        </button>
-        <h2 class="text-xl font-semibold mb-4">Regenerate Section</h2>
-        <div class="modal-body">
-          <div class="mb-4">
-            <label class="block text-sm font-medium mb-2">How should we improve this section?</label>
-            <textarea 
-              id="regenerate-prompt" 
-              class="w-full p-2 border rounded" 
-              rows="4"
-              placeholder="Make this more modern with brighter colors..."
-            ></textarea>
-          </div>
-        </div>
-        <div class="mt-4 flex justify-end space-x-2">
-          <button class="cancel-modal px-4 py-2 bg-gray-200 rounded">Cancel</button>
-          <button class="regenerate-modal px-4 py-2 bg-blue-500 border border-rose-500 text-white rounded bg-rose-500">
-            Regenerate
+       <div class="bg-white p-6 rounded-2xl max-w-lg w-full shadow-xl relative">
+          <button class="close-modal absolute top-4 right-4 text-gray-500 hover:text-gray-900 text-xl">
+            &times;
           </button>
-        </div>
-      </div>
-    `;
-
-      // Event Listeners
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-semibold text-gray-800 flex items-center gap-2">
+              Regenerate Section
+              <span class="text-xs bg-rose-100 text-rose-600 font-medium px-2 py-0.5 rounded-full">Beta</span>
+            </h2>
+          </div>
+          <div class="modal-body">
+            <div class="mb-5">
+              <label for="regenerate-prompt" class="block text-sm font-medium text-gray-700 mb-1">
+                Describe the changes you’d like to see
+              </label>
+              <textarea 
+                id="regenerate-prompt" 
+                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition" 
+                rows="4"
+                placeholder="Add a button"
+              ></textarea>
+            </div>
+          </div>
+          <div class="mt-4 flex justify-end gap-3">
+            <button class="cancel-modal px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition">
+              Cancel
+            </button>
+            <button class="regenerate-modal px-5 py-2 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-lg shadow-sm transition">
+              Apply Changes
+            </button>
+          </div>
+       </div>
+      `;
+  
+      // Attach modal events
       const closeModal = () => modal.remove();
       modal.querySelector(".close-modal").addEventListener("click", closeModal);
-      modal
-        .querySelector(".cancel-modal")
-        .addEventListener("click", closeModal);
-
-      // Regenerate button handler
-      modal
-        .querySelector(".regenerate-modal")
-        .addEventListener("click", async () => {
-          const prompt = modal.querySelector("#regenerate-prompt").value.trim();
-
-          if (!prompt) {
-            alert("Please enter your improvement instructions");
-            return;
+      modal.querySelector(".cancel-modal").addEventListener("click", closeModal);
+  
+      modal.querySelector(".regenerate-modal").addEventListener("click", async () => {
+        const prompt = modal.querySelector("#regenerate-prompt").value.trim();
+  
+        if (!prompt) {
+          alert("Please enter your improvement instructions");
+          return;
+        }
+  
+        // Show loading spinner
+        modal.querySelector(".modal-body").innerHTML = `
+          <div class="flex flex-col items-center justify-center p-8">
+            <svg class="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="mt-4">Generating new section...</p>
+          </div>
+        `;
+  
+        try {
+          const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("Bearer="))
+            ?.split("=")[1];
+  
+          if (!token) {
+            throw new Error("Authorization token not found");
           }
-
-          // Show loading state
-          modal.querySelector(".modal-body").innerHTML = `
-        <div class="flex flex-col items-center justify-center p-8">
-          <svg class="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          <p class="mt-4">Generating new section...</p>
-        </div>
-      `;
-
-          try {
-            const token = document.cookie
-              .split("; ")
-              .find((row) => row.startsWith("Bearer="))
-              ?.split("=")[1];
-
-            if (!token) {
-              throw new Error("Authorization token not found");
-            }
-
-            const response = await fetch(
-              `${BACKEND_URL}/api/website/${websiteId}/regenerate-section`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                  prompt,
-                  section: selectedComponent.toJSON(),
-                }),
+  
+          const response = await fetch(
+            `${BACKEND_URL}/api/website/${websiteId}/regenerate-section`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
               },
-            );
-
-            const data = await response.json();
-
-            if (data.status && data.section) {
-              // replaceWithAISection(data.section, editor);
-              closeModal();
-              alert("Section regenerated successfully!");
-            } else {
-              throw new Error(data.message || "Invalid response from server");
+              body: JSON.stringify({
+                prompt,
+                section: selectedComponent.toJSON(),
+                componentId, // explicitly send the original ID
+              }),
             }
-          } catch (error) {
-            console.error("Error regenerating section:", error);
-            alert(`Failed to regenerate: ${error}`);
+          );
+  
+          const data = await response.json();
+  
+          if (data.status && data.section) {
+            replaceComponentById(componentId, data.section, editor);
             closeModal();
+            alert("Section regenerated successfully!");
+          } else {
+            throw new Error(data.message || "Invalid response from server");
           }
-        });
-
+        } catch (error) {
+          console.error("Error regenerating section:", error);
+          alert(`Failed to regenerate: ${error}`);
+          closeModal();
+        }
+      });
+  
       document.body.appendChild(modal);
     },
   });
+  
+  /**
+   * Replace a GrapesJS component by its original ID.
+   * Even if the returned data has a new ID, it will replace the right component.
+   */
+  function replaceComponentById(originalId, newComponentData, editor) {
+    const root = editor.getWrapper();
+  
+    const findById = (components) => {
+      for (const comp of components) {
+        const htmlId = comp.getAttributes()?.id;
+        if (htmlId === originalId) return comp;
+  
+        const children = comp.components();
+        if (children.length) {
+          const found = findById(children);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+  
+    const target = findById(root.components());
+    if (!target) {
+      console.warn(`Component with HTML ID "${originalId}" not found`);
+      return;
+    }
+  
+    const parent = target.parent();
+    const index = parent ? parent.components().indexOf(target) : 0;
+  
+    // Remove old component
+    target.remove();
+  
+    // Clean ID in AI-generated content to avoid duplication (optional)
+    if (newComponentData.attributes?.id) {
+      delete newComponentData.attributes.id;
+    }
+  
+    // Insert new component at the same index
+    const newComp = parent
+      ? parent.append(newComponentData, { at: index })[0]
+      : root.append(newComponentData)[0];
+  
+    // Select new component
+    editor.select(newComp);
+  }
+  
+  
 
   editor.Commands.add("open-icon-picker", {
     run(editor) {
@@ -1556,7 +1581,7 @@ export default (editor, options) => {
           alignItems: "items-start",
           alignContent: "content-start",
           justifyItems: "justify-start",
-          stretch: "false",
+          stretch: "true",
         },
       },
 
@@ -2652,7 +2677,7 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "min-h-screen flex items-center justify-center bg-cover overflow-hidden bg-center p-4 pt-20 hero-section",
+            "min-h-screen flex items-center justify-center bg-cover overflow-hidden bg-center p-4 pt-40 hero-section",
           sectiontype: "normal",
         },
         traits: [
@@ -2695,7 +2720,7 @@ export default (editor, options) => {
           "bg-cover",
           "bg-center",
           "p-4",
-          "pt-20",
+          "pt-40",
           "hero-section",
         ];
 
@@ -2890,6 +2915,61 @@ export default (editor, options) => {
     },
   });
 
+  editor.DomComponents.addType('marquee', {
+    model: {
+      defaults: {
+        tagName: 'marquee',
+        draggable: true,
+        droppable: false,
+        attributes: {
+          behavior: 'scroll',
+          direction: 'left', // default direction
+          scrollamount: '5',
+          class: 'w-full overflow-hidden whitespace-nowrap text-xl text-gray-800',
+          style: `
+            mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+          `
+        },
+        content: `
+          🚀 Launch &nbsp;&nbsp; 💡 Innovation &nbsp;&nbsp; 🌍 Global &nbsp;&nbsp; 📈 Growth &nbsp;&nbsp; 🎯 Target &nbsp;&nbsp; 🤝 Partners &nbsp;&nbsp;
+          🚀`,
+        traits: [
+          {
+            type: 'select',
+            name: 'direction',
+            label: 'Scroll Direction',
+            options: [
+              { value: 'left', name: 'Left' },
+              { value: 'right', name: 'Right' },
+              { value: 'up', name: 'Up' },
+              { value: 'down', name: 'Down' },
+            ],
+            changeProp: 1,
+            default: 'left', // initial default
+          }
+        ],
+        script: function () {
+          // Sync direction attribute with trait
+          const dir = this.getAttribute('direction') || 'left';
+          this.setAttribute('direction', dir);
+        }
+      },
+  
+      init() {
+        // Ensure trait's value reflects in the attribute even on initial render
+        const dir = this.get('attributes').direction || 'left';
+        this.addAttributes({ direction: dir });
+  
+        // React to changes from trait UI
+        this.on('change:attributes:direction', () => {
+          const dir = this.getAttributes().direction;
+          this.addAttributes({ direction: dir });
+        });
+      }
+    }
+  });
+  
 
   editor.DomComponents.addType("content-title", {
     extend: "text",
@@ -4061,6 +4141,287 @@ export default (editor, options) => {
     },
   });
 
+  editor.Components.addType("button-tertiary", {
+    model: {
+      defaults: {
+        showEditButton: true,
+        tagName: "button",
+
+        draggable: false,
+        droppable: false,
+        attributes: {
+          class:
+            "button-tertiary font-primary transition px-2 my-2",
+        },
+        styles: `
+          .button-tertiary {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            width: max-content;
+          }
+          .button-tertiary::after {
+            content: '';
+            display: inline-block;
+            width: 18px;
+            height: 12px; /* Slightly taller for better vertical impact */
+            margin-left: 8px;
+            background-color: var(--color-primary);
+            mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 14' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='1' y1='7' x2='13' y2='7' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpolyline points='9,3 13,7 9,11' stroke='black' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center;
+            -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 14' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='1' y1='7' x2='13' y2='7' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpolyline points='9,3 13,7 9,11' stroke='black' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center;
+            background-size: contain;
+            transition: transform 0.3s ease;
+          }
+          .bg-section-primary .button-tertiary::after {
+            background-color: var(--color-text-primary-section-button);
+          }
+          .button-tertiary:hover {
+            font-weight: 600;
+          }
+
+          .button-tertiary:hover::after {
+            transform: translateX(15px);
+          }
+
+         `,
+      },
+    },
+    view: {
+      init() {
+        this.componentEditHandlers = {
+          // Handler specifically for button-primary components
+          "button-secondary": {
+            createModalContent(component) {
+              const container = document.createElement("div");
+
+              // Get current values
+              const content = component.get("content") || "";
+              const href = component.getAttributes().href || "";
+              const target = component.getAttributes().target || "";
+              const openInNewTab = target === "_blank";
+
+              // Create form elements
+              container.innerHTML = `
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="button-text">Button Text</label>
+                    <input 
+                      id="button-text" 
+                      type="text" 
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-rose-500" 
+                      value="${content}"
+                    >
+                  </div>
+                  
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="link-url">URL</label>
+                    <input 
+                      id="link-url" 
+                      type="text" 
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-rose-500" 
+                      value="${href}" 
+                      placeholder="https://example.com"
+                    >
+                  </div>
+                  
+                  <div class="flex items-center">
+                    <input 
+                      id="open-new-tab" 
+                      type="checkbox" 
+                      class="h-4 w-4 text-rose-500 border-gray-300 rounded" 
+                      ${openInNewTab ? "checked" : ""}
+                    >
+                    <label for="open-new-tab" class="ml-2 block text-sm text-gray-700">
+                      Open in new tab
+                    </label>
+                  </div>
+                </div>
+              `;
+
+              return {
+                container,
+                getData() {
+                  const buttonText =
+                    container.querySelector("#button-text").value;
+                  const linkUrl = container.querySelector("#link-url").value;
+                  const openInNewTab =
+                    container.querySelector("#open-new-tab").checked;
+
+                  return {
+                    content: buttonText,
+                    attributes: {
+                      href: linkUrl,
+                      target: openInNewTab ? "_blank" : "",
+                      rel: openInNewTab ? "noopener noreferrer" : "",
+                    },
+                  };
+                },
+              };
+            },
+          },
+
+          // Default handler for generic components (keeping your existing handler)
+          default: {
+            createModalContent(component) {
+              const container = document.createElement("div");
+              container.innerHTML = `
+                <div class="space-y-4">
+                  <div>
+                    <label class="block mb-2">Component Type</label>
+                    <input type="text" value="${component.get(
+                "type",
+              )}" class="w-full border p-2 rounded" disabled>
+                  </div>
+                  <div>
+                    <label class="block mb-2">Attributes</label>
+                    <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
+                component.getAttributes(),
+                null,
+                2,
+              )}</textarea>
+                  </div>
+                </div>
+              `;
+
+              return {
+                container,
+                getData() {
+                  try {
+                    const attrs = JSON.parse(
+                      container.querySelector(".component-attributes").value,
+                    );
+                    return { attributes: attrs };
+                  } catch (e) {
+                    alert("Invalid JSON for attributes");
+                    return null;
+                  }
+                },
+              };
+            },
+          },
+        };
+        this.listenTo(this.model, "active", this.onActive);
+        this.listenTo(this.model, "change:content", this.updateContent);
+      },
+
+      updateContent() {
+        const content = this.model.get("content");
+        if (content) {
+          this.el.innerHTML = content;
+        }
+      },
+
+      createModal(component) {
+        const componentType = component.get("type") || "default";
+        const handler =
+          this.componentEditHandlers[componentType] ||
+          this.componentEditHandlers.default;
+
+        // Add console logging for debugging
+        console.log("Creating modal for component:", component);
+        console.log("Component type:", componentType);
+        console.log("Handler:", handler);
+
+        if (!handler || typeof handler.createModalContent !== "function") {
+          console.error("Invalid handler or missing createModalContent method");
+          return null;
+        }
+
+        const modal = document.createElement("div");
+        modal.className =
+          "fixed inset-0 bg-black bg-opacity-50 z-[50] flex items-center justify-center";
+
+        try {
+          const modalContent = handler.createModalContent(component);
+
+          if (!modalContent || !modalContent.container) {
+            console.error("Failed to create modal content");
+            return null;
+          }
+
+          modal.innerHTML = `
+            <div class="bg-white p-6 rounded-lg max-w-md w-full relative">
+              <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-gray-900">
+                &times;
+              </button>
+              <h2 class="text-xl font-semibold mb-4">Edit Component</h2>
+              <div class="modal-body"></div>
+              <div class="mt-4 flex justify-end space-x-2">
+                <button class="cancel-modal px-4 py-2 bg-gray-200 rounded">Cancel</button>
+                <button class="save-modal px-4 py-2 bg-rose-500 text-white rounded">Save</button>
+              </div>
+            </div>
+          `;
+
+          const modalBody = modal.querySelector(".modal-body");
+
+          // Add additional error checking
+          if (!modalBody) {
+            console.error("Could not find modal body");
+            return null;
+          }
+
+          modalBody.appendChild(modalContent.container);
+
+          // Event Listeners
+          const closeBtn = modal.querySelector(".close-modal");
+          const cancelBtn = modal.querySelector(".cancel-modal");
+          const saveBtn = modal.querySelector(".save-modal");
+
+          if (!closeBtn || !cancelBtn || !saveBtn) {
+            console.error("Missing modal buttons");
+            return null;
+          }
+
+          const closeModal = () => modal.remove();
+          closeBtn.addEventListener("click", closeModal);
+          cancelBtn.addEventListener("click", closeModal);
+
+          saveBtn.addEventListener("click", () => {
+            const editData = modalContent.getData();
+            if (editData) {
+              // Apply changes to the component
+              if (editData.attributes) {
+                component.setAttributes(editData.attributes);
+              }
+              if (editData.content) {
+                component.set("content", editData.content);
+              }
+              closeModal();
+            }
+          });
+
+          return modal;
+        } catch (error) {
+          console.error("Error creating modal:", error);
+          return null;
+        }
+      },
+
+      onEditButtonClick() {
+        console.log("Edit button clicked, model:", this.model);
+
+        const modal = this.createModal(this.model);
+
+        // Add additional error checking
+        if (!modal) {
+          console.error("Failed to create modal");
+          return;
+        }
+
+        // Verify modal is a valid Node before appending
+        if (modal instanceof Node) {
+          document.body.appendChild(modal);
+        } else {
+          console.error("Invalid modal created", modal);
+        }
+      },
+    },
+  });
+
   editor.DomComponents.addType("icon", {
     model: {
       defaults: {
@@ -4078,24 +4439,17 @@ export default (editor, options) => {
 
 .icon-box {
   display: inline-block;
-  aspect-ratio: "1/1";
-  width: auto;
-  height: auto;
+  aspect-ratio: 1;
+  width: 42px;
 }
 
 .card .icon-box > svg,
 .card .icon-box > i::before {
-  width: 3.5rem !important;
-  height: 3.5rem !important;
-  font-size: 3.5rem !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 18%;
 }
 
-.card-horizontal > .icon-box > svg,
-.card-horizontal > .icon-box > i::before {
-  width: 2.5rem !important;
-  height: 2.5rem !important;
-  font-size: 3.5rem !important;
-}
         `,
       },
     },
@@ -4993,7 +5347,7 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "h-screen flex items-center justify-center bg-cover bg-center p-4 pt-20 bg-black hero-section bg",
+            "h-screen flex items-center justify-center bg-cover bg-center  overflow-hidden p-4 pt-40 bg-black hero-section bg",
           "bg-image": "https://example.com/default-image.jpg", // Initial background image URL
           "bg-overlay": "primary-gradient", // Default overlay
         },
@@ -5722,7 +6076,7 @@ export default (editor, options) => {
                           <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
                         </svg>
                       </div>
-                      <a href="" class="phone-number ml-3">+1 (555) 123-4567</a>
+                      <span class=" ml-3"><a href="" class="phone-number">+1 (555) 123-4567</a></span>
                     </div>
                     <div class="flex items-center">
                       <div class="flex h-8 w-8 items-center justify-center rounded-full border">
@@ -5730,7 +6084,7 @@ export default (editor, options) => {
                           <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
                         </svg>
                       </div>
-                      <a href="/" class="email ml-3">email@example.com</a>
+                      <span class=" ml-3"><a href="/" class="email">email@example.com</a></span>
                     </div>
                     <div class="flex items-center">
                       <div class="flex h-8 w-8 items-center justify-center rounded-full border">
@@ -5802,7 +6156,7 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "max-w-xs w-full gap-2 card",
+          class: " w-full gap-2 card",
           sectiontype: "normal",
           background: "false",
           bordered: "false"
@@ -5822,7 +6176,12 @@ export default (editor, options) => {
           },
         ],
         styles: `
-
+          .card-body>.flex{
+            height: 100%;
+          }
+          .card>.flex{
+            height: 100%;
+          }
           .card-bordered .card-body{
             padding: 20px;
           }
@@ -5948,7 +6307,7 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "card-body flex flex-col w-full text-left",
+          class: "card-body flex flex-col w-full h-full text-left",
         },
         traits: [],
       },
