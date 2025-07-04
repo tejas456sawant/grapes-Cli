@@ -428,10 +428,6 @@ export default (editor, options) => {
     // Remove old component
     target.remove();
   
-    // Clean ID in AI-generated content to avoid duplication (optional)
-    if (newComponentData.attributes?.id) {
-      delete newComponentData.attributes.id;
-    }
   
     // Insert new component at the same index
     const newComp = parent
