@@ -788,7 +788,7 @@ export default (editor, options) => {
                 <div class="space-y-4">
                   <div class="flex flex-col gap-4">
                     <div class="relative">
-                      <img src="${currentBgImage}" alt="Current background"
+                      <img src="${currentBgImage}" alt="Current Image"
                         class="w-full h-48 object-cover rounded-lg shadow-sm" />
                       <div class="absolute inset-0 bg-black bg-opacity-50 hidden items-center justify-center" id="upload-loading">
                         <svg class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -1119,13 +1119,7 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.updateClasses);
       },
 
-      setClass(name, value) {
-        const cls = this.get('classes').slice();
-        const clsNew = value ? [...cls, name] : cls.filter(c => c !== name);
-        this.set('classes', clsNew, { silent: true });
-        this.trigger('change:classes');
-        return this;
-      },
+     
       updateClasses() {
         const ratio = parseFloat(this.getAttributes()['aspect-ratio']) || 1.77;
         this.addStyle({ 'aspect-ratio': ratio });
@@ -1225,7 +1219,7 @@ export default (editor, options) => {
               <div class="space-y-4">
                 <div class="flex flex-col gap-4">
                   <div class="relative">
-                    <img src="${currentBgImage}" alt="Current background"
+                    <img src="${currentBgImage}" alt="Current Image"
                       class="w-full h-48 object-cover rounded-lg shadow-sm" />
                     <div class="absolute inset-0 bg-black bg-opacity-50 hidden items-center justify-center" id="upload-loading">
                       <svg class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -2673,7 +2667,7 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "min-h-screen flex items-center justify-center bg-cover overflow-hidden bg-center p-4 pt-40 hero-section",
+            "flex items-center justify-center bg-cover overflow-hidden bg-center p-4 pt-40 hero-section",
           sectiontype: "normal",
         },
         traits: [
@@ -2709,7 +2703,6 @@ export default (editor, options) => {
         const sectionType = this.get("attributes")["sectiontype"] || "normal"; // Get the current attribute for section type
 
         let classes = [
-          "h-screen",
           "flex",
           "items-center",
           "justify-center",
@@ -2915,7 +2908,8 @@ export default (editor, options) => {
     model: {
       defaults: {
         tagName: 'marquee',
-        draggable: true,
+        addinside: true, 
+        draggable: false,
         droppable: false,
         attributes: {
           behavior: 'scroll',
@@ -3092,17 +3086,17 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "capsule font-primary relative transition flex flex-row justify-center items-center px-5 py-1 my-2",
+            "capsule font-primary relative transition flex flex-row justify-center items-center px-5 my-1",
         },
         styles: `
         .capsule {
-  font-size: 14px;
-  font-weight: 700;
-  text-transform: uppercase;
-  width: max-content;
-  border-color: 1px solid var(--color-primary-dark);
-}`,
-        content: "Hero Subtitle",
+          font-size: 14px;
+          font-weight: 700;
+          text-transform: uppercase;
+          width: max-content;
+          border: 1px solid var(--color-primary-dark);
+        }`,
+        content: "Category",
       },
     },
   });
@@ -3117,7 +3111,7 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "text-xl lg:text-2xl font-bold font-primary pt-1 mb-2",
+          class: "text-xl lg:text-2xl font-semibold font-primary pt-1 mb-2",
           textalign: "left",
         },
         content: "Hero Subtitle",
@@ -3409,7 +3403,7 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "hero-text-title md:max-w-2xl text-4xl lg:text-6xl pb-4 font-heading",
+            "hero-text-title md:max-w-2xl text-4xl lg:text-7xl pb-4 font-heading",
           textalign: "left",
         },
         styles: `
@@ -3420,7 +3414,7 @@ export default (editor, options) => {
             font-weight: 600;
           }
         `,
-        content: "Hero Title",
+        content: "Heading",
         traits: [
           {
             type: "select",
@@ -3532,7 +3526,7 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "lg:max-w-6xl container hero-section-container px-4 h-full pb-8",
+            "lg:max-w-6xl container hero-section-container px-4 h-full grow pb-8",
         },
       },
     },
@@ -3869,7 +3863,7 @@ export default (editor, options) => {
     model: {
       defaults: {
         showEditButton: true,
-        tagName: "button",
+        tagName: "a",
 
         draggable: false,
         droppable: false,
@@ -4147,7 +4141,7 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "button-tertiary font-primary transition px-2 my-2",
+            "button-tertiary font-primary transition px-2 pl-0 my-2",
         },
         styles: `
           .button-tertiary {
@@ -4189,7 +4183,7 @@ export default (editor, options) => {
       init() {
         this.componentEditHandlers = {
           // Handler specifically for button-primary components
-          "button-secondary": {
+          "button-tertiary": {
             createModalContent(component) {
               const container = document.createElement("div");
 
@@ -4820,7 +4814,7 @@ export default (editor, options) => {
         tagName: "div",
         attributes: {
           class:
-            "w-full h-full bg-center bg-cover relative flex items-center justify-center bg-box bg",
+            "w-full h-full bg-center bg-cover relative bg-box bg",
           "bg-image": "https://example.com/default-image.jpg", // Initial background image URL
           "bg-overlay": "primary-gradient",
         },
@@ -4877,7 +4871,6 @@ export default (editor, options) => {
         style.background = `url('${url}') no-repeat center center/cover`;
 
         this.set({ style });
-        console.log("bgbox")
       },
 
       // This method updates DOM classes when the view is available
@@ -5343,7 +5336,7 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "h-screen flex items-center justify-center bg-cover bg-center  overflow-hidden p-4 pt-40 bg-black hero-section bg",
+            "flex items-center justify-center bg-cover bg-center  overflow-hidden p-4 pt-40 bg-black hero-section bg",
           "bg-image": "https://example.com/default-image.jpg", // Initial background image URL
           "bg-overlay": "primary-gradient", // Default overlay
         },
@@ -5357,18 +5350,22 @@ export default (editor, options) => {
           },
         ],
         styles: `.bg
-  *:not(.gjs-component-buttons):not(.gjs-component-buttons *):not(.highlight) {
+  *:not(.gjs-component-buttons):not(.gjs-component-buttons *):not(.highlight):not(.card *) {
   z-index: 2;
   color: white !important;
 }
 
 .hero-section {
+  position: relative;
   z-index: 2;
   width: 100%;
-  min-height: 100vh;
-  position: relative;
+  min-height: 100vh;              /* Ensures minimum full screen height */
+  display: flex;                  /* Enables vertical alignment */
+  flex-direction: column;
+  justify-content: center;        /* Center content vertically */
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
 }
 
 .hero-section-container > .flex {
@@ -6131,13 +6128,7 @@ export default (editor, options) => {
               </div>
             </div>
 
-            <div class="align-center align-center flex flex-col content-center content-center justify-between bg-slate-300 px-3 pt-5 pb-6 text-black md:flex-row lg:flex-row">
-              <div class="flex flex-shrink-0 items-center">
-                <a class="inline-flex" href="https://www.bytesites.ai"><img class="block h-7 w-auto px-2 sm:h-7" src="https://www.bytesites.ai/bytesites.png" alt="ByteSites" /></a>
-              </div>
-
-              <p class="text-xs fw-600 px-2">Crafted with <a href="https://www.bytesites.ai" target="_blank">bytesites.ai</a></p>
-            </div>
+           
 
           `,
       },
@@ -6175,6 +6166,9 @@ export default (editor, options) => {
           .card-body>.flex{
             height: 100%;
           }
+            .bg-box .card-body{
+              padding: 20px;
+            }
           .card>.flex{
             height: 100%;
           }
@@ -6303,7 +6297,7 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "card-body flex flex-col w-full h-full text-left",
+          class: "card-body flex flex-col w-full text-left",
         },
         traits: [],
       },
@@ -6320,4 +6314,7 @@ export default (editor, options) => {
       },
     },
   });
+
+
+
 };
