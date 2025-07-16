@@ -579,22 +579,10 @@ export default (editor, options) => {
         stylable: true,
         attributes: {
           formsrc: '',
-          class: 'relative aspect-[3/4] flex flex-col border border-solid border-gray-500/50 m-2 p-2 form-wrapper',
+          'mobile-width': '280px',
+          class: 'relative flex flex-col border border-solid border-gray-500/50 my-2 form-wrapper',
         },
-        content: `<div class="
-        relative min-h-[120px] border border-dashed border-blue-400 bg-blue-200/30  flex items-center justify-center text-center text-gray-500 text-sm rounded-md
-      ">
-        <div>
-          <p class="mb-1 text-blue-400">No form selected</p>
-          <p class="text-xs text-gray-400">Click ✏️ to choose a form</p>
-        </div>
-      </div>`,
         styles: `
-        .form-wrapper{
-          min-width: 250px;
-          max-width: 520px;
-          aspect-ratio: 4/5;
-        }
         .form-wrapper iframe{
           height: 100%;
           width: 100%
@@ -609,18 +597,58 @@ export default (editor, options) => {
       },
 
       updateIframe() {
-        const rawcontent = ``;
-        const rawIframe = this.getAttributes().formsrc;
-        if (rawIframe) {
-          this.set('content', rawIframe);
-          console.log(rawIframe)
-        }
+        const attrs = this.getAttributes();
+
+      // Default mobile-width if not set
+      if (!attrs['mobile-width']) {
+        this.addAttributes({ 'mobile-width': '98%' });
+        this.addAttributes({ 'desktop-width': '380px' });
+      }
+
+      // Set mobile-height only if formsrc is set and mobile-height is not
+      if (attrs.formsrc && !attrs['mobile-height']) {
+        this.addAttributes({ 'mobile-height': '420px' });
+      }
+
+      if (attrs.formsrc) {
+        this.set('content', attrs.formsrc);
+      } else {
+        this.set('content', ''); // Clear content
+      }
         }
     },
 
     view: {
       init() {
+        this.listenTo(this.model, 'change:attributes:formsrc', this.render);
+        this.render();
+      },
+    
+      onRender() {
+        const src = this.model.getAttributes().formsrc;
+    
+        // Only show placeholder when formsrc is empty
+        if (!src) {
+          this.el.innerHTML = `
+            <div class="flex items-start gap-3 border border-gray-400/30 bg-gray-100/30 rounded-md p-4 text-sm">
+          <div class="flex-shrink-0 h-8 w-8 rounded-full bg-rose-100 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2.25m0 3.75h.008v-.008H12V15ZM12 4.5c-4.142 0-7.5 3.358-7.5 7.5s3.358 7.5 7.5 7.5 7.5-3.358 7.5-7.5-3.358-7.5-7.5-7.5Z" />
+            </svg>
+          </div>
+          <div>
+            <h5 class="font-medium">No Form Selected</h5>
+            <p class="mt-1">
+              Click <button class="text-rose-600 hover:underline font-medium edit-form-link">here</button> to add a form here.
+            </p>
+          </div>
+        </div>`;
 
+        const link = this.el.querySelector('.edit-form-link');
+        if (link) {
+          link.addEventListener('click', () => this.onEditButtonClick());
+        }
+        }
       },
 
 

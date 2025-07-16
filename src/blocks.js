@@ -285,12 +285,13 @@ export default (editor, opts = {}) => {
       attributes: {
         desktopColumns: "grid-cols-3",
         mobileColumns: "grid-cols-1",
+        "mobile-width": "100%",
         gap: "gap-2",
       },
       components: Array(4).fill({
         type: "bg-box",
         attributes: {
-          "bg-image": "https://static.vecteezy.com/system/resources/previews/007/461/951/large_2x/abstract-background-graphic-blue-grey-background-free-photo.jpg",
+          "bg-image": "https://blog.adobe.com/en/publish/2020/06/16/media_13d73c6efc8a32d56ab9a678fc0a597009a372ca7.png?width=750&format=png&optimize=medium",
           "mobile-height": "230px"
         },
         components: [
