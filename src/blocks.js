@@ -24,195 +24,13 @@ export default (editor, opts = {}) => {
     content: { type: "video-section" },
     category: "Theme",
   });
-  bm.add("two-column-with-heading", {
-    label: "2 Column w/ Heading",
-    sectionblocks: true,
-    defaulttheme: true,
-    content: {
-      type: "section",
-      "components": [
-        {
-          "attributes": {
-            "desktop-width": "",
-            "mobile-width": "",
-            "textAlign": "center",
-            "textalign": "left"
-          },
-          "classes": [
-            "lg:max-w-5xl",
-            "mx-auto",
-            "flex",
-            "flex-col",
-            "gap-4",
-            "px-3",
-            "container",
-            "text-left"
-          ],
-          "components": [
-            {
-              "attributes": {
-                "desktop-width": "",
-                "mobile-width": "",
-                "textAlign": "center",
-                "textalign": "left"
-              },
-              "classes": [
-                "text-3xl",
-                "max-w-xl",
-                "lg:text-5xl",
-                "mb-2",
-                "font-bold",
-                "capitalize",
-                "font-heading",
-                "text-left"
-              ],
-              "content": "Ready to Experience the Thrill?",
-              "data-aos": "fade-up",
-              "data-aos-duration": "1000",
-              "data-aos-easing": "ease-in-out",
-              "type": "content-title"
-            },
-            {
-              "classes": [
-                "h-4"
-              ],
-              "type": "spacer"
-            },
-            {
-              "attributes": {
-                "color": "textPrimarySectionText",
-                "desktop-width": "",
-                "mobile-width": "",
-                "textAlign": "center",
-                "textalign": "left"
-              },
-              "classes": [
-                "mb-3",
-                "para",
-                "text-left"
-              ],
-              "content": "Schedule a test drive or visit our showroom to explore the Lamborghini dream.",
-              "data-aos": "fade-up",
-              "data-aos-delay": "200",
-              "data-aos-duration": "1000",
-              "data-aos-easing": "ease-in-out",
-              "type": "text-content"
-            },
-            {
-              "classes": [
-                "h-8"
-              ],
-              "type": "spacer"
-            },
-            {
-              "attributes": {
-                "alignContent": "content-center",
-                "alignItems": "items-center",
-                "desktop-width": "",
-                "flexDirection": "flex-row",
-                "flexDirectionDesktop": "md:flex-row",
-                "gap": "gap-4",
-                "justifyContent": "center",
-                "mobile-width": "",
-                "wrap": "flex-wrap"
-              },
-              "classes": [
-                "flex",
-                "item-container",
-                "flex-row",
-                "md:flex-row",
-                "flex-wrap",
-                "gap-4",
-                "items-center",
-                "content-center",
-                "center"
-              ],
-              "components": [
-                {
-                  "attributes": {
-                    "desktop-width": "",
-                    "href": "#testdrive",
-                    "mobile-width": ""
-                  },
-                  "classes": [
-                    "button-primary",
-                    "font-primary",
-                    "relative",
-                    "transition",
-                    "flex",
-                    "flex-row",
-                    "justify-center",
-                    "items-center",
-                    "px-8",
-                    "py-4",
-                    "my-2"
-                  ],
-                  "content": "Schedule a Test Drive",
-                  "data-aos": "fade-up",
-                  "data-aos-delay": "300",
-                  "data-aos-duration": "1000",
-                  "data-aos-easing": "ease-in-out",
-                  "href": "",
-                  "type": "button-primary"
-                },
-                {
-                  "attributes": {
-                    "desktop-width": "",
-                    "href": "#showroom",
-                    "mobile-width": ""
-                  },
-                  "classes": [
-                    "button-secondary",
-                    "font-primary",
-                    "transition",
-                    "flex",
-                    "flex-row",
-                    "justify-center",
-                    "items-center",
-                    "px-8",
-                    "py-4",
-                    "my-2"
-                  ],
-                  "content": "Visit Our Showroom",
-                  "data-aos": "fade-up",
-                  "data-aos-delay": "400",
-                  "data-aos-duration": "1000",
-                  "data-aos-easing": "ease-in-out",
-                  "type": "button-secondary"
-                }
-              ],
-              "type": "flex"
-            }
-          ],
-          "type": "container"
-        }
-      ],
-    }
-  });
 
-  // 3. Add Blocks
-  editor.BlockManager.add('bento-editor', {
-    label: 'Bento Grid Editor',
-    category: 'Layout',
-    defaulttheme: true,
-    content: {
-      type: 'bento-editor'
-    }
-  });
-
-  editor.BlockManager.add('bento-cell', {
-    label: 'Bento Cell',
-    category: 'Layout',
-    defaulttheme: true,
-    content: {
-      type: 'bento-cell'
-    }
-  });
 
   ///COntent blocks
   bm.add("text-content", {
     label: "Text Content",
     category: "Content",
+    media: "https://byte-ai.s3.us-east-1.amazonaws.com/preview/text-content.png",
     defaulttheme: true,
     content: {
       type: "text-content",
@@ -228,6 +46,7 @@ export default (editor, opts = {}) => {
   bm.add("hero-text-title", {
     label: "Heading 1",
     category: "Content",
+    media: "https://byte-ai.s3.us-east-1.amazonaws.com/preview/hero-text-title.png",
     defaulttheme: true,
     content: { type: "hero-text-title", content: "Title" }
   });
@@ -235,6 +54,7 @@ export default (editor, opts = {}) => {
   bm.add("content-title", {
     label: "Heading 2",
     category: "Content",
+    media: "https://byte-ai.s3.us-east-1.amazonaws.com/preview/content-title.png",
     defaulttheme: true,
     content: { type: "content-title", content: "Title" }
   });
@@ -242,6 +62,7 @@ export default (editor, opts = {}) => {
   bm.add("content-heading", {
     label: "Heading 3",
     category: "Content",
+    media: "https://byte-ai.s3.us-east-1.amazonaws.com/preview/content-heading.png",
     defaulttheme: true,
     content: { type: "content-heading" }
   });
@@ -249,6 +70,7 @@ export default (editor, opts = {}) => {
   bm.add("hero-text-subtitle", {
     label: "Subtitle 1",
     category: "Content",
+    media: "https://byte-ai.s3.us-east-1.amazonaws.com/preview/hero-text-title.png",
     defaulttheme: true,
     content: { type: "hero-text-subtitle", content: "Lorem Ipsum" }
   });
@@ -256,6 +78,7 @@ export default (editor, opts = {}) => {
   bm.add("content-subtitle", {
     label: "Subtitle 2",
     category: "Content",
+    media: "https://byte-ai.s3.us-east-1.amazonaws.com/preview/content-title.png",
     defaulttheme: true,
     content: { type: "content-subtitle", content: "Lorem Ipsum" }
   });
@@ -263,6 +86,7 @@ export default (editor, opts = {}) => {
   bm.add("small-text", {
     label: "Small Text",
     category: "Content",
+    media: "https://byte-ai.s3.us-east-1.amazonaws.com/preview/small-text.png",
     defaulttheme: true,
     content: { type: "small-text", content: "Lorem Ipsum" }
   });
@@ -270,6 +94,7 @@ export default (editor, opts = {}) => {
   bm.add("badge", {
     label: "Badge",
     category: "Content",
+    media: "https://byte-ai.s3.us-east-1.amazonaws.com/preview/badge.png",
     defaulttheme: true,
     content: { type: "badge", content: "Category" }
   });
@@ -448,24 +273,131 @@ export default (editor, opts = {}) => {
   });
 
 
+  ///section blocks
+  bm.add("section", {
+    label: "Blank Section",
+    defaulttheme: true,
+    sectionblocks: true,
+    content: {
+      type: "section",
+      attributes: {
+        id: `section-${Math.random().toString(36).substr(2, 8)}`
+      },
+      components: [{
+        type: "container", attributes: { textalign: "center" }, components: [{
+          type: "text-content",
+          attributes: { textalign: "center" },
+          content:
+            "Section Content"
+        }]
+      }]
+    },
+    media: ``
+  });
+  bm.add("bg-section", {
+    label: "Background Section",
+    defaulttheme: true,
+    sectionblocks: true,
+    content: {
+      type: "section",
+      attributes: {
+        id: `section-${Math.random().toString(36).substr(2, 8)}`,
+        class: "p-0 py-0",
+      },
+      components: [{
+        type: "bg-box",
+        attributes: {
+          "bg-image": "https://blog.adobe.com/en/publish/2020/06/16/media_13d73c6efc8a32d56ab9a678fc0a597009a372ca7.png?width=750&format=png&optimize=medium",
+          "mobile-height": "330px"
+        },
+        components: [
+          {
+            type: "container", attributes: { textalign: "center" }, components: [{
+              type: "text-content",
+              attributes: { textalign: "center" },
+              content:
+                "Section Content"
+            }]
+          }
+        ],
+      }]
+    },
+    media: ``
+  });
+
+
+
+  ///Form blocks
+  bm.add("form", {
+    label: "Form",
+    category: "Form",
+    defaulttheme: true,
+    content: {
+      type: "form-wrapper",
+    },
+    media: ``
+  });
+
+
 
 
   ///Button blocks
   bm.add("button-primary", {
-    label: "Button Primary",
+    label: "Button",
+    media: "https://byte-ai.s3.us-east-1.amazonaws.com/preview/button-primary.png",
     category: "Buttons",
     defaulttheme: true,
     content: { type: "button-primary", content: "Button Text" }
   });
 
+  bm.add("button-primary-icon", {
+    label: "Button with Icon",
+    category: "Buttons",
+    defaulttheme: true,
+    media: "https://byte-ai.s3.us-east-1.amazonaws.com/preview/button-primary-icon.png",
+    content: {
+      type: "button-primary", components: [{
+        type: "flex",
+        attributes: {
+          flexDirection: "flex-row",
+          flexDirectionDesktop: "md:flex-row",
+          wrap: "flex-wrap",
+          gap: "gap-4",
+          alignItems: "items-center",
+          alignContent: "content-center",
+          justifyContent: "justify-between"
+        },
+        components: [
+          {
+
+            type: "icon",
+            content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"></path></svg>',
+            attributes: {
+              "mobile-width": "18px",
+            }
+          },
+          {
+            type: "text-content",
+            content: "Contact Us",
+            attributes: {
+              class: "m-0"
+            }
+          }
+        ]
+      },]
+    }
+  });
+
   bm.add("button-secondary", {
     label: "Button Outlined",
+    media: "https://byte-ai.s3.us-east-1.amazonaws.com/preview/button-secondary.png",
     category: "Buttons",
     defaulttheme: true,
     content: { type: "button-secondary", content: "Button Text" }
   });
 
   bm.add("button-tertiary", {
+    media: "https://byte-ai.s3.us-east-1.amazonaws.com/preview/button-tertiary.png",
     label: "Button Arrow",
     category: "Buttons",
     defaulttheme: true,
@@ -477,7 +409,6 @@ export default (editor, opts = {}) => {
   bm.add("bg-box", {
     label: "Background",
     category: "Buttons",
-    defaulttheme: true,
     content: { type: "bg-box", content: "Button Text" }
   });
 };

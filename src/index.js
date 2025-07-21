@@ -724,7 +724,7 @@ editor.Commands.add('open-width-resize-menu', {
     },
   });
   function openBlockPickerModal(editor, targetComponent, insertPosition) {
-    const tags = ['Layout', 'Content', 'Buttons', 'Icons', 'Form', 'Visuals', 'Misc'];
+    const tags = ['Layout', 'Content', 'Buttons', 'Icons', 'Form', 'Visuals'];
   
     // Get relevant blocks (sectionblocks if required)
     const blocks = editor.BlockManager.getAll().filter((block) => {
@@ -835,7 +835,7 @@ editor.Commands.add('open-width-resize-menu', {
   
         const card = document.createElement('div');
         card.className =
-          'bg-white border rounded-lg shadow-sm hover:shadow-md hover:scale-[1.02] transition transform cursor-pointer overflow-hidden flex flex-col aspect-video';
+          'bg-white border rounded-lg shadow-sm hover:shadow-md hover:scale-[1.02] transition transform cursor-pointer overflow-hidden flex flex-col md:w-[200px]';
   
           const media = block.get('media') || '';
           const label = block.get('label') || '';
@@ -843,13 +843,32 @@ editor.Commands.add('open-width-resize-menu', {
           let mediaContent = '';
           
           // Check if it has an <img src="...">
-          const imgMatch = media.match(/<img[^>]*src="([^"]+)"[^>]*>/);
-          if (imgMatch) {
-            const imgSrc = imgMatch[1];
-            mediaContent = `<img src="${imgSrc}" class="w-full h-full object-cover" />`;
-          } else if (media.includes('<svg')) {
+          if (media.includes('<svg')) {
             // Allow inline SVG to render directly
             mediaContent = `<div class="w-full h-full">${media}</div>`;
+          } else if (media.trim().startsWith('http')) {
+            // It's a raw image URL, use background-image for better positioning control
+            mediaContent = `
+             <div 
+    data-media-box
+    style="
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background-image: url('${media}');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: left top;
+    "
+  >
+    <style>
+      @media (min-width: 768px) {
+        div[data-media-box] {
+          width: 200px !important;
+        }
+      }
+    </style>
+  </div>
+            `;
           } else {
             // Fallback
             mediaContent = `<div class="w-full h-full flex items-center justify-center text-xs text-gray-400">No Preview</div>`;

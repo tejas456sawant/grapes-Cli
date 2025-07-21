@@ -3123,6 +3123,8 @@ export default (editor, options) => {
           text-transform: uppercase;
           width: max-content;
           border: 1px solid var(--color-primary-dark);
+          padding-top: 2px,
+          padding-bottom: 2px
         }`,
         content: "Category",
       },
@@ -3554,7 +3556,7 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "lg:max-w-6xl container hero-section-container px-4 h-full grow pb-8",
+            "lg:max-w-6xl container flex flex-col flex-grow px-4 grow pb-8",
         },
       },
     },
@@ -3576,24 +3578,6 @@ export default (editor, options) => {
     },
   });
 
-  editor.Components.addType("hero-section-content-container", {
-    model: {
-      defaults: {
-        tagName: "div",
-        addInside: true,
-        draggable: false,
-        droppable: false,
-        attributes: {
-          class: "md:max-w-3xl min-w-2xl hero-section-content-container",
-        },
-        styles: `
-.hero-section-content-container {
-  width: 42rem;
-}
-        `,
-      },
-    },
-  });
 
   editor.Components.addType("row-container", {
     model: {
@@ -4176,7 +4160,7 @@ export default (editor, options) => {
             position: relative;
             display: inline-flex;
             align-items: center;
-            font-size: 12px;
+            font-size: 16px;
             cursor: pointer;
             font-weight: 500;
             width: max-content;
@@ -4458,14 +4442,12 @@ export default (editor, options) => {
 .icon-box {
   display: inline-block;
   aspect-ratio: 1;
-  width: 42px;
 }
 
-.card .icon-box > svg,
-.card .icon-box > i::before {
+.icon-box > svg,
+.icon-box > i::before {
   width: 100% !important;
   height: 100% !important;
-  padding: 18%;
 }
 
         `,
@@ -5396,8 +5378,8 @@ export default (editor, options) => {
   background-repeat: no-repeat;
 }
 
-.hero-section-container > .flex {
-  height: 100%;
+.hero-section-container>.flex {
+  flex-grow: 1;
 }
 
 .primary-gradient-overlay::before {
