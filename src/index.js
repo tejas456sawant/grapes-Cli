@@ -1175,7 +1175,40 @@ editor.Commands.add('open-width-resize-menu', {
       frameEl.onload = loadAOS;
     }
   };
-
+  const initAlpine = (editor) => {
+    const frameEl = editor.Canvas.getFrameEl();
+  
+    if (!frameEl) {
+      console.error("Canvas frame not found.");
+      return;
+    }
+  
+    const frameDoc = frameEl.contentDocument;
+    const frameWin = frameEl.contentWindow;
+  
+    const loadAlpine = () => {
+      const existing = frameDoc.querySelector('script[src*="alpinejs"]');
+      if (existing) {
+        console.log("Alpine.js already loaded.");
+        return;
+      }
+  
+      const script = frameDoc.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js";
+      script.defer = true;
+      script.onload = () => {
+        console.log("Alpine.js loaded into canvas.");
+      };
+  
+      frameDoc.head.appendChild(script);
+    };
+  
+    if (frameDoc.readyState === "complete") {
+      loadAlpine();
+    } else {
+      frameEl.onload = loadAlpine;
+    }
+  };
   // GrapesJS Command - Theme Class Management
   // Simple GrapesJS Theme Class Management
 
@@ -1186,7 +1219,11 @@ editor.Commands.add('open-width-resize-menu', {
 
     // Classes to add based on settings
     const classesToAdd = [
-      `theme-rounded-${settings.rounded}`,
+      `card-rounded-${settings["card-rounded"]}`,
+      `image-rounded-${settings["image-rounded"]}`,
+      `icon-rounded-${settings["icon-rounded"]}`,
+      `badge-rounded-${settings["badge-rounded"]}`,
+      `button-rounded-${settings["button-rounded"]}`,
       `highlight-${settings.highlightedTextStyle}`,
       `sections-${settings.sectionWidth}`,
       settings.darkTheme === "true" ? "theme-dark" : "",
@@ -1339,5 +1376,6 @@ editor.Commands.add('open-width-resize-menu', {
   // Hook into editor load
   editor.on("load", () => {
     setTimeout(() => initAOS(editor), 500); // Wait a bit for iframe
+    
   });
 };

@@ -265,31 +265,31 @@ export default (editor, options) => {
   editor.Commands.add("regenerate-section", {
     run: function (editor, sender, options = {}) {
       const selectedComponent = editor.getSelected();
-  
+
       if (!selectedComponent) {
         alert("Please select a component first");
         return;
       }
-  
+
       // Get the original component ID
       const componentId = selectedComponent.getAttributes().id;
       if (!componentId) {
         alert("Please select a component", selectedComponent.getAttributes().id);
         return;
       }
-  
+
       // Get website ID from URL
       const websiteId = new URLSearchParams(window.location.search).get("website_id");
       if (!websiteId) {
         alert("Website ID not found");
         return;
       }
-  
+
       // Create modal UI
       const modal = document.createElement("div");
       modal.className =
         "fixed inset-0 bg-black bg-opacity-50 z-[50] flex items-center justify-center";
-  
+
       modal.innerHTML = `
        <div class="bg-white p-6 rounded-2xl max-w-lg w-full shadow-xl relative">
           <button class="close-modal absolute top-4 right-4 text-gray-500 hover:text-gray-900 text-xl">
@@ -324,20 +324,20 @@ export default (editor, options) => {
           </div>
        </div>
       `;
-  
+
       // Attach modal events
       const closeModal = () => modal.remove();
       modal.querySelector(".close-modal").addEventListener("click", closeModal);
       modal.querySelector(".cancel-modal").addEventListener("click", closeModal);
-  
+
       modal.querySelector(".regenerate-modal").addEventListener("click", async () => {
         const prompt = modal.querySelector("#regenerate-prompt").value.trim();
-  
+
         if (!prompt) {
           alert("Please enter your improvement instructions");
           return;
         }
-  
+
         // Show loading spinner
         modal.querySelector(".modal-body").innerHTML = `
           <div class="flex flex-col items-center justify-center p-8">
@@ -348,17 +348,17 @@ export default (editor, options) => {
             <p class="mt-4">Generating new section...</p>
           </div>
         `;
-  
+
         try {
           const token = document.cookie
             .split("; ")
             .find((row) => row.startsWith("Bearer="))
             ?.split("=")[1];
-  
+
           if (!token) {
             throw new Error("Authorization token not found");
           }
-  
+
           const response = await fetch(
             `${BACKEND_URL}/api/website/${websiteId}/regenerate-section`,
             {
@@ -374,9 +374,9 @@ export default (editor, options) => {
               }),
             }
           );
-  
+
           const data = await response.json();
-  
+
           if (data.status && data.section) {
             replaceComponentById(componentId, data.section, editor);
             closeModal();
@@ -390,23 +390,23 @@ export default (editor, options) => {
           closeModal();
         }
       });
-  
+
       document.body.appendChild(modal);
     },
   });
-  
+
   /**
    * Replace a GrapesJS component by its original ID.
    * Even if the returned data has a new ID, it will replace the right component.
    */
   function replaceComponentById(originalId, newComponentData, editor) {
     const root = editor.getWrapper();
-  
+
     const findById = (components) => {
       for (const comp of components) {
         const htmlId = comp.getAttributes()?.id;
         if (htmlId === originalId) return comp;
-  
+
         const children = comp.components();
         if (children.length) {
           const found = findById(children);
@@ -415,30 +415,30 @@ export default (editor, options) => {
       }
       return null;
     };
-  
+
     const target = findById(root.components());
     if (!target) {
       console.warn(`Component with HTML ID "${originalId}" not found`);
       return;
     }
-  
+
     const parent = target.parent();
     const index = parent ? parent.components().indexOf(target) : 0;
-  
+
     // Remove old component
     target.remove();
-  
-  
+
+
     // Insert new component at the same index
     const newComp = parent
       ? parent.append(newComponentData, { at: index })[0]
       : root.append(newComponentData)[0];
-  
+
     // Select new component
     editor.select(newComp);
   }
-  
-  
+
+
 
   editor.Commands.add("open-icon-picker", {
     run(editor) {
@@ -599,23 +599,23 @@ export default (editor, options) => {
       updateIframe() {
         const attrs = this.getAttributes();
 
-      // Default mobile-width if not set
-      if (!attrs['mobile-width']) {
-        this.addAttributes({ 'mobile-width': '98%' });
-        this.addAttributes({ 'desktop-width': '380px' });
-      }
-
-      // Set mobile-height only if formsrc is set and mobile-height is not
-      if (attrs.formsrc && !attrs['mobile-height']) {
-        this.addAttributes({ 'mobile-height': '420px' });
-      }
-
-      if (attrs.formsrc) {
-        this.set('content', attrs.formsrc);
-      } else {
-        this.set('content', ''); // Clear content
-      }
+        // Default mobile-width if not set
+        if (!attrs['mobile-width']) {
+          this.addAttributes({ 'mobile-width': '98%' });
+          this.addAttributes({ 'desktop-width': '380px' });
         }
+
+        // Set mobile-height only if formsrc is set and mobile-height is not
+        if (attrs.formsrc && !attrs['mobile-height']) {
+          this.addAttributes({ 'mobile-height': '420px' });
+        }
+
+        if (attrs.formsrc) {
+          this.set('content', attrs.formsrc);
+        } else {
+          this.set('content', ''); // Clear content
+        }
+      }
     },
 
     view: {
@@ -623,10 +623,10 @@ export default (editor, options) => {
         this.listenTo(this.model, 'change:attributes:formsrc', this.render);
         this.render();
       },
-    
+
       onRender() {
         const src = this.model.getAttributes().formsrc;
-    
+
         // Only show placeholder when formsrc is empty
         if (!src) {
           this.el.innerHTML = `
@@ -644,10 +644,10 @@ export default (editor, options) => {
           </div>
         </div>`;
 
-        const link = this.el.querySelector('.edit-form-link');
-        if (link) {
-          link.addEventListener('click', () => this.onEditButtonClick());
-        }
+          const link = this.el.querySelector('.edit-form-link');
+          if (link) {
+            link.addEventListener('click', () => this.onEditButtonClick());
+          }
         }
       },
 
@@ -1121,16 +1121,12 @@ export default (editor, options) => {
       defaults: {
         tagName: 'div',
         classes: [
-          'img-wrapper', 'w-full', 'flex', 'items-center',
-          'justify-center', 'overflow-hidden', 'relative', 'aspect-video'
+          'img-wrapper', 'w-auto', 'flex', 'items-center',
+          'justify-center', 'overflow-hidden', 'relative',
         ],
-        attributes: { 'aspect-ratio': '1.77' },
         droppable: false,
         draggable: false,
         showEditButton: true,
-        style: {
-          'aspect-ratio': '1.77'
-        },
         traits: [
           {
             type: 'select',
@@ -1147,9 +1143,10 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.updateClasses);
       },
 
-     
+
       updateClasses() {
-        const ratio = parseFloat(this.getAttributes()['aspect-ratio']) || 1.77;
+        const ratio = parseFloat(this.getAttributes()['aspect-ratio']);
+        if(ratio)
         this.addStyle({ 'aspect-ratio': ratio });
       },
 
@@ -1584,81 +1581,119 @@ export default (editor, options) => {
 
   });
 
-  editor.DomComponents.addType("grid-layout", {
+  editor.DomComponents.addType("masonry-grid", {
     model: {
       defaults: {
         addInside: true,
         draggable: false,
         tagName: "div",
-        showEditButton: true,
-        classes: ["grid", "gap-2", "items-start", "justify-start"],
-        attributes: {
-          mobileColumns: "grid-cols-1",
-          desktopColumns: "grid-cols-2",
-          gap: "gap-4",
-          alignItems: "items-start",
-          alignContent: "content-start",
-          justifyItems: "justify-start",
-          stretch: "true",
-        },
-      },
-
-      init() {
-        this.updateClasses();
-        this.listenTo(this, "change:attributes", this.updateClasses);
-      },
-      updateClasses() {
-        const attrs = this.getAttributes();
-        const cls = this.getClasses().filter(
-          (c) =>
-            !c.startsWith("grid-cols-") &&
-            !c.startsWith("gap-") &&
-            !c.startsWith("items-") &&
-            !c.startsWith("content-") &&
-            !c.startsWith("justify-") &&
-            !c.startsWith("md:grid-cols-"),
-        );
-
-        if (attrs.mobileColumns) cls.push(attrs.mobileColumns);
-        if (attrs.desktopColumns) cls.push(`md:${attrs.desktopColumns}`);
-        if (attrs.gap) cls.push(attrs.gap);
-        if (attrs.alignItems) cls.push(attrs.alignItems);
-        if (attrs.alignContent) cls.push(attrs.alignContent);
-        if (attrs.justifyItems) cls.push(attrs.justifyItems);
-        if (attrs.justifyContent) cls.push(attrs.justifyContent);
-
-        this.setClass(cls);
-
-        this.components().forEach((comp) => {
-          const childCls = comp
-            .getClasses()
-            .filter((c) => c !== "w-full" && c !== "h-full");
-          if (attrs.stretch === "true") {
-            comp.setClass([...childCls, "w-full", "h-full"]);
-          } else {
-            comp.setClass(childCls);
+        attributes: { class: "masonry" },
+        styles: `
+        .masonry {
+          column-count: 3;
+          column-gap: 1rem;
+        }
+        @media (max-width: 1024px) {
+          .masonry {
+            column-count: 2;
           }
-        });
-      },
+        }
+        @media (max-width: 768px) {
+          .masonry {
+            column-count: 1;
+          }
+        }
+        .masonry>* {
+          display: block;
+          width: 100%;
+          margin-bottom: 1rem;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+      `,
+      }
+    }
+  }),
 
-      EditComponent(editorMode = "desktop") {
-        const view = this.view;
-        const el = view.el;
-        const oldAttrs = { ...this.getAttributes() };
-        const menu = document.createElement("div");
 
-        // Remove old menu
-        const existing = document.querySelector(".grid-editor-menu");
-        if (existing) existing.remove();
 
-        menu.className =
-          "absolute z-[99999] p-4 bg-white left-[5rem] bottom-32 my-auto shadow-2xl rounded border text-sm w-72 grid-editor-menu";
-        menu.style.position = "absolute";
-        menu.style.left = "3.5rem";
-        menu.style.bottom = "4rem";
-        document.body.appendChild(menu);
 
-        menu.innerHTML = `
+    editor.DomComponents.addType("grid-layout", {
+      model: {
+        defaults: {
+          addInside: true,
+          draggable: false,
+          tagName: "div",
+          showEditButton: true,
+          classes: ["grid", "gap-2", "items-start", "justify-start"],
+          attributes: {
+            mobileColumns: "grid-cols-1",
+            desktopColumns: "grid-cols-2",
+            gap: "gap-4",
+            alignItems: "items-start",
+            alignContent: "content-start",
+            justifyItems: "justify-start",
+            stretch: "true",
+          },
+        },
+
+        init() {
+          this.updateClasses();
+          this.listenTo(this, "change:attributes", this.updateClasses);
+        },
+        updateClasses() {
+          const attrs = this.getAttributes();
+          const cls = this.getClasses().filter(
+            (c) =>
+              !c.startsWith("grid-cols-") &&
+              !c.startsWith("gap-") &&
+              !c.startsWith("items-") &&
+              !c.startsWith("content-") &&
+              !c.startsWith("justify-") &&
+              !c.startsWith("md:grid-cols-"),
+          );
+
+          if (attrs.mobileColumns) cls.push(attrs.mobileColumns);
+          if (attrs.desktopColumns) cls.push(`md:${attrs.desktopColumns}`);
+          if (attrs.gap) cls.push(attrs.gap);
+          if (attrs.alignItems) cls.push(attrs.alignItems);
+          if (attrs.alignContent) cls.push(attrs.alignContent);
+          if (attrs.justifyItems) cls.push(attrs.justifyItems);
+          if (attrs.justifyContent) cls.push(attrs.justifyContent);
+
+          this.setClass(cls);
+
+          this.components().forEach((comp) => {
+            const childCls = comp
+              .getClasses()
+              .filter((c) => c !== "w-full" && c !== "h-full");
+            if (attrs.stretch === "true") {
+              comp.setClass([...childCls, "w-full", "h-full"]);
+            } else {
+              comp.setClass(childCls);
+            }
+          });
+        },
+
+        EditComponent(editorMode = "desktop") {
+          const view = this.view;
+          const el = view.el;
+          const oldAttrs = { ...this.getAttributes() };
+          const menu = document.createElement("div");
+
+          // Remove old menu
+          const existing = document.querySelector(".grid-editor-menu");
+          if (existing) existing.remove();
+
+          menu.className =
+            "absolute z-[99999] p-4 bg-white left-[5rem] bottom-32 my-auto shadow-2xl rounded border text-sm w-72 grid-editor-menu";
+          menu.style.position = "absolute";
+          menu.style.left = "3.5rem";
+          menu.style.bottom = "4rem";
+          document.body.appendChild(menu);
+
+          menu.innerHTML = `
         <div class="flex justify-between items-center mb-2 font-semibold">
           <button id="cancelGridSettings" class="text-red-500 font-bold text-sm">✕</button>
         </div>
@@ -1709,101 +1744,101 @@ export default (editor, options) => {
         <button class="mt-2 w-full bg-black text-white px-3 py-1 rounded" id="applyGridSettings">Apply</button>
       `;
 
-        // Get attributes
-        const attrs = this.getAttributes();
-        const safeInt = (val, fallback) => {
-          const parsed = parseInt(val?.split("-").pop());
-          return isNaN(parsed) ? fallback : parsed;
-        };
-
-        // Set current values using proper attribute keys
-        menu.querySelector("#columnsDesktop").value = safeInt(
-          attrs.desktopColumns,
-          2,
-        );
-        menu.querySelector("#columnsMobile").value = safeInt(
-          attrs.mobileColumns,
-          1,
-        );
-        menu.querySelector("#gap").value = attrs.gap || "gap-4";
-        menu.querySelector("#alignItems").value =
-          attrs.alignItems || "items-start";
-        menu.querySelector("#alignContent").value = attrs.alignContent || "";
-        menu.querySelector("#justifyItems").value =
-          attrs.justifyItems || "justify-start";
-        menu.querySelector("#stretch").checked = attrs.stretch === "true";
-
-        // Function to apply updates live
-        const updateAttrs = () => {
-          const newAttrs = {
-            desktopColumns: `grid-cols-${menu.querySelector("#columnsDesktop").value || 3
-              }`,
-            mobileColumns: `grid-cols-${menu.querySelector("#columnsMobile").value || 1
-              }`,
-            gap: menu.querySelector("#gap").value,
-            alignItems: menu.querySelector("#alignItems").value,
-            alignContent: menu.querySelector("#alignContent").value,
-            justifyItems: menu.querySelector("#justifyItems").value,
-            stretch: menu.querySelector("#stretch").checked ? "true" : "false",
+          // Get attributes
+          const attrs = this.getAttributes();
+          const safeInt = (val, fallback) => {
+            const parsed = parseInt(val?.split("-").pop());
+            return isNaN(parsed) ? fallback : parsed;
           };
-          this.addAttributes(newAttrs);
-        };
 
-        // Live update on change
-        [
-          "#columnsDesktop",
-          "#columnsMobile",
-          "#gap",
-          "#alignItems",
-          "#alignContent",
-          "#justifyItems",
-          "#stretch",
-        ].forEach((id) => {
-          const el = menu.querySelector(id);
-          if (el.type === "checkbox") {
-            el.addEventListener("change", updateAttrs);
-          } else {
-            el.addEventListener("input", updateAttrs);
-          }
-        });
+          // Set current values using proper attribute keys
+          menu.querySelector("#columnsDesktop").value = safeInt(
+            attrs.desktopColumns,
+            2,
+          );
+          menu.querySelector("#columnsMobile").value = safeInt(
+            attrs.mobileColumns,
+            1,
+          );
+          menu.querySelector("#gap").value = attrs.gap || "gap-4";
+          menu.querySelector("#alignItems").value =
+            attrs.alignItems || "items-start";
+          menu.querySelector("#alignContent").value = attrs.alignContent || "";
+          menu.querySelector("#justifyItems").value =
+            attrs.justifyItems || "justify-start";
+          menu.querySelector("#stretch").checked = attrs.stretch === "true";
 
-        // Apply button
-        menu.querySelector("#applyGridSettings").onclick = () => {
-          if (menu.parentNode) menu.remove();
-          document.removeEventListener("mousedown", onOutsideClick);
-        };
+          // Function to apply updates live
+          const updateAttrs = () => {
+            const newAttrs = {
+              desktopColumns: `grid-cols-${menu.querySelector("#columnsDesktop").value || 3
+                }`,
+              mobileColumns: `grid-cols-${menu.querySelector("#columnsMobile").value || 1
+                }`,
+              gap: menu.querySelector("#gap").value,
+              alignItems: menu.querySelector("#alignItems").value,
+              alignContent: menu.querySelector("#alignContent").value,
+              justifyItems: menu.querySelector("#justifyItems").value,
+              stretch: menu.querySelector("#stretch").checked ? "true" : "false",
+            };
+            this.addAttributes(newAttrs);
+          };
 
-        // Cancel button - revert to original attributes
-        menu.querySelector("#cancelGridSettings").onclick = () => {
-          this.addAttributes(oldAttrs);
-          if (menu.parentNode) menu.remove();
-          document.removeEventListener("mousedown", onOutsideClick);
-        };
+          // Live update on change
+          [
+            "#columnsDesktop",
+            "#columnsMobile",
+            "#gap",
+            "#alignItems",
+            "#alignContent",
+            "#justifyItems",
+            "#stretch",
+          ].forEach((id) => {
+            const el = menu.querySelector(id);
+            if (el.type === "checkbox") {
+              el.addEventListener("change", updateAttrs);
+            } else {
+              el.addEventListener("input", updateAttrs);
+            }
+          });
 
-        // Close on outside click
-        const onOutsideClick = (e) => {
-          if (!menu.contains(e.target)) {
+          // Apply button
+          menu.querySelector("#applyGridSettings").onclick = () => {
+            if (menu.parentNode) menu.remove();
+            document.removeEventListener("mousedown", onOutsideClick);
+          };
+
+          // Cancel button - revert to original attributes
+          menu.querySelector("#cancelGridSettings").onclick = () => {
             this.addAttributes(oldAttrs);
             if (menu.parentNode) menu.remove();
             document.removeEventListener("mousedown", onOutsideClick);
-          }
-        };
-        setTimeout(
-          () => document.addEventListener("mousedown", onOutsideClick),
-          0,
-        );
-      },
-    },
+          };
 
-    view: {
-      init() {
-        setupEmptyPlaceholder(this);
+          // Close on outside click
+          const onOutsideClick = (e) => {
+            if (!menu.contains(e.target)) {
+              this.addAttributes(oldAttrs);
+              if (menu.parentNode) menu.remove();
+              document.removeEventListener("mousedown", onOutsideClick);
+            }
+          };
+          setTimeout(
+            () => document.addEventListener("mousedown", onOutsideClick),
+            0,
+          );
+        },
       },
-      onEditButtonClick() {
-        this.model.EditComponent("desktop");
+
+      view: {
+        init() {
+          setupEmptyPlaceholder(this);
+        },
+        onEditButtonClick() {
+          this.model.EditComponent("desktop");
+        },
       },
-    },
-  });
+    });
 
   editor.DomComponents.addType("flex", {
     model: {
@@ -2026,7 +2061,7 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "grid grid-cols-1 md:grid-cols-2 py-24 image-section relative md:min-h-[400px] section",
+            "grid grid-cols-1 md:grid-cols-2 image-section relative md:min-h-[400px] section",
           sectiontype: "normal",
           direction: "left",
         },
@@ -2053,6 +2088,32 @@ export default (editor, options) => {
             ],
             changeProp: 1,
           },
+          {
+            type: "select",
+            label: "Padding Top",
+            name: "paddingTop",
+            options: [
+              { id: "pt-0", name: "0" },
+              { id: "pt-12", name: "12" },
+              { id: "pt-24", name: "24" },
+              { id: "pt-32", name: "32" },
+              { id: "pt-48", name: "48" },
+            ],
+            changeProp: 1,
+          },
+          {
+            type: "select",
+            label: "Padding Bottom",
+            name: "paddingBottom",
+            options: [
+              { id: "pb-0", name: "0" },
+              { id: "pb-12", name: "12" },
+              { id: "pb-24", name: "24" },
+              { id: "pb-32", name: "32" },
+              { id: "pb-48", name: "48" },
+            ],
+            changeProp: 1,
+          },
         ],
         styles: `
 .image-section > .item-container {
@@ -2070,6 +2131,11 @@ export default (editor, options) => {
         height: 200px;
         width: 100%
       }
+        .image-section > .item-container {
+  padding: 1.25rem;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
   }
   /* Media Query for MD+ (768px and above) */
   @media (min-width: 768px) {
@@ -2144,36 +2210,39 @@ export default (editor, options) => {
       },
 
       updateSectionType() {
-        const sectionType = this.get("attributes")["sectiontype"] || "normal"; // Get the current attribute for section type
-
-        let classes = [
-          "grid",
-          "grid-cols-1",
-          "md:grid-cols-2",
-          "text-left",
-          "image-section",
-          "relative",
+        const sectionType = this.get("attributes")["sectiontype"] || "normal";
+        const classList = this.getClasses() || [];
+      
+        // Section-type-specific classes we want to clean up before adding new ones
+        const sectionTypeClasses = [
+          "bg-accent-1",
+          "bg-section-primary",
+          "bg-section-dark",
+          "bg-section-light",
+          "light-text",
         ];
-
-        // Modify class list based on section type
+      
+        // Remove old section-type classes only
+        let filteredClasses = classList.filter(cls => !sectionTypeClasses.includes(cls));
+      
+        // Add section-type specific classes
         switch (sectionType) {
           case "accent-1":
-            classes.push("bg-accent-1"); // Add specific class for accent-1
+            filteredClasses.push("bg-accent-1");
             break;
           case "primary":
-            classes.push("bg-section-primary");
+            filteredClasses.push("bg-section-primary");
             break;
           case "dark":
-            classes.push("bg-section-dark");
-            classes.push("light-text"); // Change to a dark background
+            filteredClasses.push("bg-section-dark", "light-text");
             break;
           case "normal":
           default:
-            classes.push("bg-section-light"); // Keep normal background
+            filteredClasses.push("bg-section-light");
             break;
         }
-
-        this.setClass(classes); // Set the classes dynamically
+      
+        this.setClass(filteredClasses);
       },
     },
     view: {
@@ -2452,7 +2521,7 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "flex flex-col py-24 bg-slate-600 light-text px-8 relative section",
+            "flex flex-col py-24 bg-slate-600 light-text px-3 md:px-8 relative section",
           sectiontype: "normal",
         },
         traits: [
@@ -2533,46 +2602,80 @@ export default (editor, options) => {
         this.listenTo(this, "change:sectiontype", this.updateSectionType);
         // Initial update of section type
         this.updateSectionType();
+        this.listenTo(this, "change:paddingBottom", this.updatePadding);
+        this.updatePadding();
       },
 
       onAttributesChange() {
-        const sectionType = this.get("attributes")["sectiontype"];
-        if (sectionType) {
-          this.updateSectionType();
-        }
+        const attrs = this.get("attributes") || {};
+        if (attrs["sectiontype"]) this.updateSectionType();
+        if (attrs["paddingTop"] || attrs["paddingBottom"]) this.updatePadding();
+      },
+
+      updatePadding() {
+        const paddingTop = this.get("attributes")["paddingTop"];
+        const paddingBottom = this.get("attributes")["paddingBottom"];
+      
+        // If both values are empty or undefined, do nothing
+        if (!paddingBottom) return;
+      
+        const classList = this.getClasses() || [];
+      
+        const paddingClasses = [
+          "py-0", "py-4", "py-8", "py-12", "py-16", "py-24", "py-32", "py-48",
+          "pt-0", "pt-4", "pt-8", "pt-12", "pt-16", "pt-24", "pt-32", "pt-48",
+          "pb-0", "pb-4", "pb-8", "pb-12", "pb-16", "pb-24", "pb-32", "pb-48",
+        ];
+      
+        let filtered = classList.filter(cls => !paddingClasses.includes(cls));
+      
+        if (paddingTop) filtered.push(paddingTop);
+        if (paddingBottom) filtered.push(paddingBottom);
+      
+        this.setClass(filtered);
       },
 
       updateSectionType() {
-        const sectionType = this.get("attributes")["sectiontype"] || "normal"; // Get the current attribute for section type
-
-        let classes = ["flex", "flex-col", "py-28", "relative"];
-
-        // Modify class list based on section type
+        const sectionType = this.get("attributes")["sectiontype"] || "normal";
+        const classList = this.getClasses() || [];
+      
+        // Section-type-specific classes we want to clean up before adding new ones
+        const sectionTypeClasses = [
+          "bg-accent-1",
+          "bg-section-primary",
+          "bg-section-dark",
+          "bg-section-light",
+          "light-text",
+        ];
+      
+        // Remove old section-type classes only
+        let filteredClasses = classList.filter(cls => !sectionTypeClasses.includes(cls));
+      
+        // Add section-type specific classes
         switch (sectionType) {
           case "accent-1":
-            classes.push("bg-accent-1"); // Add specific class for accent-1
+            filteredClasses.push("bg-accent-1");
             break;
           case "primary":
-            classes.push("bg-section-primary");
+            filteredClasses.push("bg-section-primary");
             break;
           case "dark":
-            classes.push("bg-section-dark");
-            classes.push("light-text"); // Change to a dark background
+            filteredClasses.push("bg-section-dark", "light-text");
             break;
           case "normal":
           default:
-            classes.push("bg-section-light"); // Keep normal background
+            filteredClasses.push("bg-section-light");
             break;
         }
-
-        this.setClass(classes); // Set the classes dynamically
+      
+        this.setClass(filteredClasses);
       },
       getName() {
         return "#" + this.getId(); // Show the component's ID
       },
     },
     view: {
-      init(){
+      init() {
         setupEmptyPlaceholder(this);
       },
       onRender() {
@@ -2689,13 +2792,14 @@ export default (editor, options) => {
       defaults: {
         tagName: "section",
         addInside: true,
-        disableMovement: true,
         disableToolbar: true,
+        disableMovement: true,
+        // disableToolbar: true,
         draggable: false,
         droppable: false,
         attributes: {
           class:
-            "flex items-center justify-center bg-cover overflow-hidden bg-center p-4 pt-40 hero-section",
+            "flex items-center justify-center bg-cover overflow-hidden bg-center hero-section",
           sectiontype: "normal",
         },
         traits: [
@@ -2711,6 +2815,26 @@ export default (editor, options) => {
             ],
             changeProp: 1,
           },
+          {
+            type: "text",
+            label: "Hero Section Height (e.g., 500px, 80vh, screen)",
+            name: "hero-section-height",
+            placeholder: "500px / 80vh / screen",
+            changeProp: 1,
+          },
+          {
+            type: "select",
+            label: "Padding Bottom",
+            name: "paddingBottom",
+            options: [
+              { id: "pb-0", name: "0" },
+              { id: "pb-12", name: "12" },
+              { id: "pb-24", name: "24" },
+              { id: "pb-32", name: "32" },
+              { id: "pb-48", name: "48" },
+            ],
+            changeProp: 1,
+          },
         ],
       },
       init() {
@@ -2718,6 +2842,31 @@ export default (editor, options) => {
         this.listenTo(this, "change:sectiontype", this.updateSectionType);
         // Initial update of section type
         this.updateSectionType();
+        this.listenTo(this, "change:paddingBottom", this.updatePadding);
+        this.listenTo(this, "change:paddingTop", this.updatePadding);
+        this.updatePadding();
+      },
+      updatePadding() {
+        const paddingTop = this.get("attributes")["paddingTop"];
+        const paddingBottom = this.get("attributes")["paddingBottom"];
+      
+        // If both values are empty or undefined, do nothing
+        if (!paddingTop && !paddingBottom) return;
+      
+        const classList = this.getClasses() || [];
+      
+        const paddingClasses = [
+          "py-0", "py-4", "py-8", "py-12", "py-16", "py-24", "py-32", "py-48",
+          "pt-0", "pt-4", "pt-8", "pt-12", "pt-16", "pt-24", "pt-32", "pt-48",
+          "pb-0", "pb-4", "pb-8", "pb-12", "pb-16", "pb-24", "pb-32", "pb-48",
+        ];
+      
+        let filtered = classList.filter(cls => !paddingClasses.includes(cls));
+      
+        if (paddingTop) filtered.push(paddingTop);
+        if (paddingBottom) filtered.push(paddingBottom);
+      
+        this.setClass(filtered);
       },
 
       onAttributesChange() {
@@ -2725,42 +2874,60 @@ export default (editor, options) => {
         if (sectionType) {
           this.updateSectionType();
         }
+        this.updateHeightClass();
       },
-
+      updateHeightClass() {
+        const heightValue = this.get("attributes")["hero-section-height"];
+        const classList = this.getClasses() || [];
+      
+        // Remove all existing h-[...] or h-screen classes
+        const filtered = classList.filter((cls) => !/^h-\[.*\]$/.test(cls) && cls !== "h-screen");
+      
+        // Add new class if value is provided
+        if (heightValue && heightValue.trim() !== "") {
+          const heightClass = heightValue === "screen" ? "h-screen" : `h-[${heightValue}]`;
+          filtered.push(heightClass);
+        }
+      
+        this.setClass(filtered);
+      },
       updateSectionType() {
-        const sectionType = this.get("attributes")["sectiontype"] || "normal"; // Get the current attribute for section type
-
-        let classes = [
-          "flex",
-          "items-center",
-          "justify-center",
-          "bg-cover",
-          "bg-center",
-          "p-4",
-          "pt-40",
-          "hero-section",
+        const sectionType = this.get("attributes")["sectiontype"] || "normal";
+        const classList = this.getClasses() || [];
+      
+        // Section-type-specific classes we want to clean up before adding new ones
+        const sectionTypeClasses = [
+          "bg-accent-1",
+          "bg-section-primary",
+          "bg-section-dark",
+          "bg-section-light",
+          "light-text",
         ];
-
-        // Modify class list based on section type
+      
+        // Remove old section-type classes only
+        let filteredClasses = classList.filter(cls => !sectionTypeClasses.includes(cls));
+      
+        // Add section-type specific classes
         switch (sectionType) {
           case "accent-1":
-            classes.push("bg-accent-1"); // Add specific class for accent-1
+            filteredClasses.push("bg-accent-1");
             break;
           case "primary":
-            classes.push("bg-section-primary");
+            filteredClasses.push("bg-section-primary");
             break;
           case "dark":
-            classes.push("bg-section-dark");
-            classes.push("light-text"); // Change to a dark background
+            filteredClasses.push("bg-section-dark", "light-text");
             break;
           case "normal":
           default:
-            classes.push("bg-section-light"); // Keep normal background
+            filteredClasses.push("bg-section-light");
             break;
         }
-
-        this.setClass(classes); // Set the classes dynamically
+      
+        this.setClass(filteredClasses);
       },
+
+
     },
     view: {
       onRender() {
@@ -2882,7 +3049,7 @@ export default (editor, options) => {
         droppable: false,
         tagName: "div",
         attributes: {
-          class: "lg:max-w-5xl mx-auto flex flex-col gap-4 px-3 container",
+          class: "lg:max-w-6xl mx-auto flex flex-col gap-4 px-3 container",
           textalign: "left",
         },
         traits: [
@@ -2900,7 +3067,7 @@ export default (editor, options) => {
       },
 
       init() {
-       
+
         this.listenTo(this, "change:attributes", this.updateTextAlign);
         this.updateTextAlign();
       },
@@ -2936,7 +3103,7 @@ export default (editor, options) => {
     model: {
       defaults: {
         tagName: 'marquee',
-        addinside: true, 
+        addinside: true,
         draggable: false,
         droppable: false,
         attributes: {
@@ -2973,12 +3140,12 @@ export default (editor, options) => {
           this.setAttribute('direction', dir);
         }
       },
-  
+
       init() {
         // Ensure trait's value reflects in the attribute even on initial render
         const dir = this.get('attributes').direction || 'left';
         this.addAttributes({ direction: dir });
-  
+
         // React to changes from trait UI
         this.on('change:attributes:direction', () => {
           const dir = this.getAttributes().direction;
@@ -2987,7 +3154,7 @@ export default (editor, options) => {
       }
     }
   });
-  
+
 
   editor.DomComponents.addType("content-title", {
     extend: "text",
@@ -3114,7 +3281,7 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "capsule font-primary relative transition flex flex-row justify-center items-center px-5 my-1",
+            "capsule font-primary relative transition flex flex-row justify-center items-center my-1",
         },
         styles: `
         .capsule {
@@ -3122,9 +3289,10 @@ export default (editor, options) => {
           font-weight: 700;
           text-transform: uppercase;
           width: max-content;
-          border: 1px solid var(--color-primary-dark);
-          padding-top: 2px,
-          padding-bottom: 2px
+          border-style: solid;
+          border-width: 1px 1px 1px 1px;
+          border-color: #CDD0CD;
+          padding: 7px 15px 7px 15px;
         }`,
         content: "Category",
       },
@@ -3141,7 +3309,7 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: "text-xl lg:text-2xl font-semibold font-primary pt-1 mb-2",
+          class: "text-xl font-semibold font-primary pt-1 mb-2",
           textalign: "left",
         },
         content: "Hero Subtitle",
@@ -3197,6 +3365,15 @@ export default (editor, options) => {
             "overflow-x-hidden scroll-smooth antialiased min-h-screen w-full",
         },
         styles: `
+        .button-rounded-undefined .button-secondary{
+          border-radius: 99999px !important;
+        }
+        .button-rounded-undefined .button-primary{
+          border-radius: 99999px !important;
+        }
+        .badge-rounded-undefined .capsule{
+          border-radius: 99999px !important;
+        }
         .highlight-gradient-color-text h1 .highlight,
         .highlight-gradient-color-text h2 .highlight,
         .highlight-gradient-color-text h3 .highlight,
@@ -3556,7 +3733,7 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "lg:max-w-6xl container flex flex-col flex-grow px-4 grow pb-8",
+            "lg:max-w-6xl container flex flex-col flex-grow px-4 mt-40 m-4 grow pb-8",
         },
       },
     },
@@ -4434,14 +4611,20 @@ export default (editor, options) => {
         attributes: {
           class: "relative transition isolate icon-box",
         },
+        traits: [
+          {
+            type: "text",
+            name: "icon-style",
+            label: "Icon Style",
+            changeProp: 1,
+          },
+        ],
         styles: `
-.card:hover > .icon-box > svg {
-  color: var(--color-primary) !important;
-}
 
 .icon-box {
   display: inline-block;
   aspect-ratio: 1;
+  border-radius: 9999px !important;
 }
 
 .icon-box > svg,
@@ -4450,7 +4633,41 @@ export default (editor, options) => {
   height: 100% !important;
 }
 
+.icon-style-white-bg
+{
+  background: white !important,
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  font-size: 100%; 
+  padding: 0.7em;
+  color: var(--color-primary) !important;
+}
+
         `,
+
+      },
+      init() {
+        this.listenTo(this, "change:attributes", this.updateIconStyleClass);
+        this.updateIconStyleClass();
+      },
+  
+      updateIconStyleClass() {
+        const attrs = this.getAttributes() || {};
+        const iconStyle = attrs["icon-style"];
+      
+        // Remove previous icon-style-* classes
+        let cls = this.getClasses().filter(
+          (c) => !c.startsWith("icon-style-")
+        );
+      
+        // Add the new icon-style if valid
+        if (iconStyle && iconStyle.startsWith("icon-style-")) {
+          cls.push(iconStyle);
+        }
+      
+        this.setClass(cls);
       },
     },
     view: {
@@ -4701,6 +4918,64 @@ export default (editor, options) => {
         tagName: "div",
         attributes: {
           class: "mb-3 para",
+          textalign: "left",
+        },
+        traits: [
+          {
+            type: "select",
+            name: "textalign",
+            label: "Text Align",
+            options: [
+              { value: "left", name: "Left" },
+              { value: "center", name: "Center" },
+              { value: "right", name: "Right" },
+            ],
+          },
+        ],
+      },
+
+      init() {
+
+        this.listenTo(this, "change:attributes", this.updateTextAlign);
+        this.updateTextAlign();
+
+      },
+
+      updateTextAlign() {
+        const attrs = this.getAttributes();
+        const align = attrs.textalign || "left";
+
+        // Remove previous alignment-related classes
+        let cls = this.getClasses().filter(
+          (c) => !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+        );
+
+        console.log("Bob " + align)
+        // Add new alignment classes
+        if (align === "left") {
+          cls.push("text-left");
+        } else if (align === "center") {
+          cls.push("text-center", "items-center");
+        } else if (align === "right") {
+          cls.push("text-right", "items-end");
+        }
+
+        this.setClass(cls);
+      },
+
+    },
+  });
+
+  editor.Components.addType("statistic-text", {
+    textalign: true,
+    extend: "text",
+    model: {
+      defaults: {
+        draggable: false,
+        droppable: false,
+        tagName: "h5",
+        attributes: {
+          class: "mb-1 text-[40px]",
           textalign: "left",
         },
         traits: [
@@ -5341,12 +5616,12 @@ export default (editor, options) => {
       defaults: {
         disableMovement: true,
         tagName: "div",
-        disableToolbar: true,
         draggable: false,
         droppable: false,
+        disableToolbar: true,
         attributes: {
           class:
-            "flex items-center justify-center bg-cover bg-center  overflow-hidden p-4 pt-40 bg-black hero-section bg",
+            "flex items-center justify-center bg-cover bg-center  overflow-hidden bg-black hero-section bg",
           "bg-image": "https://example.com/default-image.jpg", // Initial background image URL
           "bg-overlay": "primary-gradient", // Default overlay
         },
@@ -5362,14 +5637,13 @@ export default (editor, options) => {
         styles: `.bg
   *:not(.gjs-component-buttons):not(.gjs-component-buttons *):not(.highlight):not(.card *) {
   z-index: 2;
-  color: white !important;
+  color: white;
 }
 
 .hero-section {
   position: relative;
   z-index: 2;
-  width: 100%;
-  min-height: 100vh;              /* Ensures minimum full screen height */
+  width: 100%;           /* Ensures minimum full screen height */
   display: flex;                  /* Enables vertical alignment */
   flex-direction: column;
   justify-content: center;        /* Center content vertically */
@@ -5514,6 +5788,13 @@ export default (editor, options) => {
             ],
             changeProp: 1,
           },
+          {
+            type: "text",
+            label: "Hero Section Height (e.g., 500px, 80vh, screen)",
+            name: "hero-section-height",
+            placeholder: "500px / 80vh / screen",
+            changeProp: 1,
+          },
         ],
         propagate: ["bg-image", "bg-overlay"],
       },
@@ -5522,8 +5803,10 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
         this.listenTo(this, "change:bg-image", this.updateBackgroundImage);
         this.listenTo(this, "change:bg-overlay", this.updateBackgroundOverlay);
+        this.listenTo(this, "change:hero-section-height", this.updateHeightClass);
         this.updateBackgroundImage();
         this.updateBackgroundOverlay();
+        this.updateHeightClass();
       },
 
       onAttributesChange() {
@@ -5546,7 +5829,21 @@ export default (editor, options) => {
 
         this.set({ style });
       },
-
+      updateHeightClass() {
+        const heightValue = this.get("attributes")["hero-section-height"];
+        const classList = this.getClasses() || [];
+      
+        // Remove all existing h-[...] or h-screen classes
+        const filtered = classList.filter((cls) => !/^h-\[.*\]$/.test(cls) && cls !== "h-screen");
+      
+        // Add new class if value is provided
+        if (heightValue && heightValue.trim() !== "") {
+          const heightClass = heightValue === "screen" ? "h-screen" : `h-[${heightValue}]`;
+          filtered.push(heightClass);
+        }
+      
+        this.setClass(filtered);
+      },
       // This method updates DOM classes when the view is available
       updateBackgroundOverlay() {
         const overlay =
@@ -6153,7 +6450,7 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class: " w-full gap-2 card",
+          class: " w-full gap-2 card break-inside-avoid",
           sectiontype: "normal",
           background: "false",
           bordered: "false"
@@ -6325,6 +6622,240 @@ export default (editor, options) => {
     },
   });
 
+  editor.Components.addType('google-map', {
+    model: {
+      defaults: {
+        showEditButton: true,
+        tagName: 'div',
+        draggable: false,
+        droppable: false,
+        traits: [
+          {
+            type: 'text',
+            name: 'location',
+            label: 'Location',
+            placeholder: 'e.g., New York, NY',
+          },
+        ],
+        attributes: {
+          location: 'New York, NY', // default
+        },
+        components: [
+          { 
+            selectable: false,
+            disableMovement: true,
+            disableToolbar: true,
+            draggable: false,
+            droppable: false,
+            tagName: 'iframe',
+            type: 'iframe',
+            attributes: {
+              width: '100%',
+              height: '100%',
+              frameborder: '0',
+              style: 'border:0;height:100%;',
+              allowfullscreen: true,
+              loading: 'lazy',
+            },
+          },
+        ],
+        script: function () {
+          // Nothing needed in script since we are updating iframe src via model
+        },
+      },
+  
+      init() {
+        const location = this.get('attributes').location || 'New York, NY';
+        this.updateMapSrc(location);
+  
+        this.on('change:attributes:location', () => {
+          const newLocation = this.get('attributes').location;
+          this.updateMapSrc(newLocation);
+        });
+      },
+  
+      updateMapSrc(location) {
+        const iframe = this.get('components').at(0);
+        if (iframe) {
+          const query = encodeURIComponent(location);
+          const src = `https://www.google.com/maps?q=${query}&output=embed`;
+          iframe.addAttributes({ src });
+        }
+      },
+    },
+  
+    view: {
+      onEditButtonClick() {
+        const component = this.model;
+  
+        const modal = document.createElement('div');
+        modal.className =
+          'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+  
+        const container = document.createElement('div');
+        container.className =
+          'bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl shadow-lg p-6 relative';
+  
+        const currentLocation =
+          component.getAttributes().location || 'New York, NY';
+  
+        container.innerHTML = `
+          <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-black text-xl">&times;</button>
+          <h2 class="text-2xl font-semibold text-gray-800 mb-6">Set Google Map Location</h2>
+  
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="map-location-input">Enter Location</label>
+              <input 
+                id="map-location-input"
+                type="text"
+                placeholder="e.g., Eiffel Tower, Paris"
+                class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+  
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Preview</label>
+              <div class="aspect-video w-full border rounded overflow-hidden">
+                <iframe id="map-preview-iframe" width="100%" height="100%" frameborder="0" style="border:0;" allowfullscreen loading="lazy"></iframe>
+              </div>
+            </div>
+          </div>
+  
+          <div class="mt-6 flex justify-end gap-2">
+            <button class="cancel-modal px-4 py-2 bg-gray-100 text-sm rounded hover:bg-gray-200">Cancel</button>
+            <button class="save-modal px-4 py-2 bg-rose-600 text-white text-sm rounded hover:bg-rose-700">Save</button>
+          </div>
+        `;
+  
+        modal.appendChild(container);
+        document.body.appendChild(modal);
+  
+        this.prefillLocation(currentLocation);
+        this.attachPreviewListener();
+        this.attachSaveListener(component);
+        this.attachCloseListeners();
+      },
+  
+      prefillLocation(location) {
+        const input = document.querySelector('#map-location-input');
+        const iframe = document.querySelector('#map-preview-iframe');
+        if (input && iframe) {
+          input.value = location;
+          iframe.src = `https://www.google.com/maps?q=${encodeURIComponent(
+            location
+          )}&output=embed`;
+        }
+      },
+  
+      attachPreviewListener() {
+        const input = document.querySelector('#map-location-input');
+        const iframe = document.querySelector('#map-preview-iframe');
+        if (input && iframe) {
+          input.addEventListener('input', () => {
+            const val = input.value.trim();
+            if (val.length > 2) {
+              iframe.src = `https://www.google.com/maps?q=${encodeURIComponent(
+                val
+              )}&output=embed`;
+            }
+          });
+        }
+      },
+  
+      attachSaveListener(component) {
+        const saveBtn = document.querySelector('.save-modal');
+        const input = document.querySelector('#map-location-input');
+        if (saveBtn && input) {
+          saveBtn.addEventListener('click', () => {
+            const newLocation = input.value.trim();
+            if (newLocation) {
+              component.addAttributes({ location: newLocation });
+            }
+            this.closeModal();
+          });
+        }
+      },
+  
+      attachCloseListeners() {
+        const closeBtn = document.querySelector('.close-modal');
+        const cancelBtn = document.querySelector('.cancel-modal');
+        if (closeBtn) {
+          closeBtn.addEventListener('click', () => this.closeModal());
+        }
+        if (cancelBtn) {
+          cancelBtn.addEventListener('click', () => this.closeModal());
+        }
+      },
+  
+      closeModal() {
+        const modal = document.querySelector('.fixed.inset-0.bg-black');
+        if (modal) modal.remove();
+      },
+    
 
-
+    },
+  });
+  editor.Components.addType("scroll-marquee", {
+    isComponent: el => el.classList?.contains("scroll-marquee"),
+    model: {
+      defaults: {
+        name: "Scroll Marquee",
+        tagName: "div",
+        droppable: false,
+        attributes: {
+          class:
+            "scroll-marquee overflow-hidden w-full [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]",
+        },
+        components: [
+          {
+            tagName: "div",
+            attributes: {
+              class: "scroll-inner flex flex-nowrap gap-8 animate-marquee",
+            },
+            droppable: true,
+            components: [
+              {
+                type: "image",
+                attributes: {
+                  src: "https://cruip-tutorials.vercel.app/logo-carousel/apple.svg",
+                  class: "h-8 w-auto",
+                },
+              },
+              {
+                type: "text",
+                content: "Sample Partner",
+                attributes: { class: "text-base font-medium" },
+              },
+            ],
+          },
+        ],
+        styles: `
+          @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .animate-marquee {
+            animation: marquee 40s linear infinite;
+          }
+        `,
+      },
+    },
+  
+    view: {
+      onRender({ el }) {
+        const inner = el.querySelector(".scroll-inner");
+        if (!inner || inner.classList.contains("duplicated")) return;
+  
+        const clone = inner.cloneNode(true);
+        clone.setAttribute("aria-hidden", "true");
+        clone.classList.add("cloned");
+        inner.classList.add("duplicated");
+        el.appendChild(clone);
+      },
+    },
+  });
+  
+  
+  
 };
