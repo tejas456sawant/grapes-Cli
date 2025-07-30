@@ -6488,9 +6488,13 @@ export default (editor, options) => {
             border-style: solid;
             border-color: var(--color-text-primary)
           }
+            
 
           .card-background {
             background-color: var(--color-section-light);
+          }
+          .bg-section-light .card-background {
+            background-color: var(--color-section-accent1);
           }
 
           .bg-section-dark .card-background {
