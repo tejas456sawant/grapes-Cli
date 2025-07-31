@@ -854,9 +854,9 @@ export default (editor, options) => {
                 if (!file) return;
 
                 // Validate file type
-                const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+                const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
                 if (!allowedTypes.includes(file.type)) {
-                  alert("Please select a valid image file (JPG, JPEG or PNG)");
+                  alert("Please select a valid image file");
                   return;
                 }
 
@@ -1282,9 +1282,9 @@ export default (editor, options) => {
                 if (!file) return;
 
                 // Validate file type
-                const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+                const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
                 if (!allowedTypes.includes(file.type)) {
-                  alert("Please select a valid image file (JPG, JPEG or PNG)");
+                  alert("Please select a valid image file");
                   return;
                 }
 
@@ -5335,9 +5335,9 @@ export default (editor, options) => {
                 if (!file) return;
 
                 // Validate file type
-                const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+                const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif",];
                 if (!allowedTypes.includes(file.type)) {
-                  alert("Please select a valid image file (JPG, JPEG or PNG)");
+                  alert("Please select a valid image file");
                   return;
                 }
 
@@ -6020,9 +6020,9 @@ export default (editor, options) => {
                 if (!file) return;
 
                 // Validate file type
-                const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+                const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
                 if (!allowedTypes.includes(file.type)) {
-                  alert("Please select a valid image file (JPG, JPEG or PNG)");
+                  alert("Please select a valid image file");
                   return;
                 }
 
