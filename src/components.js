@@ -2140,7 +2140,8 @@ export default (editor, options) => {
   /* Media Query for MD+ (768px and above) */
   @media (min-width: 768px) {
     .image-section {
-      max-height: 84vh;
+      max-height: 100vh;
+      overflow:scroll;
     }
     .sections-contained.theme-rounded-md .image-section{
       border-radius: 2rem !important;
