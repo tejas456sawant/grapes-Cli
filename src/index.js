@@ -1369,7 +1369,20 @@ editor.Commands.add('open-width-resize-menu', {
   });
 
 
-
+  editor.on('component:selected', (component) => {
+    if (!component) return;
+  
+    const id = component.getId();
+    const allowedIds = ['section-n52xrolx', 'section-00pe2ftl'];
+  
+    if (allowedIds.includes(id)) {
+      const classes = component.getClasses() || [];
+      if (!classes.includes('bg-fixed')) {
+        component.addClass('bg-fixed');
+      }
+    }
+  });
+  
 
 
 
