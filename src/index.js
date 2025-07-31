@@ -1370,18 +1370,34 @@ editor.Commands.add('open-width-resize-menu', {
 
 
   editor.on('component:selected', (component) => {
-    if (!component) return;
+    if (!component) {
+      console.log('❌ No component selected.');
+      return;
+    }
   
     const id = component.getId();
+    console.log('✅ Selected component ID:', id);
+  
     const allowedIds = ['section-n52xrolx', 'section-00pe2ftl'];
   
     if (allowedIds.includes(id)) {
+      console.log(`🎯 ID "${id}" is in the allowed list.`);
+  
       const classes = component.getClasses() || [];
+      console.log('📦 Current classes:', classes);
+  
       if (!classes.includes('bg-fixed')) {
         component.addClass('bg-fixed');
+        console.log('➕ Added "bg-fixed" class to component.');
+      } else {
+        console.log('✅ "bg-fixed" class already present.');
       }
+  
+    } else {
+      console.log(`⚠️ ID "${id}" is not in the allowed list. Skipping...`);
     }
   });
+  
   
 
 
