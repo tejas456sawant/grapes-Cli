@@ -2646,6 +2646,7 @@ export default (editor, options) => {
           "bg-section-dark",
           "bg-section-light",
           "light-text",
+          "bg-slate-600"
         ];
       
         // Remove old section-type classes only
