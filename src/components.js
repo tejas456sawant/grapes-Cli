@@ -2521,7 +2521,7 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "flex flex-col py-24 bg-slate-600 light-text px-3 md:px-8 relative section",
+            "flex flex-col py-24 px-3 md:px-8 relative section",
           sectiontype: "normal",
         },
         traits: [
