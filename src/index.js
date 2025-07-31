@@ -1386,8 +1386,8 @@ editor.Commands.add('open-width-resize-menu', {
       const classes = component.getClasses() || [];
       console.log('📦 Current classes:', classes);
   
-      if (!classes.includes('bg-fixed')) {
-        component.addClass('bg-fixed');
+      if (!classes.includes('!bg-fixed')) {
+        component.addClass('!bg-fixed');
         console.log('➕ Added "bg-fixed" class to component.');
       } else {
         console.log('✅ "bg-fixed" class already present.');
