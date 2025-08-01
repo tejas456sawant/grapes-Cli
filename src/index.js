@@ -1368,7 +1368,6 @@ editor.Commands.add('open-width-resize-menu', {
     }
   });
 
-
   editor.on('component:selected', (component) => {
     if (!component) {
       console.log('❌ No component selected.');
@@ -1386,17 +1385,33 @@ editor.Commands.add('open-width-resize-menu', {
       const classes = component.getClasses() || [];
       console.log('📦 Current classes:', classes);
   
-      if (!classes.includes('!bg-fixed')) {
-        component.addClass('!bg-fixed');
-        console.log('➕ Added "bg-fixed" class to component.');
+      // Remove '!bg-fixed' if present
+      if (classes.includes('!bg-fixed')) {
+        component.removeClass('!bg-fixed');
+        console.log('➖ Removed "!bg-fixed" class.');
+      }
+  
+      // Add '!bg-scroll' if not present
+      if (!classes.includes('!bg-scroll')) {
+        component.addClass('!bg-scroll');
+        console.log('➕ Added "!bg-scroll" class.');
       } else {
-        console.log('✅ "bg-fixed" class already present.');
+        console.log('✅ "!bg-scroll" class already present.');
+      }
+  
+      // Add 'md:!bg-fixed' if not present
+      if (!classes.includes('md:!bg-fixed')) {
+        component.addClass('md:!bg-fixed');
+        console.log('➕ Added "md:!bg-fixed" class.');
+      } else {
+        console.log('✅ "md:!bg-fixed" class already present.');
       }
   
     } else {
       console.log(`⚠️ ID "${id}" is not in the allowed list. Skipping...`);
     }
   });
+  
   
   
 

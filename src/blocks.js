@@ -385,7 +385,7 @@ export default (editor, opts = {}) => {
           {
             type: "img-wrapper",
             attributes: {
-              "mobile-height": "66px"
+              "mobile-height": "56px"
             },
             components: {
               type: "custom-image",
@@ -397,7 +397,7 @@ export default (editor, opts = {}) => {
           {
             type: "img-wrapper",
             attributes: {
-              "mobile-height": "66px"
+              "mobile-height": "56px"
             },
             components: {
               type: "custom-image",
@@ -409,7 +409,7 @@ export default (editor, opts = {}) => {
           {
             type: "img-wrapper",
             attributes: {
-              "mobile-height": "66px"
+              "mobile-height": "56px"
             },
             components: {
               type: "custom-image",
@@ -421,7 +421,7 @@ export default (editor, opts = {}) => {
           {
             type: "img-wrapper",
             attributes: {
-              "mobile-height": "66px"
+              "mobile-height": "56px"
             },
             components: {
               type: "custom-image",
@@ -433,7 +433,7 @@ export default (editor, opts = {}) => {
           {
             type: "img-wrapper",
             attributes: {
-              "mobile-height": "66px"
+              "mobile-height": "56px"
             },
             components: {
               type: "custom-image",
@@ -445,7 +445,7 @@ export default (editor, opts = {}) => {
           {
             type: "img-wrapper",
             attributes: {
-              "mobile-height": "66px"
+              "mobile-height": "56px"
             },
             components: {
               type: "custom-image",
@@ -457,7 +457,7 @@ export default (editor, opts = {}) => {
           {
             type: "img-wrapper",
             attributes: {
-              "mobile-height": "66px"
+              "mobile-height": "56px"
             },
             components: {
               type: "custom-image",
@@ -469,7 +469,7 @@ export default (editor, opts = {}) => {
           {
             type: "img-wrapper",
             attributes: {
-              "mobile-height": "66px"
+              "mobile-height": "56px"
             },
             components: {
               type: "custom-image",
