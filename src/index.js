@@ -18,311 +18,311 @@ export default (editor, opts = {}) => {
 
   loadComponents(editor);
 
-// Responsive width + height mixin using Tailwind utility classes
-setTimeout(() => {
-  const types = editor.DomComponents.getTypes();
+  // Responsive width + height mixin using Tailwind utility classes
+  setTimeout(() => {
+    const types = editor.DomComponents.getTypes();
 
-  types.forEach((typeObj) => {
-    const typeId = typeof typeObj === 'string' ? typeObj : typeObj.id;
-    const comp = editor.DomComponents.getType(typeId);
-    if (!comp || typeof comp.model !== 'function') return;
+    types.forEach((typeObj) => {
+      const typeId = typeof typeObj === 'string' ? typeObj : typeObj.id;
+      const comp = editor.DomComponents.getType(typeId);
+      if (!comp || typeof comp.model !== 'function') return;
 
-    const model = comp.model;
-    const def = model.prototype.defaults;
+      const model = comp.model;
+      const def = model.prototype.defaults;
 
-    if (def?.disableResponsiveResize) return;
+      if (def?.disableResponsiveResize) return;
 
-    const originalInit = model.prototype.init;
-    const originalGetAttrToHTML = model.prototype.getAttrToHTML || (() => ({}));
+      const originalInit = model.prototype.init;
+      const originalGetAttrToHTML = model.prototype.getAttrToHTML || (() => ({}));
 
-    model.prototype.init = function (...args) {
-      originalInit && originalInit.apply(this, args);
-      const attrs = this.getAttributes();
-
-      if (attrs['desktop-width']) applyTailwindDesktopWidth.call(this, attrs['desktop-width']);
-      if (attrs['mobile-width']) applyTailwindMobileWidth.call(this, attrs['mobile-width']);
-      if (attrs['desktop-height']) applyTailwindDesktopHeight.call(this, attrs['desktop-height']);
-      if (attrs['mobile-height']) applyTailwindMobileHeight.call(this, attrs['mobile-height']);
-
-      this.listenTo(this, 'change:attributes:desktop-width', () => {
-        applyTailwindDesktopWidth.call(this, this.getAttributes()['desktop-width']);
-      });
-
-      this.listenTo(this, 'change:attributes:mobile-width', () => {
-        applyTailwindMobileWidth.call(this, this.getAttributes()['mobile-width']);
-      });
-
-      this.listenTo(this, 'change:attributes:desktop-height', () => {
-        applyTailwindDesktopHeight.call(this, this.getAttributes()['desktop-height']);
-      });
-
-      this.listenTo(this, 'change:attributes:mobile-height', () => {
-        applyTailwindMobileHeight.call(this, this.getAttributes()['mobile-height']);
-      });
-
-      this.once('change:status', () => {
+      model.prototype.init = function (...args) {
+        originalInit && originalInit.apply(this, args);
         const attrs = this.getAttributes();
+
         if (attrs['desktop-width']) applyTailwindDesktopWidth.call(this, attrs['desktop-width']);
         if (attrs['mobile-width']) applyTailwindMobileWidth.call(this, attrs['mobile-width']);
         if (attrs['desktop-height']) applyTailwindDesktopHeight.call(this, attrs['desktop-height']);
         if (attrs['mobile-height']) applyTailwindMobileHeight.call(this, attrs['mobile-height']);
+
+        this.listenTo(this, 'change:attributes:desktop-width', () => {
+          applyTailwindDesktopWidth.call(this, this.getAttributes()['desktop-width']);
+        });
+
+        this.listenTo(this, 'change:attributes:mobile-width', () => {
+          applyTailwindMobileWidth.call(this, this.getAttributes()['mobile-width']);
+        });
+
+        this.listenTo(this, 'change:attributes:desktop-height', () => {
+          applyTailwindDesktopHeight.call(this, this.getAttributes()['desktop-height']);
+        });
+
+        this.listenTo(this, 'change:attributes:mobile-height', () => {
+          applyTailwindMobileHeight.call(this, this.getAttributes()['mobile-height']);
+        });
+
+        this.once('change:status', () => {
+          const attrs = this.getAttributes();
+          if (attrs['desktop-width']) applyTailwindDesktopWidth.call(this, attrs['desktop-width']);
+          if (attrs['mobile-width']) applyTailwindMobileWidth.call(this, attrs['mobile-width']);
+          if (attrs['desktop-height']) applyTailwindDesktopHeight.call(this, attrs['desktop-height']);
+          if (attrs['mobile-height']) applyTailwindMobileHeight.call(this, attrs['mobile-height']);
+        });
+      };
+
+      model.prototype.getAttrToHTML = function () {
+        const out = originalGetAttrToHTML.call(this);
+        const attrs = this.getAttributes();
+        if (attrs['desktop-width']?.trim()) out['data-desktop-width'] = attrs['desktop-width'];
+        if (attrs['mobile-width']?.trim()) out['data-mobile-width'] = attrs['mobile-width'];
+        if (attrs['desktop-height']?.trim()) out['data-desktop-height'] = attrs['desktop-height'];
+        if (attrs['mobile-height']?.trim()) out['data-mobile-height'] = attrs['mobile-height'];
+        return out;
+      };
+
+      Object.assign(def.attributes ||= {}, {
+        'desktop-width': '',
+        'mobile-width': '',
+        'desktop-height': '',
+        'mobile-height': '',
       });
-    };
 
-    model.prototype.getAttrToHTML = function () {
-      const out = originalGetAttrToHTML.call(this);
-      const attrs = this.getAttributes();
-      if (attrs['desktop-width']?.trim()) out['data-desktop-width'] = attrs['desktop-width'];
-      if (attrs['mobile-width']?.trim()) out['data-mobile-width'] = attrs['mobile-width'];
-      if (attrs['desktop-height']?.trim()) out['data-desktop-height'] = attrs['desktop-height'];
-      if (attrs['mobile-height']?.trim()) out['data-mobile-height'] = attrs['mobile-height'];
-      return out;
-    };
+      def.traits ||= [];
+      def.traits.push(
+        { type: 'text', name: 'mobile-width', label: 'Mobile Width', placeholder: 'e.g. 100%' },
+        { type: 'text', name: 'desktop-width', label: 'Desktop Width (md+)', placeholder: 'e.g. 80%' },
+        { type: 'text', name: 'mobile-height', label: 'Mobile Height', placeholder: 'e.g. 300px' },
+        { type: 'text', name: 'desktop-height', label: 'Desktop Height (md+)', placeholder: 'e.g. 500px' },
+      );
+    });
+  }, 0);
 
-    Object.assign(def.attributes ||= {}, {
-      'desktop-width': '',
-      'mobile-width': '',
-      'desktop-height': '',
-      'mobile-height': '',
+  function applyTailwindDesktopWidth(width) {
+    const classList = this.getClasses() || [];
+    const newClass = getTailwindWidthClass(width, true);
+    const updated = classList.filter(c => !/^md:w-\[.+\]$/.test(c));
+    if (newClass) updated.push(newClass);
+    this.setClass(updated);
+  }
+
+  function applyTailwindMobileWidth(width) {
+    const classList = this.getClasses() || [];
+    const newClass = getTailwindWidthClass(width, false);
+    const updated = classList.filter(c => !/^w-\[.+\]$/.test(c) || /^md:w-/.test(c));
+    if (newClass) updated.push(newClass);
+    this.setClass(updated);
+  }
+
+  function applyTailwindDesktopHeight(height) {
+    const classList = this.getClasses() || [];
+    const newClass = getTailwindHeightClass(height, true);
+    const updated = classList.filter(c => !/^md:h-\[.+\]$/.test(c));
+    if (newClass) updated.push(newClass);
+    this.setClass(updated);
+  }
+
+  function applyTailwindMobileHeight(height) {
+    const classList = this.getClasses() || [];
+    const newClass = getTailwindHeightClass(height, false);
+    const updated = classList.filter(c => !/^h-\[.+\]$/.test(c) || /^md:h-/.test(c));
+    if (newClass) updated.push(newClass);
+    this.setClass(updated);
+  }
+
+  function getTailwindWidthClass(width, isDesktop) {
+    if (!width || typeof width !== 'string') return null;
+    const trimmed = width.trim();
+    const match = trimmed.match(/^([\d.]+)(px|%|rem)?$/);
+    if (!match) return null;
+    const [_, num, unit = '%'] = match;
+    return `${isDesktop ? 'md:' : ''}w-[${num}${unit}]`;
+  }
+
+  function getTailwindHeightClass(height, isDesktop) {
+    if (!height || typeof height !== 'string') return null;
+    const trimmed = height.trim();
+    const match = trimmed.match(/^([\d.]+)(px|%|rem)?$/);
+    if (!match) return null;
+    const [_, num, unit = 'px'] = match;
+    return `${isDesktop ? 'md:' : ''}h-[${num}${unit}]`;
+  }
+
+  function revertInlinePreview(fields, el) {
+    fields.forEach((field) => {
+      if (field?.type) el.style[field.type] = '';
+    });
+  }
+
+  function parseWidth(str) {
+    const match = String(str).match(/^([\d.]+)(px|%|rem)?$/);
+    return {
+      value: match ? parseFloat(match[1]) : NaN,
+      unit: match ? match[2] || '%' : '%',
+    };
+  }
+
+  function buildField(label, initialValue, initialUnit, el, showPlaceholder = false, type = 'width') {
+    const wrapper = document.createElement('div');
+    const title = document.createElement('div');
+    title.innerText = label;
+    title.className = 'text-xs text-gray-600 mb-1';
+    const row = document.createElement('div');
+    row.className = 'flex items-center gap-2';
+    const unitState = { value: initialUnit };
+
+    let input = createInput(initialValue, initialUnit, (newVal) => {
+      el.style[type] = `${newVal}${unitState.value}`;
+    }, showPlaceholder);
+
+    const unitSelect = createUnitSelect(initialUnit, (unit) => {
+      const computed = getComputedStyle(el);
+      const px = parseFloat(computed[type]); // width or height
+
+      unitState.value = unit;
+
+      const newInput = createInput(px, unit, (val) => {
+        el.style[type] = `${val}${unit}`;  // ✅ dynamic width/height
+      }, false);
+
+      row.replaceChild(newInput.el, input.el);
+      input.el = newInput.el;
+      input.value = newInput.value;
+
+      el.style[type] = `${input.value()}${unit}`; // ✅ correct preview
     });
 
-    def.traits ||= [];
-    def.traits.push(
-      { type: 'text', name: 'mobile-width', label: 'Mobile Width', placeholder: 'e.g. 100%' },
-      { type: 'text', name: 'desktop-width', label: 'Desktop Width (md+)', placeholder: 'e.g. 80%' },
-      { type: 'text', name: 'mobile-height', label: 'Mobile Height', placeholder: 'e.g. 300px' },
-      { type: 'text', name: 'desktop-height', label: 'Desktop Height (md+)', placeholder: 'e.g. 500px' },
-    );
-  });
-}, 0);
+    row.appendChild(input.el);
+    row.appendChild(unitSelect);
+    wrapper.appendChild(title);
+    wrapper.appendChild(row);
 
-function applyTailwindDesktopWidth(width) {
-  const classList = this.getClasses() || [];
-  const newClass = getTailwindWidthClass(width, true);
-  const updated = classList.filter(c => !/^md:w-\[.+\]$/.test(c));
-  if (newClass) updated.push(newClass);
-  this.setClass(updated);
-}
+    return { wrapper, input, unit: unitState, type };
+  }
 
-function applyTailwindMobileWidth(width) {
-  const classList = this.getClasses() || [];
-  const newClass = getTailwindWidthClass(width, false);
-  const updated = classList.filter(c => !/^w-\[.+\]$/.test(c) || /^md:w-/.test(c));
-  if (newClass) updated.push(newClass);
-  this.setClass(updated);
-}
+  function createInput(value, unit, onInputChange, showPlaceholder = false) {
+    const el = document.createElement('input');
+    el.type = 'number';
+    el.className = 'w-full border border-gray-300 rounded px-2 py-1 text-sm';
+    el.min = unit === '%' ? '0' : '';
+    el.max = unit === '%' ? '100' : '';
+    el.step = '1';
+    el.value = isNaN(value) ? '' : value;
+    if (showPlaceholder) el.placeholder = '—';
+    el.oninput = () => {
+      if (onInputChange && el.value !== '') onInputChange(parseFloat(el.value));
+    };
+    return { el, value: () => parseFloat(el.value) };
+  }
 
-function applyTailwindDesktopHeight(height) {
-  const classList = this.getClasses() || [];
-  const newClass = getTailwindHeightClass(height, true);
-  const updated = classList.filter(c => !/^md:h-\[.+\]$/.test(c));
-  if (newClass) updated.push(newClass);
-  this.setClass(updated);
-}
+  function createUnitSelect(selectedUnit, onChange) {
+    const select = document.createElement('select');
+    select.className = 'border border-gray-300 rounded px-1 py-1 text-sm w-[60px]';
+    ['%', 'px', 'rem'].forEach((u) => {
+      const opt = document.createElement('option');
+      opt.value = u;
+      opt.textContent = u;
+      if (u === selectedUnit) opt.selected = true;
+      select.appendChild(opt);
+    });
+    select.addEventListener('change', (e) => onChange(e.target.value));
+    return select;
+  }
 
-function applyTailwindMobileHeight(height) {
-  const classList = this.getClasses() || [];
-  const newClass = getTailwindHeightClass(height, false);
-  const updated = classList.filter(c => !/^h-\[.+\]$/.test(c) || /^md:h-/.test(c));
-  if (newClass) updated.push(newClass);
-  this.setClass(updated);
-}
+  editor.Commands.add('open-width-resize-menu', {
+    run(editor) {
+      setTimeout(() => {
+        const selected = editor.getSelected();
+        if (!selected) return;
 
-function getTailwindWidthClass(width, isDesktop) {
-  if (!width || typeof width !== 'string') return null;
-  const trimmed = width.trim();
-  const match = trimmed.match(/^([\d.]+)(px|%|rem)?$/);
-  if (!match) return null;
-  const [_, num, unit = '%'] = match;
-  return `${isDesktop ? 'md:' : ''}w-[${num}${unit}]`;
-}
+        const el = selected.view.el;
+        document.getElementById('width-resize-menu')?.remove();
 
-function getTailwindHeightClass(height, isDesktop) {
-  if (!height || typeof height !== 'string') return null;
-  const trimmed = height.trim();
-  const match = trimmed.match(/^([\d.]+)(px|%|rem)?$/);
-  if (!match) return null;
-  const [_, num, unit = 'px'] = match;
-  return `${isDesktop ? 'md:' : ''}h-[${num}${unit}]`;
-}
+        const attr = selected.getAttributes();
+        const desktopParsed = parseWidth(attr['desktop-width'] || '');
+        const mobileParsed = parseWidth(attr['mobile-width'] || '');
+        const desktopHeightParsed = parseWidth(attr['desktop-height'] || '');
+        const mobileHeightParsed = parseWidth(attr['mobile-height'] || '');
 
-function revertInlinePreview(fields, el) {
-  fields.forEach((field) => {
-    if (field?.type) el.style[field.type] = '';
-  });
-}
+        const menu = document.createElement('div');
+        menu.id = 'width-resize-menu';
+        menu.className = 'fixed z-[9999] bg-white shadow-xl rounded-lg p-6 border border-gray-200 w-[280px] text-sm space-y-4 font-sans';
 
-function parseWidth(str) {
-  const match = String(str).match(/^([\d.]+)(px|%|rem)?$/);
-  return {
-    value: match ? parseFloat(match[1]) : NaN,
-    unit: match ? match[2] || '%' : '%',
-  };
-}
+        const canvasRect = editor.Canvas.getElement().getBoundingClientRect();
+        menu.style.top = `${canvasRect.top + canvasRect.height * 0.25}px`;
+        menu.style.left = `${Math.max(canvasRect.left - 300, 60)}px`;
 
-function buildField(label, initialValue, initialUnit, el, showPlaceholder = false, type = 'width') {
-  const wrapper = document.createElement('div');
-  const title = document.createElement('div');
-  title.innerText = label;
-  title.className = 'text-xs text-gray-600 mb-1';
-  const row = document.createElement('div');
-  row.className = 'flex items-center gap-2';
-  const unitState = { value: initialUnit };
+        const title = document.createElement('div');
+        title.innerText = 'Adjust Width and Height';
+        title.className = 'text-base font-semibold text-gray-800';
+        menu.appendChild(title);
 
-  let input = createInput(initialValue, initialUnit, (newVal) => {
-    el.style[type] = `${newVal}${unitState.value}`;
-  }, showPlaceholder);
+        const desktopField = buildField('Desktop Width', desktopParsed.value, desktopParsed.unit, el, !attr['desktop-width'], 'width');
+        const mobileField = buildField('Mobile Width', mobileParsed.value, mobileParsed.unit, el, !attr['mobile-width'], 'width');
+        const desktopHeightField = buildField('Desktop Height', desktopHeightParsed.value, desktopHeightParsed.unit, el, !attr['desktop-height'], 'height');
+        const mobileHeightField = buildField('Mobile Height', mobileHeightParsed.value, mobileHeightParsed.unit, el, !attr['mobile-height'], 'height');
 
-  const unitSelect = createUnitSelect(initialUnit, (unit) => {
-    const computed = getComputedStyle(el);
-    const px = parseFloat(computed[type]); // width or height
-  
-    unitState.value = unit;
-  
-    const newInput = createInput(px, unit, (val) => {
-      el.style[type] = `${val}${unit}`;  // ✅ dynamic width/height
-    }, false);
-  
-    row.replaceChild(newInput.el, input.el);
-    input.el = newInput.el;
-    input.value = newInput.value;
-  
-    el.style[type] = `${input.value()}${unit}`; // ✅ correct preview
-  });
+        const fields = [desktopField, mobileField, desktopHeightField, mobileHeightField];
+        fields.forEach(f => menu.appendChild(f.wrapper));
 
-  row.appendChild(input.el);
-  row.appendChild(unitSelect);
-  wrapper.appendChild(title);
-  wrapper.appendChild(row);
-
-  return { wrapper, input, unit: unitState, type };
-}
-
-function createInput(value, unit, onInputChange, showPlaceholder = false) {
-  const el = document.createElement('input');
-  el.type = 'number';
-  el.className = 'w-full border border-gray-300 rounded px-2 py-1 text-sm';
-  el.min = unit === '%' ? '0' : '';
-  el.max = unit === '%' ? '100' : '';
-  el.step = '1';
-  el.value = isNaN(value) ? '' : value;
-  if (showPlaceholder) el.placeholder = '—';
-  el.oninput = () => {
-    if (onInputChange && el.value !== '') onInputChange(parseFloat(el.value));
-  };
-  return { el, value: () => parseFloat(el.value) };
-}
-
-function createUnitSelect(selectedUnit, onChange) {
-  const select = document.createElement('select');
-  select.className = 'border border-gray-300 rounded px-1 py-1 text-sm w-[60px]';
-  ['%', 'px', 'rem'].forEach((u) => {
-    const opt = document.createElement('option');
-    opt.value = u;
-    opt.textContent = u;
-    if (u === selectedUnit) opt.selected = true;
-    select.appendChild(opt);
-  });
-  select.addEventListener('change', (e) => onChange(e.target.value));
-  return select;
-}
-
-editor.Commands.add('open-width-resize-menu', {
-  run(editor) {
-    setTimeout(() => {
-      const selected = editor.getSelected();
-      if (!selected) return;
-
-      const el = selected.view.el;
-      document.getElementById('width-resize-menu')?.remove();
-
-      const attr = selected.getAttributes();
-      const desktopParsed = parseWidth(attr['desktop-width'] || '');
-      const mobileParsed = parseWidth(attr['mobile-width'] || '');
-      const desktopHeightParsed = parseWidth(attr['desktop-height'] || '');
-      const mobileHeightParsed = parseWidth(attr['mobile-height'] || '');
-
-      const menu = document.createElement('div');
-      menu.id = 'width-resize-menu';
-      menu.className = 'fixed z-[9999] bg-white shadow-xl rounded-lg p-6 border border-gray-200 w-[280px] text-sm space-y-4 font-sans';
-
-      const canvasRect = editor.Canvas.getElement().getBoundingClientRect();
-      menu.style.top = `${canvasRect.top + canvasRect.height * 0.25}px`;
-      menu.style.left = `${Math.max(canvasRect.left - 300, 60)}px`;
-
-      const title = document.createElement('div');
-      title.innerText = 'Adjust Width and Height';
-      title.className = 'text-base font-semibold text-gray-800';
-      menu.appendChild(title);
-
-      const desktopField = buildField('Desktop Width', desktopParsed.value, desktopParsed.unit, el, !attr['desktop-width'], 'width');
-      const mobileField = buildField('Mobile Width', mobileParsed.value, mobileParsed.unit, el, !attr['mobile-width'], 'width');
-      const desktopHeightField = buildField('Desktop Height', desktopHeightParsed.value, desktopHeightParsed.unit, el, !attr['desktop-height'], 'height');
-      const mobileHeightField = buildField('Mobile Height', mobileHeightParsed.value, mobileHeightParsed.unit, el, !attr['mobile-height'], 'height');
-
-      const fields = [desktopField, mobileField, desktopHeightField, mobileHeightField];
-      fields.forEach(f => menu.appendChild(f.wrapper));
-
-      const closeButton = document.createElement('button');
-      closeButton.innerText = '✕';
-      closeButton.className = 'absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-sm';
-      closeButton.onclick = () => {
-        revertInlinePreview(fields, el);
-        menu.remove();
-        document.removeEventListener('mousedown', onOutsideClick);
-      };
-      menu.appendChild(closeButton);
-
-      const saveBtn = document.createElement('button');
-      saveBtn.innerText = 'Save';
-      saveBtn.className = 'w-full bg-rose-600 text-white text-sm py-1.5 rounded hover:bg-rose-700';
-      saveBtn.onclick = () => {
-        const newAttrs = { ...selected.getAttributes() };
-      
-        const dWVal = desktopField.input.el.value.trim();
-        const mWVal = mobileField.input.el.value.trim();
-        const dHVal = desktopHeightField.input.el.value.trim();
-        const mHVal = mobileHeightField.input.el.value.trim();
-      
-        if (dWVal !== '' && !isNaN(desktopField.input.value()))
-          newAttrs['desktop-width'] = `${desktopField.input.value()}${desktopField.unit.value}`;
-      
-        if (mWVal !== '' && !isNaN(mobileField.input.value()))
-          newAttrs['mobile-width'] = `${mobileField.input.value()}${mobileField.unit.value}`;
-      
-        if (dHVal !== '' && !isNaN(desktopHeightField.input.value()))
-          newAttrs['desktop-height'] = `${desktopHeightField.input.value()}${desktopHeightField.unit.value}`;
-      
-        if (mHVal !== '' && !isNaN(mobileHeightField.input.value()))
-          newAttrs['mobile-height'] = `${mobileHeightField.input.value()}${mobileHeightField.unit.value}`;
-      
-        selected.setAttributes(newAttrs);
-        revertInlinePreview(fields, el);
-      
-        if (newAttrs['desktop-width']) applyTailwindDesktopWidth.call(selected, newAttrs['desktop-width']);
-        if (newAttrs['mobile-width']) applyTailwindMobileWidth.call(selected, newAttrs['mobile-width']);
-        if (newAttrs['desktop-height']) applyTailwindDesktopHeight.call(selected, newAttrs['desktop-height']);
-        if (newAttrs['mobile-height']) applyTailwindMobileHeight.call(selected, newAttrs['mobile-height']);
-      
-        menu.remove();
-        document.removeEventListener('mousedown', onOutsideClick);
-      };
-      
-      
-      menu.appendChild(saveBtn);
-
-      document.body.appendChild(menu);
-      const onOutsideClick = (e) => {
-        if (!menu.contains(e.target)) {
+        const closeButton = document.createElement('button');
+        closeButton.innerText = '✕';
+        closeButton.className = 'absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-sm';
+        closeButton.onclick = () => {
           revertInlinePreview(fields, el);
           menu.remove();
           document.removeEventListener('mousedown', onOutsideClick);
-        }
-      };
-      setTimeout(() => document.addEventListener('mousedown', onOutsideClick), 200);
-    }, 0);
-  }
-});
+        };
+        menu.appendChild(closeButton);
+
+        const saveBtn = document.createElement('button');
+        saveBtn.innerText = 'Save';
+        saveBtn.className = 'w-full bg-rose-600 text-white text-sm py-1.5 rounded hover:bg-rose-700';
+        saveBtn.onclick = () => {
+          const newAttrs = { ...selected.getAttributes() };
+
+          const dWVal = desktopField.input.el.value.trim();
+          const mWVal = mobileField.input.el.value.trim();
+          const dHVal = desktopHeightField.input.el.value.trim();
+          const mHVal = mobileHeightField.input.el.value.trim();
+
+          if (dWVal !== '' && !isNaN(desktopField.input.value()))
+            newAttrs['desktop-width'] = `${desktopField.input.value()}${desktopField.unit.value}`;
+
+          if (mWVal !== '' && !isNaN(mobileField.input.value()))
+            newAttrs['mobile-width'] = `${mobileField.input.value()}${mobileField.unit.value}`;
+
+          if (dHVal !== '' && !isNaN(desktopHeightField.input.value()))
+            newAttrs['desktop-height'] = `${desktopHeightField.input.value()}${desktopHeightField.unit.value}`;
+
+          if (mHVal !== '' && !isNaN(mobileHeightField.input.value()))
+            newAttrs['mobile-height'] = `${mobileHeightField.input.value()}${mobileHeightField.unit.value}`;
+
+          selected.setAttributes(newAttrs);
+          revertInlinePreview(fields, el);
+
+          if (newAttrs['desktop-width']) applyTailwindDesktopWidth.call(selected, newAttrs['desktop-width']);
+          if (newAttrs['mobile-width']) applyTailwindMobileWidth.call(selected, newAttrs['mobile-width']);
+          if (newAttrs['desktop-height']) applyTailwindDesktopHeight.call(selected, newAttrs['desktop-height']);
+          if (newAttrs['mobile-height']) applyTailwindMobileHeight.call(selected, newAttrs['mobile-height']);
+
+          menu.remove();
+          document.removeEventListener('mousedown', onOutsideClick);
+        };
+
+
+        menu.appendChild(saveBtn);
+
+        document.body.appendChild(menu);
+        const onOutsideClick = (e) => {
+          if (!menu.contains(e.target)) {
+            revertInlinePreview(fields, el);
+            menu.remove();
+            document.removeEventListener('mousedown', onOutsideClick);
+          }
+        };
+        setTimeout(() => document.addEventListener('mousedown', onOutsideClick), 200);
+      }, 0);
+    }
+  });
 
 
 
@@ -725,45 +725,45 @@ editor.Commands.add('open-width-resize-menu', {
   });
   function openBlockPickerModal(editor, targetComponent, insertPosition) {
     const tags = ['Layout', 'Content', 'Buttons', 'Icons', 'Form', 'Visuals'];
-  
+
     // Get relevant blocks (sectionblocks if required)
     const blocks = editor.BlockManager.getAll().filter((block) => {
       const attrs = block.attributes || {};
       const isDefaultTheme = attrs.defaulttheme === true;
       const isSectionBlock = attrs.sectionblocks === true;
-    
+
       if (!isDefaultTheme) return false;
-    
+
       const insertingAroundSection =
         (insertPosition === 'before' || insertPosition === 'after') &&
         targetComponent?.is('section');
-    
+
       if (insertingAroundSection) {
         // Only show sectionblocks
         return isSectionBlock === true;
       }
-    
+
       // Do not show sectionblocks when NOT inserting around a section
       return isSectionBlock !== true;
     });
-    
-    
-    
-  
+
+
+
+
     // Cleanup existing modal
     document.querySelector('.custom-block-modal')?.remove();
-  
+
     // Create overlay
     const overlay = document.createElement('div');
     overlay.className =
       'custom-block-modal fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center';
-  
+
     // Modal container
     const modal = document.createElement('div');
     modal.className =
       'bg-white w-[90vw] max-w-6xl rounded-xl shadow-xl flex flex-col';
     modal.style.height = '536px';
-  
+
     // Header
     const header = document.createElement('div');
     header.className =
@@ -776,16 +776,16 @@ editor.Commands.add('open-width-resize-menu', {
     closeBtn.className = 'text-2xl text-gray-500 hover:text-black';
     closeBtn.onclick = () => history.back();
     header.append(title, closeBtn);
-  
+
     // Modal Body (Sidebar + Grid)
     const body = document.createElement('div');
     body.className = 'flex flex-1 overflow-hidden';
-  
+
     // Sidebar
     const sidebar = document.createElement('div');
     sidebar.className =
       'hidden md:flex flex-col w-48 border-r border-gray-200 bg-gray-50 overflow-y-auto';
-  
+
     tags.forEach((tag) => {
       const btn = document.createElement('button');
       btn.textContent = tag;
@@ -800,7 +800,7 @@ editor.Commands.add('open-width-resize-menu', {
       });
       sidebar.appendChild(btn);
     });
-  
+
     // Hide sidebar if inserting around a section
     if (
       (insertPosition === 'before' || insertPosition === 'after') &&
@@ -809,18 +809,18 @@ editor.Commands.add('open-width-resize-menu', {
       sidebar.innerHTML = '';
       sidebar.className = 'hidden';
     }
-  
+
     // Grid wrapper
     const gridWrapper = document.createElement('div');
     gridWrapper.className = 'flex-1 overflow-y-auto p-4';
-  
+
     // Grid itself
     const grid = document.createElement('div');
     grid.className =
       'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4';
-  
+
     gridWrapper.appendChild(grid);
-  
+
     // Render blocks based on category filter
     function renderGrid(tagFilter) {
       grid.innerHTML = '';
@@ -830,25 +830,25 @@ editor.Commands.add('open-width-resize-menu', {
           typeof category === 'string'
             ? category.toLowerCase()
             : category?.id?.toLowerCase?.() || '';
-  
+
         if (tagFilter && blockTag !== tagFilter.toLowerCase()) return;
-  
+
         const card = document.createElement('div');
         card.className =
           'bg-white border rounded-lg shadow-sm hover:shadow-md hover:scale-[1.02] transition transform cursor-pointer overflow-hidden flex flex-col md:w-[200px]';
-  
-          const media = block.get('media') || '';
-          const label = block.get('label') || '';
-          
-          let mediaContent = '';
-          
-          // Check if it has an <img src="...">
-          if (media.includes('<svg')) {
-            // Allow inline SVG to render directly
-            mediaContent = `<div class="w-full h-full">${media}</div>`;
-          } else if (media.trim().startsWith('http')) {
-            // It's a raw image URL, use background-image for better positioning control
-            mediaContent = `
+
+        const media = block.get('media') || '';
+        const label = block.get('label') || '';
+
+        let mediaContent = '';
+
+        // Check if it has an <img src="...">
+        if (media.includes('<svg')) {
+          // Allow inline SVG to render directly
+          mediaContent = `<div class="w-full h-full">${media}</div>`;
+        } else if (media.trim().startsWith('http')) {
+          // It's a raw image URL, use background-image for better positioning control
+          mediaContent = `
              <div 
     data-media-box
     style="
@@ -869,19 +869,19 @@ editor.Commands.add('open-width-resize-menu', {
     </style>
   </div>
             `;
-          } else {
-            // Fallback
-            mediaContent = `<div class="w-full h-full flex items-center justify-center text-xs text-gray-400">No Preview</div>`;
-          }
-          
-          card.innerHTML = `
+        } else {
+          // Fallback
+          mediaContent = `<div class="w-full h-full flex items-center justify-center text-xs text-gray-400">No Preview</div>`;
+        }
+
+        card.innerHTML = `
             <div class="flex-1 bg-gray-100">
               ${mediaContent}
             </div>
             <div class="p-2 text-center text-sm font-medium text-gray-700">${label}</div>
           `;
-          
-  
+
+
         card.addEventListener('click', () => {
           const comp = block.get('content');
           if (insertPosition === 'before') {
@@ -897,20 +897,20 @@ editor.Commands.add('open-width-resize-menu', {
           }
           history.back();
         });
-  
+
         grid.appendChild(card);
       });
     }
-  
+
     // Initial grid render
     renderGrid();
-  
+
     // Compose and render modal
     body.append(sidebar, gridWrapper);
     modal.append(header, body);
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
-  
+
     // Handle history for closing
     window.addEventListener('popstate', () => overlay.remove(), { once: true });
     history.pushState(null, '');
@@ -918,7 +918,7 @@ editor.Commands.add('open-width-resize-menu', {
       if (e.target === overlay) history.back();
     });
   }
-  
+
 
   editor.on("component:add", (component) => {
     if (component.get("disableToolbar")) {
@@ -1177,32 +1177,32 @@ editor.Commands.add('open-width-resize-menu', {
   };
   const initAlpine = (editor) => {
     const frameEl = editor.Canvas.getFrameEl();
-  
+
     if (!frameEl) {
       console.error("Canvas frame not found.");
       return;
     }
-  
+
     const frameDoc = frameEl.contentDocument;
     const frameWin = frameEl.contentWindow;
-  
+
     const loadAlpine = () => {
       const existing = frameDoc.querySelector('script[src*="alpinejs"]');
       if (existing) {
         console.log("Alpine.js already loaded.");
         return;
       }
-  
+
       const script = frameDoc.createElement("script");
       script.src = "https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js";
       script.defer = true;
       script.onload = () => {
         console.log("Alpine.js loaded into canvas.");
       };
-  
+
       frameDoc.head.appendChild(script);
     };
-  
+
     if (frameDoc.readyState === "complete") {
       loadAlpine();
     } else {
@@ -1250,66 +1250,66 @@ editor.Commands.add('open-width-resize-menu', {
 
   editor.on("load", () => {
 
-  //   const iframe = editor.Canvas.getFrameEl();
-  // if (!iframe?.contentDocument) return;
+    //   const iframe = editor.Canvas.getFrameEl();
+    // if (!iframe?.contentDocument) return;
 
-  // const script = iframe.contentDocument.createElement('script');
-  // script.type = 'text/javascript';
-  // script.innerHTML = `
-  //   (function() {
-  //     const ATTR_DESKTOP = 'desktop-width';
-  //     const ATTR_MOBILE = 'mobile-width';
+    // const script = iframe.contentDocument.createElement('script');
+    // script.type = 'text/javascript';
+    // script.innerHTML = `
+    //   (function() {
+    //     const ATTR_DESKTOP = 'desktop-width';
+    //     const ATTR_MOBILE = 'mobile-width';
 
-  //     function updateClasses(el) {
-  //       const mobile = el.getAttribute(ATTR_MOBILE);
-  //       const desktop = el.getAttribute(ATTR_DESKTOP);
+    //     function updateClasses(el) {
+    //       const mobile = el.getAttribute(ATTR_MOBILE);
+    //       const desktop = el.getAttribute(ATTR_DESKTOP);
 
-  //       // Remove previous Tailwind width classes (excluding max-w)
-  //       el.className = el.className
-  //         .split(' ')
-  //         .filter(c => !/^w-\\[.*\\]$/.test(c) && !/^md:w-\\[.*\\]$/.test(c))
-  //         .join(' ');
+    //       // Remove previous Tailwind width classes (excluding max-w)
+    //       el.className = el.className
+    //         .split(' ')
+    //         .filter(c => !/^w-\\[.*\\]$/.test(c) && !/^md:w-\\[.*\\]$/.test(c))
+    //         .join(' ');
 
-  //       if (mobile) el.classList.add(\`w-[\${mobile}]\`);
-  //       if (desktop) el.classList.add(\`md:w-[\${desktop}]\`);
-  //     }
+    //       if (mobile) el.classList.add(\`w-[\${mobile}]\`);
+    //       if (desktop) el.classList.add(\`md:w-[\${desktop}]\`);
+    //     }
 
-  //     // Initial pass
-  //     document.querySelectorAll('[' + ATTR_MOBILE + '],[' + ATTR_DESKTOP + ']').forEach(updateClasses);
+    //     // Initial pass
+    //     document.querySelectorAll('[' + ATTR_MOBILE + '],[' + ATTR_DESKTOP + ']').forEach(updateClasses);
 
-  //     // Observe for any attribute changes
-  //     const observer = new MutationObserver((mutations) => {
-  //       mutations.forEach(m => {
-  //         if (
-  //           m.type === 'attributes' &&
-  //           (m.attributeName === ATTR_MOBILE || m.attributeName === ATTR_DESKTOP)
-  //         ) {
-  //           updateClasses(m.target);
-  //         }
-  //       });
-  //     });
+    //     // Observe for any attribute changes
+    //     const observer = new MutationObserver((mutations) => {
+    //       mutations.forEach(m => {
+    //         if (
+    //           m.type === 'attributes' &&
+    //           (m.attributeName === ATTR_MOBILE || m.attributeName === ATTR_DESKTOP)
+    //         ) {
+    //           updateClasses(m.target);
+    //         }
+    //       });
+    //     });
 
-  //     document.querySelectorAll('[' + ATTR_MOBILE + '],[' + ATTR_DESKTOP + ']').forEach(el => {
-  //       observer.observe(el, { attributes: true });
-  //     });
+    //     document.querySelectorAll('[' + ATTR_MOBILE + '],[' + ATTR_DESKTOP + ']').forEach(el => {
+    //       observer.observe(el, { attributes: true });
+    //     });
 
-  //     // Listen for new nodes
-  //     const treeObserver = new MutationObserver(mutations => {
-  //       mutations.forEach(m => {
-  //         m.addedNodes.forEach(node => {
-  //           if (!(node instanceof HTMLElement)) return;
-  //           if (node.hasAttribute(ATTR_MOBILE) || node.hasAttribute(ATTR_DESKTOP)) {
-  //             updateClasses(node);
-  //             observer.observe(node, { attributes: true });
-  //           }
-  //         });
-  //       });
-  //     });
+    //     // Listen for new nodes
+    //     const treeObserver = new MutationObserver(mutations => {
+    //       mutations.forEach(m => {
+    //         m.addedNodes.forEach(node => {
+    //           if (!(node instanceof HTMLElement)) return;
+    //           if (node.hasAttribute(ATTR_MOBILE) || node.hasAttribute(ATTR_DESKTOP)) {
+    //             updateClasses(node);
+    //             observer.observe(node, { attributes: true });
+    //           }
+    //         });
+    //       });
+    //     });
 
-  //     treeObserver.observe(document.body, { childList: true, subtree: true });
-  //   })();
-  // `;
-  // iframe.contentDocument.body.appendChild(script);
+    //     treeObserver.observe(document.body, { childList: true, subtree: true });
+    //   })();
+    // `;
+    // iframe.contentDocument.body.appendChild(script);
 
 
     editor.RichTextEditor.get("wrap").result = (rte) => {
@@ -1368,58 +1368,252 @@ editor.Commands.add('open-width-resize-menu', {
     }
   });
 
-  editor.on('component:selected', (component) => {
-    if (!component) {
-      console.log('❌ No component selected.');
-      return;
-    }
-  
-    const id = component.getId();
-    console.log('✅ Selected component ID:', id);
-  
-    const allowedIds = ['section-n52xrolx', 'section-00pe2ftl'];
-  
-    if (allowedIds.includes(id)) {
-      console.log(`🎯 ID "${id}" is in the allowed list.`);
-  
-      const classes = component.getClasses() || [];
-      console.log('📦 Current classes:', classes);
-  
-      // Remove '!bg-fixed' if present
-      if (classes.includes('!bg-fixed')) {
-        component.removeClass('!bg-fixed');
-        console.log('➖ Removed "!bg-fixed" class.');
-      }
-  
-      // Add '!bg-scroll' if not present
-      if (!classes.includes('!bg-scroll')) {
-        component.addClass('!bg-scroll');
-        console.log('➕ Added "!bg-scroll" class.');
-      } else {
-        console.log('✅ "!bg-scroll" class already present.');
-      }
-  
-      // Add 'md:!bg-fixed' if not present
-      if (!classes.includes('md:!bg-fixed')) {
-        component.addClass('md:!bg-fixed');
-        console.log('➕ Added "md:!bg-fixed" class.');
-      } else {
-        console.log('✅ "md:!bg-fixed" class already present.');
-      }
-  
-    } else {
-      console.log(`⚠️ ID "${id}" is not in the allowed list. Skipping...`);
-    }
-  });
-  
-  
-  
+
 
 
 
   // Hook into editor load
   editor.on("load", () => {
     setTimeout(() => initAOS(editor), 500); // Wait a bit for iframe
-    
+
   });
+
+  editor.on('load', initContextMenu);
+
+  function initContextMenu() {
+    let copiedComponent = null;
+    let isCut = false;
+  
+    // Create context menu element
+    const menu = document.createElement('div');
+    menu.id = 'context-menu';
+    Object.assign(menu.style, {
+      position: 'fixed',
+      zIndex: '9999',
+      display: 'none',
+      width: '320px',
+      maxHeight: '360px',
+      overflow: 'scroll',
+    });
+    menu.className =
+      'bg-white border border-gray-200 p-3 rounded overflow-scroll rounded-md shadow-xl py-2 text-sm font-medium text-gray-800';
+  
+    document.body.appendChild(menu);
+  
+    const hideMenu = () => {
+      menu.style.display = 'none';
+    };
+  
+    const renderMenu = (components) => {
+      menu.innerHTML = '';
+  
+      components.forEach((comp, i) => {
+        const item = document.createElement('div');
+        item.className =
+          'px-4 py-2 flex items-center justify-between hover:bg-gray-100 hover:translate-x-1 cursor-pointer transition-all group';
+  
+        // Left side - component name
+        const leftSide = document.createElement('div');
+        leftSide.className = 'flex items-center';
+  
+        const label = document.createElement('span');
+        label.className = 'truncate flex-1';
+        label.textContent = comp.getName() || comp.get('tagName');
+  
+        leftSide.appendChild(label);
+  
+        // Right side container - holds both tag and actions
+        const rightSide = document.createElement('div');
+        rightSide.className = 'flex items-center relative min-w-0';
+  
+        // Tag name badge
+        const tag = document.createElement('span');
+        tag.className =
+          'text-sm text-gray-400 bg-black/5 px-3 py-1 rounded font-mono group-hover:opacity-0 group-hover:invisible transition-all duration-200 absolute right-0';
+        tag.textContent = comp.get('tagName');
+  
+        // Action buttons container
+        const actions = document.createElement('div');
+        actions.className =
+          'flex gap-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 absolute right-0 px-2 bg-gray-100';
+  
+        const createIconButton = (svgPath, tooltip, onClick) => {
+          const btn = document.createElement('button');
+          btn.className =
+            'w-8 h-8 border border-gray-300 rounded-md flex items-center justify-center text-gray-500 hover:text-rose-600 hover:border-rose-400 bg-white transition';
+          btn.innerHTML = `
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg">
+              ${svgPath}
+            </svg>
+          `;
+          btn.title = tooltip;
+          btn.onclick = (e) => {
+            e.stopPropagation();
+            onClick();
+            hideMenu();
+          };
+          return btn;
+        };
+  
+        // SVG paths
+        const cutIcon = `<path d="M10 6.5C10 4.57 8.43 3 6.5 3S3 4.57 3 6.5 4.57 10 6.5 10a3.45 3.45 0 0 0 1.613-.413l2.357 2.528-2.318 2.318A3.46 3.46 0 0 0 6.5 14C4.57 14 3 15.57 3 17.5S4.57 21 6.5 21s3.5-1.57 3.5-3.5c0-.601-.166-1.158-.434-1.652l2.269-2.268L17 19.121a3 3 0 0 0 2.121.879H22L9.35 8.518c.406-.572.65-1.265.65-2.018zM6.5 8C5.673 8 5 7.327 5 6.5S5.673 5 6.5 5 8 5.673 8 6.5 7.327 8 6.5 8zm0 11c-.827 0-1.5-.673-1.5-1.5S5.673 16 6.5 16s1.5.673 1.5 1.5S7.327 19 6.5 19z"></path><path d="m17 4.879-3.707 4.414 1.414 1.414L22 4h-2.879A3 3 0 0 0 17 4.879z"></path>`;
+  
+        const copyIcon = `<path fill="none" d="M0 0h24v24H0z"></path><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path>`;
+        
+        const deleteIcon = `<path fill="none" d="M0 0h24v24H0V0z"></path><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5l-1-1h-5l-1 1H5v2h14V4z"></path>`;
+        
+        const pasteIcon = `<path d="M20 11V5c0-1.103-.897-2-2-2h-3a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1H4c-1.103 0-2 .897-2 2v13c0 1.103.897 2 2 2h7c0 1.103.897 2 2 2h7c1.103 0 2-.897 2-2v-7c0-1.103-.897-2-2-2zm-9 2v5H4V5h3v2h8V5h3v6h-5c-1.103 0-2 .897-2 2zm2 7v-7h7l.001 7H13z"></path>`;
+        
+        // Buttons
+        const cutBtn = createIconButton(cutIcon, 'Cut', () => {
+          copiedComponent = comp;
+          isCut = true;
+          comp.remove();
+        });
+  
+        const copyBtn = createIconButton(copyIcon, 'Copy', () => {
+          copiedComponent = comp.clone();
+          isCut = false;
+        });
+  
+        const deleteBtn = createIconButton(deleteIcon, 'Delete', () => {
+          comp.remove();
+        });
+  
+        actions.appendChild(cutBtn);
+        actions.appendChild(copyBtn);
+        actions.appendChild(deleteBtn);
+  
+        if (copiedComponent) {
+          const pasteBtn = createIconButton(pasteIcon, 'Paste', () => {
+            const newComp = isCut ? copiedComponent : copiedComponent.clone();
+            comp.append(newComp);
+            editor.select(newComp);
+            if (isCut) {
+              copiedComponent = null;
+              isCut = false;
+            }
+          });
+          actions.appendChild(pasteBtn);
+        }
+  
+        // Assemble right side
+        rightSide.appendChild(tag);
+        rightSide.appendChild(actions);
+  
+        // Add hover highlighting functionality
+        item.addEventListener('mouseenter', () => {
+          // Get the component's DOM element in the canvas
+          const compEl = comp.getEl();
+          if (compEl) {
+            // Simulate mouseenter on the actual component element
+            const mouseEnterEvent = new MouseEvent('mouseenter', {
+              view: editor.Canvas.getWindow(),
+              bubbles: true,
+              cancelable: true
+            });
+            compEl.dispatchEvent(mouseEnterEvent);
+          }
+        });
+  
+        item.addEventListener('mouseleave', () => {
+          // Get the component's DOM element in the canvas
+          const compEl = comp.getEl();
+          if (compEl) {
+            // Simulate mouseleave on the actual component element
+            const mouseLeaveEvent = new MouseEvent('mouseleave', {
+              view: editor.Canvas.getWindow(),
+              bubbles: true,
+              cancelable: true
+            });
+            compEl.dispatchEvent(mouseLeaveEvent);
+          }
+        });
+  
+        item.onclick = (e) => {
+          e.stopPropagation();
+          editor.select(comp);
+          hideMenu();
+        };
+  
+        item.appendChild(leftSide);
+        item.appendChild(rightSide);
+        menu.appendChild(item);
+      });
+    };
+  
+    // Get component by DOM element
+    const getComponentFromEl = (el) => {
+      const all = editor.getWrapper().find('*');
+      return all.find((cmp) => cmp.getEl() === el) || null;
+    };
+  
+    // Handle right-click on canvas
+    const handleContextMenu = (e) => {
+      e.preventDefault();
+      hideMenu();
+  
+      const canvasDoc = editor.Canvas.getDocument();
+      const canvasWin = editor.Canvas.getWindow();
+      const targetEl = canvasDoc.elementFromPoint(e.clientX, e.clientY);
+      if (!targetEl) return;
+  
+      const comp = getComponentFromEl(targetEl);
+      if (!comp) return;
+  
+      // Build clean linear hierarchy from outermost section tag
+      const tree = [];
+      let current = comp;
+      while (current) {
+        tree.unshift(current);
+        if (current.get('tagName').toLowerCase() === 'section') break;
+        current = current.parent();
+      }
+  
+      renderMenu(tree);
+  
+      // Position menu near cursor with window boundary protection
+      const canvasRect = editor.Canvas.getFrameEl().getBoundingClientRect();
+      const clickX = e.clientX + canvasRect.left;
+      const clickY = e.clientY + canvasRect.top;
+  
+      const maxLeft = window.innerWidth - 330;
+      const maxTop = window.innerHeight - 370;
+      menu.style.left = `${Math.min(clickX, maxLeft)}px`;
+      menu.style.top = `${Math.min(clickY, maxTop)}px`;
+      menu.style.display = 'block';
+    };
+  
+    // Attach event listeners to the current canvas
+    const attachCanvasListeners = () => {
+      const canvasBody = editor.Canvas.getBody();
+      if (canvasBody) {
+        canvasBody.addEventListener('contextmenu', handleContextMenu);
+      }
+    };
+  
+    // Initial attachment
+    attachCanvasListeners();
+  
+    // Re-attach when canvas changes (like page switch)
+    editor.on('canvas:frame:load', attachCanvasListeners);
+  
+    // Close menu when clicking outside
+    document.addEventListener('mousedown', (e) => {
+      if (!menu.contains(e.target)) {
+        hideMenu();
+      }
+    });
+  
+    // Cleanup when editor is destroyed
+    editor.on('destroy', () => {
+      const canvasBody = editor.Canvas.getBody();
+      if (canvasBody) {
+        canvasBody.removeEventListener('contextmenu', handleContextMenu);
+      }
+      document.body.removeChild(menu);
+    });
+  }
+
+
 };
