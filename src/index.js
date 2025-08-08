@@ -1380,240 +1380,309 @@ export default (editor, opts = {}) => {
 
   editor.on('load', initContextMenu);
 
-  function initContextMenu() {
-    let copiedComponent = null;
-    let isCut = false;
-  
-    // Create context menu element
-    const menu = document.createElement('div');
-    menu.id = 'context-menu';
-    Object.assign(menu.style, {
-      position: 'fixed',
-      zIndex: '9999',
-      display: 'none',
-      width: '320px',
-      maxHeight: '360px',
-      overflow: 'scroll',
-    });
-    menu.className =
-      'bg-white border border-gray-200 p-3 rounded overflow-scroll rounded-md shadow-xl py-2 text-sm font-medium text-gray-800';
-  
-    document.body.appendChild(menu);
-  
-    const hideMenu = () => {
-      menu.style.display = 'none';
-    };
-  
-    const renderMenu = (components) => {
-      menu.innerHTML = '';
-  
-      components.forEach((comp, i) => {
-        const item = document.createElement('div');
-        item.className =
-          'px-4 py-2 flex items-center justify-between hover:bg-gray-100 hover:translate-x-1 cursor-pointer transition-all group';
-  
-        // Left side - component name
-        const leftSide = document.createElement('div');
-        leftSide.className = 'flex items-center';
-  
-        const label = document.createElement('span');
-        label.className = 'truncate flex-1';
-        label.textContent = comp.getName() || comp.get('tagName');
-  
-        leftSide.appendChild(label);
-  
-        // Right side container - holds both tag and actions
-        const rightSide = document.createElement('div');
-        rightSide.className = 'flex items-center relative min-w-0';
-  
-        // Tag name badge
-        const tag = document.createElement('span');
-        tag.className =
-          'text-sm text-gray-400 bg-black/5 px-3 py-1 rounded font-mono group-hover:opacity-0 group-hover:invisible transition-all duration-200 absolute right-0';
-        tag.textContent = comp.get('tagName');
-  
-        // Action buttons container
-        const actions = document.createElement('div');
-        actions.className =
-          'flex gap-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 absolute right-0 px-2 bg-gray-100';
-  
-        const createIconButton = (svgPath, tooltip, onClick) => {
-          const btn = document.createElement('button');
-          btn.className =
-            'w-8 h-8 border border-gray-300 rounded-md flex items-center justify-center text-gray-500 hover:text-rose-600 hover:border-rose-400 bg-white transition';
-          btn.innerHTML = `
-            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg">
-              ${svgPath}
-            </svg>
-          `;
-          btn.title = tooltip;
-          btn.onclick = (e) => {
-            e.stopPropagation();
-            onClick();
-            hideMenu();
-          };
-          return btn;
-        };
-  
-        // SVG paths
-        const cutIcon = `<path d="M10 6.5C10 4.57 8.43 3 6.5 3S3 4.57 3 6.5 4.57 10 6.5 10a3.45 3.45 0 0 0 1.613-.413l2.357 2.528-2.318 2.318A3.46 3.46 0 0 0 6.5 14C4.57 14 3 15.57 3 17.5S4.57 21 6.5 21s3.5-1.57 3.5-3.5c0-.601-.166-1.158-.434-1.652l2.269-2.268L17 19.121a3 3 0 0 0 2.121.879H22L9.35 8.518c.406-.572.65-1.265.65-2.018zM6.5 8C5.673 8 5 7.327 5 6.5S5.673 5 6.5 5 8 5.673 8 6.5 7.327 8 6.5 8zm0 11c-.827 0-1.5-.673-1.5-1.5S5.673 16 6.5 16s1.5.673 1.5 1.5S7.327 19 6.5 19z"></path><path d="m17 4.879-3.707 4.414 1.414 1.414L22 4h-2.879A3 3 0 0 0 17 4.879z"></path>`;
-  
-        const copyIcon = `<path fill="none" d="M0 0h24v24H0z"></path><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path>`;
-        
-        const deleteIcon = `<path fill="none" d="M0 0h24v24H0V0z"></path><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5l-1-1h-5l-1 1H5v2h14V4z"></path>`;
-        
-        const pasteIcon = `<path d="M20 11V5c0-1.103-.897-2-2-2h-3a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1H4c-1.103 0-2 .897-2 2v13c0 1.103.897 2 2 2h7c0 1.103.897 2 2 2h7c1.103 0 2-.897 2-2v-7c0-1.103-.897-2-2-2zm-9 2v5H4V5h3v2h8V5h3v6h-5c-1.103 0-2 .897-2 2zm2 7v-7h7l.001 7H13z"></path>`;
-        
-        // Buttons
-        const cutBtn = createIconButton(cutIcon, 'Cut', () => {
-          copiedComponent = comp;
-          isCut = true;
-          comp.remove();
-        });
-  
-        const copyBtn = createIconButton(copyIcon, 'Copy', () => {
-          copiedComponent = comp.clone();
-          isCut = false;
-        });
-  
-        const deleteBtn = createIconButton(deleteIcon, 'Delete', () => {
-          comp.remove();
-        });
-  
-        actions.appendChild(cutBtn);
-        actions.appendChild(copyBtn);
-        actions.appendChild(deleteBtn);
-  
-        if (copiedComponent) {
-          const pasteBtn = createIconButton(pasteIcon, 'Paste', () => {
-            const newComp = isCut ? copiedComponent : copiedComponent.clone();
-            comp.append(newComp);
-            editor.select(newComp);
-            if (isCut) {
-              copiedComponent = null;
-              isCut = false;
-            }
-          });
-          actions.appendChild(pasteBtn);
-        }
-  
-        // Assemble right side
-        rightSide.appendChild(tag);
-        rightSide.appendChild(actions);
-  
-        // Add hover highlighting functionality
-        item.addEventListener('mouseenter', () => {
-          // Get the component's DOM element in the canvas
-          const compEl = comp.getEl();
-          if (compEl) {
-            // Simulate mouseenter on the actual component element
-            const mouseEnterEvent = new MouseEvent('mouseenter', {
-              view: editor.Canvas.getWindow(),
-              bubbles: true,
-              cancelable: true
-            });
-            compEl.dispatchEvent(mouseEnterEvent);
-          }
-        });
-  
-        item.addEventListener('mouseleave', () => {
-          // Get the component's DOM element in the canvas
-          const compEl = comp.getEl();
-          if (compEl) {
-            // Simulate mouseleave on the actual component element
-            const mouseLeaveEvent = new MouseEvent('mouseleave', {
-              view: editor.Canvas.getWindow(),
-              bubbles: true,
-              cancelable: true
-            });
-            compEl.dispatchEvent(mouseLeaveEvent);
-          }
-        });
-  
-        item.onclick = (e) => {
-          e.stopPropagation();
-          editor.select(comp);
-          hideMenu();
-        };
-  
-        item.appendChild(leftSide);
-        item.appendChild(rightSide);
-        menu.appendChild(item);
-      });
-    };
-  
-    // Get component by DOM element
-    const getComponentFromEl = (el) => {
-      const all = editor.getWrapper().find('*');
-      return all.find((cmp) => cmp.getEl() === el) || null;
-    };
-  
-    // Handle right-click on canvas
-    const handleContextMenu = (e) => {
-      e.preventDefault();
-      hideMenu();
-  
+function initContextMenu() {
+  let copiedComponent = null;
+  let isCut = false;
+  let highlightOverlay = null;
+
+  // Create highlight overlay element
+  const createHighlightOverlay = () => {
+    if (highlightOverlay) return highlightOverlay;
+    
+    highlightOverlay = document.createElement('div');
+    highlightOverlay.style.cssText = `
+      position: fixed;
+      pointer-events: none;
+      border: 2px solid #3b82f6;
+      background-color: rgba(59, 130, 246, 0.1);
+      z-index: 9998;
+      display: none;
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
+      transition: all 0.15s ease;
+    `;
+    
+    // Append to main document body (not canvas body) for proper positioning
+    document.body.appendChild(highlightOverlay);
+    
+    return highlightOverlay;
+  };
+
+  // Function to highlight a component
+  const highlightComponent = (comp) => {
+    const overlay = createHighlightOverlay();
+    const compEl = comp.getEl();
+    
+    if (!compEl || !overlay) return;
+    
+    try {
+      // Get the canvas iframe and its document
+      const canvasFrame = editor.Canvas.getFrameEl();
       const canvasDoc = editor.Canvas.getDocument();
       const canvasWin = editor.Canvas.getWindow();
-      const targetEl = canvasDoc.elementFromPoint(e.clientX, e.clientY);
-      if (!targetEl) return;
-  
-      const comp = getComponentFromEl(targetEl);
-      if (!comp) return;
-  
-      // Build clean linear hierarchy from outermost section tag
-      const tree = [];
-      let current = comp;
-      while (current) {
-        tree.unshift(current);
-        if (current.get('tagName').toLowerCase() === 'section') break;
-        current = current.parent();
-      }
-  
-      renderMenu(tree);
-  
-      // Position menu near cursor with window boundary protection
-      const canvasRect = editor.Canvas.getFrameEl().getBoundingClientRect();
-      const clickX = e.clientX + canvasRect.left;
-      const clickY = e.clientY + canvasRect.top;
-  
-      const maxLeft = window.innerWidth - 330;
-      const maxTop = window.innerHeight - 370;
-      menu.style.left = `${Math.min(clickX, maxLeft)}px`;
-      menu.style.top = `${Math.min(clickY, maxTop)}px`;
-      menu.style.display = 'block';
-    };
-  
-    // Attach event listeners to the current canvas
-    const attachCanvasListeners = () => {
       const canvasBody = editor.Canvas.getBody();
-      if (canvasBody) {
-        canvasBody.addEventListener('contextmenu', handleContextMenu);
+      
+      // Get component's position in canvas document
+      const compRect = compEl.getBoundingClientRect();
+      
+      // Get canvas frame position relative to main window
+      const frameRect = canvasFrame.getBoundingClientRect();
+      
+      // Calculate absolute position accounting for canvas frame position
+      const absoluteLeft = frameRect.left + compRect.left;
+      const absoluteTop = frameRect.top + compRect.top;
+      
+      // Position overlay in main document coordinates (not canvas coordinates)
+      overlay.style.display = 'block';
+      overlay.style.left = absoluteLeft + 'px';
+      overlay.style.top = absoluteTop + 'px';
+      overlay.style.width = compRect.width + 'px';
+      overlay.style.height = compRect.height + 'px';
+      overlay.style.position = 'fixed'; // Use fixed positioning to ignore scrolling
+      
+    } catch (e) {
+      console.log('Highlight positioning error:', e);
+      // Fallback: just show a border on the element itself
+      compEl.style.outline = '2px solid #3b82f6';
+      compEl.style.outlineOffset = '-2px';
+    }
+  };
+
+  // Function to remove highlight
+  const removeHighlight = () => {
+    if (highlightOverlay) {
+      highlightOverlay.style.display = 'none';
+    }
+    
+    // Remove any fallback outlines
+    const canvasBody = editor.Canvas.getBody();
+    if (canvasBody) {
+      const elements = canvasBody.querySelectorAll('*[style*="outline"]');
+      elements.forEach(el => {
+        if (el.style.outline.includes('#3b82f6')) {
+          el.style.outline = '';
+          el.style.outlineOffset = '';
+        }
+      });
+    }
+  };
+
+  // Create context menu element
+  const menu = document.createElement('div');
+  menu.id = 'context-menu';
+  Object.assign(menu.style, {
+    position: 'fixed',
+    zIndex: '9999',
+    display: 'none',
+    width: '320px',
+    maxHeight: '360px',
+    overflow: 'scroll',
+  });
+  menu.className =
+    'bg-white border border-gray-200 p-3 rounded overflow-scroll rounded-md shadow-xl py-2 text-sm font-medium text-gray-800';
+
+  document.body.appendChild(menu);
+
+  const hideMenu = () => {
+    menu.style.display = 'none';
+    removeHighlight(); // Clean up any highlights when menu is hidden
+  };
+
+  const renderMenu = (components) => {
+    menu.innerHTML = '';
+
+    components.forEach((comp, i) => {
+      const item = document.createElement('div');
+      item.className =
+        'px-4 py-2 flex items-center justify-between hover:bg-gray-100 hover:translate-x-1 cursor-pointer transition-all group';
+
+      // Left side - component name
+      const leftSide = document.createElement('div');
+      leftSide.className = 'flex items-center';
+
+      const label = document.createElement('span');
+      label.className = 'truncate flex-1';
+      label.textContent = comp.getName() || comp.get('tagName');
+
+      leftSide.appendChild(label);
+
+      // Right side container - holds both tag and actions
+      const rightSide = document.createElement('div');
+      rightSide.className = 'flex items-center relative min-w-0';
+
+      // Tag name badge
+      const tag = document.createElement('span');
+      tag.className =
+        'text-sm text-gray-400 bg-black/5 px-3 py-1 rounded font-mono group-hover:opacity-0 group-hover:invisible transition-all duration-200 absolute right-0';
+      tag.textContent = comp.get('tagName');
+
+      // Action buttons container
+      const actions = document.createElement('div');
+      actions.className =
+        'flex gap-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 absolute right-0 px-2 bg-gray-100';
+
+      const createIconButton = (svgPath, tooltip, onClick) => {
+        const btn = document.createElement('button');
+        btn.className =
+          'w-8 h-8 border border-gray-300 rounded-md flex items-center justify-center text-gray-500 hover:text-rose-600 hover:border-rose-400 bg-white transition';
+        btn.innerHTML = `
+          <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg">
+            ${svgPath}
+          </svg>
+        `;
+        btn.title = tooltip;
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          onClick();
+          hideMenu();
+        };
+        return btn;
+      };
+
+      // SVG paths
+      const cutIcon = `<path d="M10 6.5C10 4.57 8.43 3 6.5 3S3 4.57 3 6.5 4.57 10 6.5 10a3.45 3.45 0 0 0 1.613-.413l2.357 2.528-2.318 2.318A3.46 3.46 0 0 0 6.5 14C4.57 14 3 15.57 3 17.5S4.57 21 6.5 21s3.5-1.57 3.5-3.5c0-.601-.166-1.158-.434-1.652l2.269-2.268L17 19.121a3 3 0 0 0 2.121.879H22L9.35 8.518c.406-.572.65-1.265.65-2.018zM6.5 8C5.673 8 5 7.327 5 6.5S5.673 5 6.5 5 8 5.673 8 6.5 7.327 8 6.5 8zm0 11c-.827 0-1.5-.673-1.5-1.5S5.673 16 6.5 16s1.5.673 1.5 1.5S7.327 19 6.5 19z"></path><path d="m17 4.879-3.707 4.414 1.414 1.414L22 4h-2.879A3 3 0 0 0 17 4.879z"></path>`;
+
+      const copyIcon = `<path fill="none" d="M0 0h24v24H0z"></path><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"></path>`;
+      
+      const deleteIcon = `<path fill="none" d="M0 0h24v24H0V0z"></path><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5l-1-1h-5l-1 1H5v2h14V4z"></path>`;
+      
+      const pasteIcon = `<path d="M20 11V5c0-1.103-.897-2-2-2h-3a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1H4c-1.103 0-2 .897-2 2v13c0 1.103.897 2 2 2h7c0 1.103.897 2 2 2h7c1.103 0 2-.897 2-2v-7c0-1.103-.897-2-2-2zm-9 2v5H4V5h3v2h8V5h3v6h-5c-1.103 0-2 .897-2 2zm2 7v-7h7l.001 7H13z"></path>`;
+      
+      // Buttons
+      const cutBtn = createIconButton(cutIcon, 'Cut', () => {
+        copiedComponent = comp;
+        isCut = true;
+        comp.remove();
+      });
+
+      const copyBtn = createIconButton(copyIcon, 'Copy', () => {
+        copiedComponent = comp.clone();
+        isCut = false;
+      });
+
+      const deleteBtn = createIconButton(deleteIcon, 'Delete', () => {
+        comp.remove();
+      });
+
+      actions.appendChild(cutBtn);
+      actions.appendChild(copyBtn);
+      actions.appendChild(deleteBtn);
+
+      if (copiedComponent) {
+        const pasteBtn = createIconButton(pasteIcon, 'Paste', () => {
+          const newComp = isCut ? copiedComponent : copiedComponent.clone();
+          comp.append(newComp);
+          editor.select(newComp);
+          if (isCut) {
+            copiedComponent = null;
+            isCut = false;
+          }
+        });
+        actions.appendChild(pasteBtn);
       }
-    };
-  
-    // Initial attachment
-    attachCanvasListeners();
-  
-    // Re-attach when canvas changes (like page switch)
-    editor.on('canvas:frame:load', attachCanvasListeners);
-  
-    // Close menu when clicking outside
-    document.addEventListener('mousedown', (e) => {
-      if (!menu.contains(e.target)) {
+
+      // Assemble right side
+      rightSide.appendChild(tag);
+      rightSide.appendChild(actions);
+
+      // Add hover highlighting functionality
+      item.addEventListener('mouseenter', () => {
+        highlightComponent(comp);
+      });
+
+      item.addEventListener('mouseleave', () => {
+        removeHighlight();
+      });
+
+      item.onclick = (e) => {
+        e.stopPropagation();
+        editor.select(comp);
         hideMenu();
-      }
+      };
+
+      item.appendChild(leftSide);
+      item.appendChild(rightSide);
+      menu.appendChild(item);
     });
-  
-    // Cleanup when editor is destroyed
-    editor.on('destroy', () => {
-      const canvasBody = editor.Canvas.getBody();
-      if (canvasBody) {
-        canvasBody.removeEventListener('contextmenu', handleContextMenu);
-      }
+  };
+
+  // Get component by DOM element
+  const getComponentFromEl = (el) => {
+    const all = editor.getWrapper().find('*');
+    return all.find((cmp) => cmp.getEl() === el) || null;
+  };
+
+  // Handle right-click on canvas
+  const handleContextMenu = (e) => {
+    e.preventDefault();
+    hideMenu();
+
+    const canvasDoc = editor.Canvas.getDocument();
+    const canvasWin = editor.Canvas.getWindow();
+    const targetEl = canvasDoc.elementFromPoint(e.clientX, e.clientY);
+    if (!targetEl) return;
+
+    const comp = getComponentFromEl(targetEl);
+    if (!comp) return;
+
+    // Build clean linear hierarchy from outermost section tag
+    const tree = [];
+    let current = comp;
+    while (current) {
+      tree.unshift(current);
+      if (current.get('tagName').toLowerCase() === 'section') break;
+      current = current.parent();
+    }
+
+    renderMenu(tree);
+
+    // Position menu near cursor with window boundary protection
+    const canvasRect = editor.Canvas.getFrameEl().getBoundingClientRect();
+    const clickX = e.clientX + canvasRect.left;
+    const clickY = e.clientY + canvasRect.top;
+
+    const maxLeft = window.innerWidth - 330;
+    const maxTop = window.innerHeight - 370;
+    menu.style.left = `${Math.min(clickX, maxLeft)}px`;
+    menu.style.top = `${Math.min(clickY, maxTop)}px`;
+    menu.style.display = 'block';
+  };
+
+  // Attach event listeners to the current canvas
+  const attachCanvasListeners = () => {
+    const canvasBody = editor.Canvas.getBody();
+    if (canvasBody) {
+      canvasBody.addEventListener('contextmenu', handleContextMenu);
+    }
+  };
+
+  // Initial attachment
+  attachCanvasListeners();
+
+  // Re-attach when canvas changes (like page switch)
+  editor.on('canvas:frame:load', attachCanvasListeners);
+
+  // Close menu when clicking outside
+  document.addEventListener('mousedown', (e) => {
+    if (!menu.contains(e.target)) {
+      hideMenu();
+    }
+  });
+
+  // Cleanup when editor is destroyed
+  editor.on('destroy', () => {
+    const canvasBody = editor.Canvas.getBody();
+    if (canvasBody) {
+      canvasBody.removeEventListener('contextmenu', handleContextMenu);
+    }
+    // Remove highlight overlay from main document
+    if (highlightOverlay && document.body.contains(highlightOverlay)) {
+      document.body.removeChild(highlightOverlay);
+    }
+    if (document.body.contains(menu)) {
       document.body.removeChild(menu);
-    });
-  }
+    }
+  });
+}
 
 
 };
