@@ -3204,7 +3204,7 @@ export default (editor, opts = {}) => {
       attributes: {
         id: `section-${Math.random().toString(36).substr(2, 8)}`,
         "bg-image": "https://posten.in/wp-content/uploads/2022/07/Night-1-2.png",
-        "hero-section-height": "410px"
+        "hero-section-height": "600px"
       },
       components: [
         {
@@ -3756,6 +3756,170 @@ export default (editor, opts = {}) => {
       ]
     }
   });
+  bm.add('hero-section-overlapping-card', {
+    label: 'Hero Section',
+    defaulttheme: true,
+    sectionblocks: true,
+    content: [{
+      type: 'hero-section-bg',
+      attributes: {
+        id: 'section-n52xrolx',
+        'bg-image': 'https://images.unsplash.com/photo-1606836591695-4d58a73eba1e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2MjczNDh8MHwxfHNlYXJjaHwxfHxvZmZpY2UlMjBtZWV0aW5nfGVufDB8fHx8MTc1NTExMDAyNnww&ixlib=rb-4.1.0&q=80&w=1080',
+      },
+      components: [
+        {
+          type: "spacer",
+          attributes: {
+            "mobile-height": "560px",
+            "mobile-width": "75%",
+            "desktop-height": "36vh"
+          }
+        },
+        {
+          type: "overlap-container",
+          attributes: {
+            "desktop-width": "75%",
+            "desktop-height": "530px",
+            "mobile-height": "678px",
+          },
+          components: [
+            {
+              type: "flex",
+              attributes: {
+                flexDirection: "flex-col",
+                flexDirectionDesktop: "md:flex-row",
+                wrap: "no-wrap",
+                gap: "no-gap",
+                alignItems: "items-end",
+                alignContent: "content-center",
+                justifyContent: "justify-between",
+                "mobile-height": "100%",
+                
+              },
+              components: [
+                // {
+                //   type: "spacer",
+                //   attributes: {
+                //     "mobile-height": "236px",
+                //   }
+                // },
+                {
+                  type: "flex",
+                  attributes: {
+                    flexDirection: "flex-col",
+                    flexDirectionDesktop: "md:flex-row",
+                    wrap: "flex-wrap",
+                    gap: "no-gap",
+                    alignItems: "items-end",
+                    alignContent: "content-end",
+                    justifyContent: "justify-between",
+                    "mobile-width": "100%",
+                    "desktop-width": "50%"
+                  },
+                  components: [
+                    {
+                      type: "card",
+                      attributes: {
+                      },
+                      components: [
+                        {
+                          type: "card-body",
+                          classes: [ "z-10", "relative", "px-4" ,"md:px-8", "py-6"],
+                          components: [
+                            {
+                              type: "flex",
+                              attributes: {
+                                flexDirection: "flex-col",
+                                flexDirectionDesktop: "md:flex-col",
+                                wrap: "no-wrap",
+                                gap: "gap-4",
+                                alignItems: "items-start",
+                                alignContent: "content-start",
+                                justifyContent: "justify-start",
+                              },
+                              components: [
+                                {
+                                  type: "img-wrapper",
+                                  attributes: {
+                                    "mobile-width": "150px"
+                                  },
+                                  components: {
+                                    type: "custom-image",
+                                    attributes: {
+                                      "src": "https://byte-ai.s3.us-east-1.amazonaws.com/013d2802-65bc-4bab-9488-874e52c80e20.png",
+                                    }
+                                  }
+                                },
+                                {
+                                  type: "spacer",
+                                  attributes: {
+                                    "mobile-height": "24px",
+                                  }
+                                },
+                                {
+                                  type: "content-title",
+                                  content: "Empowering Healthcare Businesses with Smart Global Solutions."
+                                },
+                               
+                                { type: "button-primary", content: "Work With Us" }
+                                
+                              ]
+                            }
+                          ],
+                        }
+                      ],
+                    },
 
+                  ]
+                },  
+                {
+                  type: "img-wrapper",
+                  attributes: {
+                    "mobile-width": "60%",
+                    "desktop-width": "50%",
+                    "desktop-height": "100%",
+                  },
+                  
+                  components: {
+                    type: "custom-image",
+                    attributes: {
+                      "src": "	https://byte-ai.s3.us-east-1.amazonaws.com/1ad2765d-eaa1-4c54-b271-ae902f0fdc90.png",
+                    
+                    }
+                  }
+                },
+
+              ]
+            },
+            
+          ]
+        }
+      ],
+      
+    },
+    {
+      type: "section",
+      components: [
+        {
+          type: "spacer",
+          attributes: {
+            "mobile-height": "286px",
+            "mobile-width": "75%",
+          }
+        },
+        {
+        type: "container", attributes: { textalign: "center" }, components: [{
+          type: "text-content",
+          attributes: { textalign: "center" },
+          content:
+            "Section Content"
+        }]
+      }]
+    }
+
+  
+  ]
+  });
+  
 };
 

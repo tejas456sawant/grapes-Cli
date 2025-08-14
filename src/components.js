@@ -1121,7 +1121,7 @@ export default (editor, options) => {
       defaults: {
         tagName: 'div',
         classes: [
-          'img-wrapper', 'w-auto', 'flex', 'items-center',
+          'img-wrapper', 'flex', 'items-center',
           'justify-center', 'overflow-hidden', 'relative',
         ],
         droppable: false,
@@ -2801,7 +2801,7 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "flex items-center justify-center bg-cover overflow-hidden bg-center hero-section",
+            "flex items-center overflow-y-visible justify-center bg-cover bg-center hero-section",
           sectiontype: "normal",
         },
         traits: [
@@ -3373,6 +3373,12 @@ export default (editor, options) => {
         .button-rounded-undefined .button-primary{
           border-radius: 99999px !important;
         }
+        .button-rounded-sm .button-secondary{
+          border-radius: 8px !important;
+        }
+        .button-rounded-sm .button-primary{
+          border-radius: 8px !important;
+        }
         .badge-rounded-undefined .capsule{
           border-radius: 99999px !important;
         }
@@ -3735,7 +3741,7 @@ export default (editor, options) => {
         droppable: false,
         attributes: {
           class:
-            "lg:max-w-6xl container flex flex-col flex-grow px-4 mt-40 m-4 grow pb-8",
+            "lg:max-w-6xl container hero-section-container flex flex-col flex-grow px-4 mt-40 m-4 grow pb-8",
         },
       },
     },
@@ -3745,6 +3751,28 @@ export default (editor, options) => {
       },
     },
   });
+
+  editor.Components.addType("overlap-container", {
+    model: {
+      defaults: {
+        tagName: "div",
+        draggable: false,
+        droppable: true,
+        attributes: {
+          class: `
+            absolute  bottom-0
+            translate-y-1/2 z-10
+            w-[90%] max-w-6xl
+            flex flex-col flex-grow
+             mx-2 md:mx-5
+            bg-white shadow-lg
+            overlap-container
+          `.trim(),
+        },
+      },
+    },
+  });
+  
 
   editor.Components.addType("spacer", {
     model: {
@@ -4080,7 +4108,7 @@ export default (editor, options) => {
 }
 
 .bg .button-secondary {
-  box-shadow: inset 0px 0px 0px 1px white;
+  box-shadow: inset 0px 0px 0px 1px currentColor;
 }
 
 .bg-section-dark .button-secondary {
@@ -5623,7 +5651,7 @@ export default (editor, options) => {
         disableToolbar: true,
         attributes: {
           class:
-            "flex items-center justify-center bg-cover bg-center  overflow-hidden bg-black hero-section bg",
+            "flex items-center justify-center bg-cover bg-center overflow-y-visible bg-gray-600 hero-section bg",
           "bg-image": "https://example.com/default-image.jpg", // Initial background image URL
           "bg-overlay": "primary-gradient", // Default overlay
         },
@@ -5637,7 +5665,7 @@ export default (editor, options) => {
           },
         ],
         styles: `.bg
-  *:not(.gjs-component-buttons):not(.gjs-component-buttons *):not(.highlight):not(.card *) {
+  *:not(.gjs-component-buttons):not(.gjs-component-buttons *):not(.highlight):not(.card *):not(.overlap-container *) {
   z-index: 2;
   color: white;
 }
@@ -5756,18 +5784,6 @@ export default (editor, options) => {
   pointer-events: none;
 }
 
-.right-gradient-overlay::before {
-  content: "";
-  position: absolute;
-  z-index: 1;
-  top: 0px;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: rgba(0, 0, 0, 0);
-  opacity: 0.65;
-  pointer-events: none;
-}
 `,
         traits: [
           {
