@@ -3204,7 +3204,6 @@ export default (editor, opts = {}) => {
       attributes: {
         id: `section-${Math.random().toString(36).substr(2, 8)}`,
         "bg-image": "https://posten.in/wp-content/uploads/2022/07/Night-1-2.png",
-        "hero-section-height": "600px"
       },
       components: [
         {
