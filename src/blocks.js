@@ -3068,7 +3068,7 @@ export default (editor, opts = {}) => {
   <body class="bg-gray-50 flex items-center justify-center min-h-screen">
     <div class="bg-white p-12 rounded-lg shadow-md w-full max-w-4xl">
       <form action="https://api.forms.bytesuite.io/r/i0skZsTXyWC" method="post">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
           <div>
             <label for="name" class="text-xs font-semibold text-gray-500 uppercase">Your name</label>
             <input type="text" id="name" placeholder="Full name" name="name"
