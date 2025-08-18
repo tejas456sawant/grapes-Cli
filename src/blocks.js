@@ -3045,90 +3045,85 @@ export default (editor, opts = {}) => {
     label: "Contact Form (iframe)",
     defaulttheme: true,
     category: "Form",
-    content: `
-      <iframe 
-        srcdoc='
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Contact Form</title>
-            <script src="https://cdn.tailwindcss.com"></script>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
-            <style>
-              .iti { width: 100%; margin-top: 0.5rem; position: relative; border-bottom: 2px solid #e5e7eb; transition: border-color 0.2s ease-in-out; }
-              .iti:focus-within { border-bottom-color: #000; }
-              .iti__input { width: 100%; border: none; padding-top: 0.5rem; padding-bottom: 0.5rem; position: relative; z-index: 1; background: transparent; }
-              .iti__input:focus { outline: none; box-shadow: none; }
-              .iti--allow-dropdown .iti__input { padding-left: 56px; }
-              .iti__flag-container { position: absolute; top: 0; bottom: 0; left: 0; z-index: 2; }
-              .iti__selected-flag { background-color: transparent; display: flex; align-items: center; height: 100%; }
-              .iti__country-list { z-index: 20; }
-            </style>
-          </head>
-          <body class="bg-gray-50 flex items-center justify-center min-h-screen">
-            <div class="bg-white p-12 rounded-lg shadow-md w-full max-w-4xl">
-              <form action="https://api.forms.bytesuite.io/r/i0skZsTXyWC" method="post">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                  <div>
-                    <label for="name" class="text-xs font-semibold text-gray-500 uppercase">Your name</label>
-                    <input type="text" id="name" placeholder="Full name" name="name"
-                        class="mt-2 block w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black py-2 placeholder-gray-400"
-                        required>
-                  </div>
-                  <div>
-                    <label for="email" class="text-xs font-semibold text-gray-500 uppercase">Email address</label>
-                    <input type="email" id="email" placeholder="Email Address" name="email"
-                        class="mt-2 block w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black py-2 placeholder-gray-400"
-                        required>
-                  </div>
-                  <div>
-                    <label for="phone" class="text-xs font-semibold text-gray-500 uppercase">Phone No</label>
-                    <input type="tel" id="phone" placeholder="Phone No" name="phone"
-                        class="mt-2 block w-full border-0 border-b-1 border-gray-200 focus:ring-0 focus:border-black py-2 placeholder-gray-400"
-                        required>
-                  </div>
-                  <div>
-                    <label for="subject" class="text-xs font-semibold text-gray-500 uppercase">Subject</label>
-                    <input type="text" id="subject" placeholder="Subject" name="subject"
-                        class="mt-2 block w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black py-2 placeholder-gray-400"
-                        required>
-                  </div>
-                  <div class="md:col-span-2">
-                    <label for="message" class="text-xs font-semibold text-gray-500 uppercase">Your message</label>
-                    <textarea id="message" rows="5" placeholder="Tell us about your enquiry" name="message"
-                        class="mt-2 block w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black py-2 placeholder-gray-400 resize-none"
-                        required></textarea>
-                  </div>
-                </div>
-                <div class="mt-6 flex items-center">
-                  <input id="terms" name="terms" type="checkbox" value="true"
-                      class="h-4 w-4 text-black border-gray-300 rounded focus:ring-black">
-                  <label for="terms" class="ml-3 block text-sm text-gray-600">I am bound by the terms of the Service I
-                      accept Privacy Policy</label>
-                </div>
-                <div class="mt-8">
-                  <button type="submit"
-                      class="w-full bg-black text-white py-3 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black font-semibold">
-                      Send message
-                  </button>
-                </div>
-              </form>
-            </div>
-            <script>
-              const phoneInputField = document.querySelector("#phone");
-              const phoneInput = window.intlTelInput(phoneInputField, {
-                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-              });
-            </script>
-          </body>
-          </html>
-        ' 
-        style="width:100%; height:900px; border:none; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);" 
-      ></iframe>
-    `
+    content: {
+      type: "iframe",
+  content: `<iframe style='width:100%;height:100vh;border:none;' srcdoc='
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <style>
+      .iti { width: 100%; margin-top: 0.5rem; position: relative; border-bottom: 2px solid #e5e7eb; transition: border-color 0.2s ease-in-out; }
+      .iti:focus-within { border-bottom-color: #000; }
+      .iti__input { width: 100%; border: none; padding-top: 0.5rem; padding-bottom: 0.5rem; position: relative; z-index: 1; background: transparent; }
+      .iti__input:focus { outline: none; box-shadow: none; }
+      .iti--allow-dropdown .iti__input { padding-left: 56px; }
+      .iti__flag-container { position: absolute; top: 0; bottom: 0; left: 0; z-index: 2; }
+      .iti__selected-flag { background-color: transparent; display: flex; align-items: center; height: 100%; }
+      .iti__country-list { z-index: 20; }
+    </style>
+  </head>
+  <body class="bg-gray-50 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-12 rounded-lg shadow-md w-full max-w-4xl">
+      <form action="https://api.forms.bytesuite.io/r/i0skZsTXyWC" method="post">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+          <div>
+            <label for="name" class="text-xs font-semibold text-gray-500 uppercase">Your name</label>
+            <input type="text" id="name" placeholder="Full name" name="name"
+              class="mt-2 block w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black py-2 placeholder-gray-400"
+              required>
+          </div>
+          <div>
+            <label for="email" class="text-xs font-semibold text-gray-500 uppercase">Email address</label>
+            <input type="email" id="email" placeholder="Email Address" name="email"
+              class="mt-2 block w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black py-2 placeholder-gray-400"
+              required>
+          </div>
+          <div>
+            <label for="phone" class="text-xs font-semibold text-gray-500 uppercase">Phone No</label>
+            <input type="tel" id="phone" placeholder="Phone No" name="phone"
+              class="mt-2 block w-full border-0 border-b-1 border-gray-200 focus:ring-0 focus:border-black py-2 placeholder-gray-400"
+              required>
+          </div>
+          <div>
+            <label for="subject" class="text-xs font-semibold text-gray-500 uppercase">Subject</label>
+            <input type="text" id="subject" placeholder="Subject" name="subject"
+              class="mt-2 block w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black py-2 placeholder-gray-400"
+              required>
+          </div>
+          <div class="md:col-span-2">
+            <label for="message" class="text-xs font-semibold text-gray-500 uppercase">Your message</label>
+            <textarea id="message" rows="5" placeholder="Tell us about your enquiry" name="message"
+              class="mt-2 block w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black py-2 placeholder-gray-400 resize-none"
+              required></textarea>
+          </div>
+        </div>
+        <div class="mt-6 flex items-center">
+          <input id="terms" name="terms" type="checkbox" value="true"
+            class="h-4 w-4 text-black border-gray-300 rounded focus:ring-black">
+          <label for="terms" class="ml-3 block text-sm text-gray-600">I am bound by the terms of the Service I accept Privacy Policy</label>
+        </div>
+        <div class="mt-8">
+          <button type="submit"
+            class="w-full bg-black text-white py-3 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black font-semibold">
+            Send message
+          </button>
+        </div>
+      </form>
+    </div>
+    <script>
+      const phoneInputField = document.querySelector("#phone");
+      const phoneInput = window.intlTelInput(phoneInputField, {
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+      });
+    </script>
+  </body>
+  </html>'>
+  </iframe>
+  `,
+    }
   });
   
   bm.add("contact-form-section-2", {
