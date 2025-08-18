@@ -2794,8 +2794,345 @@ export default (editor, opts = {}) => {
     },
     media: ``
   });
-  bm.add("contact-form-section", {
-    label: "Contact Section",
+  // bm.add("contact-form-section", {
+  //   label: "Contact Section",
+  //   defaulttheme: true,
+  //   sectionblocks: true,
+  //   content: {
+  //     type: "section",
+  //     attributes: {
+  //       id: `contact`,
+  //     },
+  //     components: [{
+  //       type: "container",
+  //       components: [
+  //         {
+  //           type: "flex",
+  //           attributes: {
+  //             flexDirection: "flex-col",
+  //             flexDirectionDesktop: "md:flex-col",
+  //             wrap: "no-wrap",
+  //             gap: "gap-4",
+  //             alignItems: "items-start",
+  //             alignContent: "content-start",
+  //             justifyContent: "justify-start",
+
+  //           },
+  //           components: [
+  //             {
+  //               type: "badge",
+  //               content: "Get in Touch"
+  //             },
+  //             {
+  //               type: "content-heading",
+  //               content: "For Manufacturers, Contractors, Engineers & Suppliers in Pre-Stressing"
+  //             }
+  //           ]
+
+  //         },
+  //         {
+  //           type: "spacer",
+  //           attributes: {
+  //             "mobile-height": "48px",
+  //           }
+  //         },
+  //         {
+  //           type: "flex",
+  //           attributes: {
+  //             flexDirection: "flex-col",
+  //             flexDirectionDesktop: "md:flex-row",
+  //             wrap: "no-wrap",
+  //             gap: "gap-8",
+  //             alignItems: "items-start",
+  //             alignContent: "content-start",
+  //             justifyContent: "justify-between"
+  //           },
+  //           components: [
+  //             {
+  //               type: "flex",
+  //               attributes: {
+  //                 flexDirection: "flex-col",
+  //                 flexDirectionDesktop: "md:flex-col",
+  //                 wrap: "no-wrap",
+  //                 gap: "gap-8",
+  //                 alignItems: "items-start",
+  //                 alignContent: "content-start",
+  //                 justifyContent: "justify-start",
+  //                 "desktop-width": "46%",
+  //               },
+  //               components: [
+
+  //                 {
+  //                   type: "grid-layout",
+  //                   attributes: {
+  //                     desktopColumns: "grid-cols-1",
+  //                     mobileColumns: "grid-cols-1",
+  //                     "mobile-width": "100%",
+  //                     gap: "gap-4",
+  //                   },
+  //                   components: [
+
+  //                     {
+  //                       type: "card",
+  //                       attributes: {
+  //                         background: "true",
+  //                         bordered: "false"
+  //                       },
+  //                       components: [
+  //                         {
+  //                           type: "card-body",
+  //                           components: [
+  //                             {
+  //                               type: "flex",
+  //                               attributes: {
+  //                                 flexDirection: "flex-col",
+  //                                 flexDirectionDesktop: "md:flex-col",
+  //                                 wrap: "no-wrap",
+  //                                 gap: "gap-4",
+  //                                 alignItems: "items-start",
+  //                                 alignContent: "content-start",
+  //                                 justifyContent: "justify-start",
+  //                               },
+  //                               components: [
+  //                                 {
+  //                                   type: "icon",
+  //                                   content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M288 39.056v16.659c0 10.804 7.281 20.159 17.686 23.066C383.204 100.434 440 171.518 440 256c0 101.689-82.295 184-184 184-101.689 0-184-82.295-184-184 0-84.47 56.786-155.564 134.312-177.219C216.719 75.874 224 66.517 224 55.712V39.064c0-15.709-14.834-27.153-30.046-23.234C86.603 43.482 7.394 141.206 8.003 257.332c.72 137.052 111.477 246.956 248.531 246.667C393.255 503.711 504 392.788 504 256c0-115.633-79.14-212.779-186.211-240.236C302.678 11.889 288 23.456 288 39.056z"></path></svg>',
+  //                                   attributes: {
+  //                                     "mobile-width": "60px",
+  //                                     "icon-style": "icon-style-white-bg",
+  //                                   }
+  //                                 },
+  //                                 {
+  //                                   type: "content-heading",
+  //                                   content: "Our Location"
+  //                                 },
+  //                                 {
+  //                                   type: "text-content",
+  //                                   content: "F02& F03, Silver Dale, F Road, Mahatma Nagar, Nashik 422 007 Maharashtra, India"
+  //                                 }
+  //                               ]
+  //                             }
+  //                           ],
+  //                         }
+  //                       ],
+  //                     },
+  //                     // Duplicate 4 more times
+  //                     {
+  //                       type: "card",
+  //                       attributes: {
+  //                         background: "true",
+  //                         bordered: "false"
+  //                       },
+  //                       components: [
+  //                         {
+  //                           type: "card-body",
+  //                           components: [
+  //                             {
+  //                               type: "flex",
+  //                               attributes: {
+  //                                 flexDirection: "flex-col",
+  //                                 flexDirectionDesktop: "md:flex-col",
+  //                                 wrap: "no-wrap",
+  //                                 gap: "gap-4",
+  //                                 alignItems: "items-start",
+  //                                 alignContent: "content-start",
+  //                                 justifyContent: "justify-start",
+  //                               },
+  //                               components: [
+  //                                 {
+  //                                   type: "icon",
+  //                                   content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 384 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M372 160H12c-6.6 0-12 5.4-12 12v56c0 6.6 5.4 12 12 12h140v228c0 6.6 5.4 12 12 12h56c6.6 0 12-5.4 12-12V240h140c6.6 0 12-5.4 12-12v-56c0-6.6-5.4-12-12-12zm0-128H12C5.4 32 0 37.4 0 44v56c0 6.6 5.4 12 12 12h360c6.6 0 12-5.4 12-12V44c0-6.6-5.4-12-12-12z"></path></svg>',
+  //                                   attributes: {
+  //                                     "mobile-width": "60px",
+  //                                     "icon-style": "icon-style-white-bg",
+  //                                   }
+  //                                 },
+  //                                 {
+  //                                   type: "content-heading",
+  //                                   content: "Call Us On"
+  //                                 },
+  //                                 {
+  //                                   type: "text-content",
+  //                                   content: "+ 91 0253 2357169 &nbsp;&nbsp; | &nbsp;&nbsp; + 91 98228 75353 ​"
+  //                                 },
+  //                               ]
+  //                             }
+  //                           ],
+  //                         }
+  //                       ],
+  //                     },
+  //                     {
+  //                       type: "card",
+  //                       attributes: {
+  //                         background: "true",
+  //                         bordered: "false"
+  //                       },
+  //                       components: [
+  //                         {
+  //                           type: "card-body",
+  //                           components: [
+  //                             {
+  //                               type: "flex",
+  //                               attributes: {
+  //                                 flexDirection: "flex-col",
+  //                                 flexDirectionDesktop: "md:flex-col",
+  //                                 wrap: "no-wrap",
+  //                                 gap: "gap-4",
+  //                                 alignItems: "items-start",
+  //                                 alignContent: "content-start",
+  //                                 justifyContent: "justify-start",
+  //                               },
+  //                               components: [
+  //                                 {
+  //                                   type: "icon",
+  //                                   content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="M17 15l1.55 1.55c-.96 1.69-3.33 3.04-5.55 3.37V11h3V9h-3V7.82C14.16 7.4 15 6.3 15 5c0-1.65-1.35-3-3-3S9 3.35 9 5c0 1.3.84 2.4 2 2.82V9H8v2h3v8.92c-2.22-.33-4.59-1.68-5.55-3.37L7 15l-4-3v3c0 3.88 4.92 7 9 7s9-3.12 9-7v-3l-4 3zM12 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z"></path></svg>',
+  //                                   attributes: {
+  //                                     "mobile-width": "60px",
+  //                                     "icon-style": "icon-style-white-bg",
+  //                                   }
+  //                                 },
+  //                                 {
+  //                                   type: "content-heading",
+  //                                   content: "Email us"
+  //                                 },
+  //                                 {
+  //                                   type: "text-content",
+  //                                   content: "info@posten.in &nbsp;&nbsp; | &nbsp;&nbsp; posten.india@gmail.com​"
+  //                                 }
+  //                               ]
+  //                             }
+  //                           ],
+  //                         }
+  //                       ],
+  //                     },
+
+  //                   ]
+  //                 }
+  //               ]
+  //             },
+  //             {
+  //               type: "flex",
+  //               attributes: {
+  //                 flexDirection: "flex-col",
+  //                 flexDirectionDesktop: "md:flex-col",
+  //                 wrap: "flex-wrap",
+  //                 gap: "gap-6",
+  //                 alignItems: "items-stretch",
+  //                 justifyContent: "justify-start",
+  //               },
+  //               components: [
+  //                 {
+
+  //                   type: "form-wrapper",
+  //                   attributes: { "desktop-width": "100%" },
+  //                 },
+  //               ]
+  //             }
+  //           ]
+
+  //         },
+
+
+
+
+  //       ],
+  //     }]
+  //   },
+  //   media: ``
+  // });
+  
+  editor.BlockManager.add("contact-form-iframe", {
+    label: "Contact Form (iframe)",
+    defaulttheme: true,
+    category: "Form",
+    content: `
+      <iframe 
+        srcdoc='
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Contact Form</title>
+            <script src="https://cdn.tailwindcss.com"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+            <style>
+              .iti { width: 100%; margin-top: 0.5rem; position: relative; border-bottom: 2px solid #e5e7eb; transition: border-color 0.2s ease-in-out; }
+              .iti:focus-within { border-bottom-color: #000; }
+              .iti__input { width: 100%; border: none; padding-top: 0.5rem; padding-bottom: 0.5rem; position: relative; z-index: 1; background: transparent; }
+              .iti__input:focus { outline: none; box-shadow: none; }
+              .iti--allow-dropdown .iti__input { padding-left: 56px; }
+              .iti__flag-container { position: absolute; top: 0; bottom: 0; left: 0; z-index: 2; }
+              .iti__selected-flag { background-color: transparent; display: flex; align-items: center; height: 100%; }
+              .iti__country-list { z-index: 20; }
+            </style>
+          </head>
+          <body class="bg-gray-50 flex items-center justify-center min-h-screen">
+            <div class="bg-white p-12 rounded-lg shadow-md w-full max-w-4xl">
+              <form action="https://api.forms.bytesuite.io/r/i0skZsTXyWC" method="post">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                  <div>
+                    <label for="name" class="text-xs font-semibold text-gray-500 uppercase">Your name</label>
+                    <input type="text" id="name" placeholder="Full name" name="name"
+                        class="mt-2 block w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black py-2 placeholder-gray-400"
+                        required>
+                  </div>
+                  <div>
+                    <label for="email" class="text-xs font-semibold text-gray-500 uppercase">Email address</label>
+                    <input type="email" id="email" placeholder="Email Address" name="email"
+                        class="mt-2 block w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black py-2 placeholder-gray-400"
+                        required>
+                  </div>
+                  <div>
+                    <label for="phone" class="text-xs font-semibold text-gray-500 uppercase">Phone No</label>
+                    <input type="tel" id="phone" placeholder="Phone No" name="phone"
+                        class="mt-2 block w-full border-0 border-b-1 border-gray-200 focus:ring-0 focus:border-black py-2 placeholder-gray-400"
+                        required>
+                  </div>
+                  <div>
+                    <label for="subject" class="text-xs font-semibold text-gray-500 uppercase">Subject</label>
+                    <input type="text" id="subject" placeholder="Subject" name="subject"
+                        class="mt-2 block w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black py-2 placeholder-gray-400"
+                        required>
+                  </div>
+                  <div class="md:col-span-2">
+                    <label for="message" class="text-xs font-semibold text-gray-500 uppercase">Your message</label>
+                    <textarea id="message" rows="5" placeholder="Tell us about your enquiry" name="message"
+                        class="mt-2 block w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black py-2 placeholder-gray-400 resize-none"
+                        required></textarea>
+                  </div>
+                </div>
+                <div class="mt-6 flex items-center">
+                  <input id="terms" name="terms" type="checkbox" value="true"
+                      class="h-4 w-4 text-black border-gray-300 rounded focus:ring-black">
+                  <label for="terms" class="ml-3 block text-sm text-gray-600">I am bound by the terms of the Service I
+                      accept Privacy Policy</label>
+                </div>
+                <div class="mt-8">
+                  <button type="submit"
+                      class="w-full bg-black text-white py-3 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black font-semibold">
+                      Send message
+                  </button>
+                </div>
+              </form>
+            </div>
+            <script>
+              const phoneInputField = document.querySelector("#phone");
+              const phoneInput = window.intlTelInput(phoneInputField, {
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+              });
+            </script>
+          </body>
+          </html>
+        ' 
+        style="width:100%; height:900px; border:none; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);" 
+      ></iframe>
+    `
+  });
+  
+  bm.add("contact-form-section-2", {
+    label: "Contact Section 2",
     defaulttheme: true,
     sectionblocks: true,
     content: {
@@ -2875,135 +3212,19 @@ export default (editor, opts = {}) => {
                       {
                         type: "card",
                         attributes: {
-                          background: "true",
+                          background: "false",
                           bordered: "false"
                         },
                         components: [
                           {
-                            type: "card-body",
-                            components: [
-                              {
-                                type: "flex",
-                                attributes: {
-                                  flexDirection: "flex-col",
-                                  flexDirectionDesktop: "md:flex-col",
-                                  wrap: "no-wrap",
-                                  gap: "gap-4",
-                                  alignItems: "items-start",
-                                  alignContent: "content-start",
-                                  justifyContent: "justify-start",
-                                },
-                                components: [
-                                  {
-                                    type: "icon",
-                                    content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M288 39.056v16.659c0 10.804 7.281 20.159 17.686 23.066C383.204 100.434 440 171.518 440 256c0 101.689-82.295 184-184 184-101.689 0-184-82.295-184-184 0-84.47 56.786-155.564 134.312-177.219C216.719 75.874 224 66.517 224 55.712V39.064c0-15.709-14.834-27.153-30.046-23.234C86.603 43.482 7.394 141.206 8.003 257.332c.72 137.052 111.477 246.956 248.531 246.667C393.255 503.711 504 392.788 504 256c0-115.633-79.14-212.779-186.211-240.236C302.678 11.889 288 23.456 288 39.056z"></path></svg>',
-                                    attributes: {
-                                      "mobile-width": "60px",
-                                      "icon-style": "icon-style-white-bg",
-                                    }
-                                  },
-                                  {
-                                    type: "content-heading",
-                                    content: "Our Location"
-                                  },
-                                  {
-                                    type: "text-content",
-                                    content: "F02& F03, Silver Dale, F Road, Mahatma Nagar, Nashik 422 007 Maharashtra, India"
-                                  }
-                                ]
-                              }
-                            ],
-                          }
-                        ],
-                      },
-                      // Duplicate 4 more times
-                      {
-                        type: "card",
-                        attributes: {
-                          background: "true",
-                          bordered: "false"
-                        },
-                        components: [
+                            type: "content-title",
+                            content: "Get in touch"
+                          },
                           {
-                            type: "card-body",
-                            components: [
-                              {
-                                type: "flex",
-                                attributes: {
-                                  flexDirection: "flex-col",
-                                  flexDirectionDesktop: "md:flex-col",
-                                  wrap: "no-wrap",
-                                  gap: "gap-4",
-                                  alignItems: "items-start",
-                                  alignContent: "content-start",
-                                  justifyContent: "justify-start",
-                                },
-                                components: [
-                                  {
-                                    type: "icon",
-                                    content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 384 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M372 160H12c-6.6 0-12 5.4-12 12v56c0 6.6 5.4 12 12 12h140v228c0 6.6 5.4 12 12 12h56c6.6 0 12-5.4 12-12V240h140c6.6 0 12-5.4 12-12v-56c0-6.6-5.4-12-12-12zm0-128H12C5.4 32 0 37.4 0 44v56c0 6.6 5.4 12 12 12h360c6.6 0 12-5.4 12-12V44c0-6.6-5.4-12-12-12z"></path></svg>',
-                                    attributes: {
-                                      "mobile-width": "60px",
-                                      "icon-style": "icon-style-white-bg",
-                                    }
-                                  },
-                                  {
-                                    type: "content-heading",
-                                    content: "Call Us On"
-                                  },
-                                  {
-                                    type: "text-content",
-                                    content: "+ 91 0253 2357169 &nbsp;&nbsp; | &nbsp;&nbsp; + 91 98228 75353 ​"
-                                  },
-                                ]
-                              }
-                            ],
+                            type: "text-content",
+                            content: "We are here to answer any question you may have. Feel free to reach via contact form."
                           }
-                        ],
-                      },
-                      {
-                        type: "card",
-                        attributes: {
-                          background: "true",
-                          bordered: "false"
-                        },
-                        components: [
-                          {
-                            type: "card-body",
-                            components: [
-                              {
-                                type: "flex",
-                                attributes: {
-                                  flexDirection: "flex-col",
-                                  flexDirectionDesktop: "md:flex-col",
-                                  wrap: "no-wrap",
-                                  gap: "gap-4",
-                                  alignItems: "items-start",
-                                  alignContent: "content-start",
-                                  justifyContent: "justify-start",
-                                },
-                                components: [
-                                  {
-                                    type: "icon",
-                                    content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="M17 15l1.55 1.55c-.96 1.69-3.33 3.04-5.55 3.37V11h3V9h-3V7.82C14.16 7.4 15 6.3 15 5c0-1.65-1.35-3-3-3S9 3.35 9 5c0 1.3.84 2.4 2 2.82V9H8v2h3v8.92c-2.22-.33-4.59-1.68-5.55-3.37L7 15l-4-3v3c0 3.88 4.92 7 9 7s9-3.12 9-7v-3l-4 3zM12 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z"></path></svg>',
-                                    attributes: {
-                                      "mobile-width": "60px",
-                                      "icon-style": "icon-style-white-bg",
-                                    }
-                                  },
-                                  {
-                                    type: "content-heading",
-                                    content: "Email us"
-                                  },
-                                  {
-                                    type: "text-content",
-                                    content: "info@posten.in &nbsp;&nbsp; | &nbsp;&nbsp; posten.india@gmail.com​"
-                                  }
-                                ]
-                              }
-                            ],
-                          }
-                        ],
+                        ]
                       },
 
                     ]
