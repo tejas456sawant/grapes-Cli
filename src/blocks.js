@@ -3047,7 +3047,7 @@ export default (editor, opts = {}) => {
     category: "Form",
     content: {
       type: "div",
-  content: `<iframe style='width:100%;height:100vh;border:none;' srcdoc='
+  content: `<iframe style='width:100%;height:100%;border:none;' srcdoc='
   <!DOCTYPE html>
   <html lang="en">
   <head>
