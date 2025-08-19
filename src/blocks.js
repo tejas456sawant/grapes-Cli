@@ -532,7 +532,7 @@ export default (editor, opts = {}) => {
             <div class="mx-auto px-4 pt-16 sm:max-w-xl md:max-w-full md:px-24 lg:max-w-screen-xl lg:px-8">
               <div class="row-gap-6 mb-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
                 <div class="">
-                  <div class="flex flex-col items-start justify-start flex-shrink-0 items-center">
+                  <div class="flex flex-col items-start justify-start flex-shrink-0 items-start">
                     <a class="inline-flex" href="/"><img class="brandimg block h-20 w-auto" src="https://byte-ai.s3.us-east-1.amazonaws.com/013d2802-65bc-4bab-9488-874e52c80e20.png" /></a>
                     <h5 class="ml-1 text-xl font-bold tracking-wide"><span class="business-name"></span> </h5>
                   </div>
