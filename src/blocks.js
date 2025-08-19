@@ -534,11 +534,12 @@ export default (editor, opts = {}) => {
                 <div class="">
                   <div class="flex flex-col items-start justify-start flex-shrink-0 items-start">
                     <a class="inline-flex" href="/"><img class="brandimg block h-20 w-auto" src="https://byte-ai.s3.us-east-1.amazonaws.com/013d2802-65bc-4bab-9488-874e52c80e20.png" /></a>
-                    <h5 class="ml-1 text-xl font-bold tracking-wide"><span class="business-name"></span> </h5>
+                    
                   </div>
 
                   <div class="lg:max-w-sm">
                     <p data-gjs-type="text-content" class=" mt-4 text-sm">
+                      <h5 class="ml-1 text-xl font-bold tracking-wide"><span class="business-name"></span> </h5>
                       <p class="business-description">Avora Solutions, based in North Carolina, specializes in virtual staffing, connecting businesses with top-tier global professionals.</p>
                     
                     </p>
