@@ -6358,10 +6358,9 @@ export default (editor, options) => {
       defaults: {
         tagName: "footer",
         disableMovement: true,
-        disableToolbar: true,
+        disableToolbar: false,
         draggable: false,
         droppable: false,
-        attributes: { class: "bg-section-dark light-text" },
         content: `
             <div class="mx-auto px-4 pt-16 sm:max-w-xl md:max-w-full md:px-24 lg:max-w-screen-xl lg:px-8">
               <div class="row-gap-6 mb-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">

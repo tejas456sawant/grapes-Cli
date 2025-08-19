@@ -521,6 +521,121 @@ export default (editor, opts = {}) => {
   });
 
 
+  ///Footer blocks
+  bm.add("footer", {
+    label: "Footer",
+    category: "Layout",
+    defaulttheme: true,
+    content: {
+      type: "footer",
+      content: `
+            <div class="mx-auto px-4 pt-16 sm:max-w-xl md:max-w-full md:px-24 lg:max-w-screen-xl lg:px-8">
+              <div class="row-gap-6 mb-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="">
+                  <div class="flex flex-shrink-0 items-center">
+                    <a class="inline-flex" href="/"><img class="brandimg block h-20 w-auto" src="https://byte-ai.s3.us-east-1.amazonaws.com/013d2802-65bc-4bab-9488-874e52c80e20.png" /></a>
+                    <h5 class="ml-1 text-xl font-bold tracking-wide"><span class="business-name"></span> </h5>
+                  </div>
+
+                  <div class="lg:max-w-sm">
+                    <p data-gjs-type="text-content" class=" mt-4 text-sm">
+                      <p class="business-description">Avora Solutions, based in North Carolina, specializes in virtual staffing, connecting businesses with top-tier global professionals.</p>
+                    
+                    </p>
+                     <p data-gjs-type="text-content" class=" mt-2 text-sm">
+                      <p class="business-hours"></p>
+                    
+                    </p>
+                  </div>
+                </div>
+
+                <div class="space-y-4 text-sm flex md:items-center justify-start flex-col">
+                  <h5 class="text-base font-bold tracking-wide">Company</h5>
+                  <div class="space-y-4">
+                    <div class="flex items-center">
+                      
+                      <span class="relative font-medium hover:font-bold transition-all duration-300
+          after:content-[''] after:absolute after:left-0 after:bottom-0
+          after:w-0 after:h-[2px] after:bg-current
+          after:transition-all after:duration-300 hover:after:w-full"><a href="/">Home</a></span>
+                    </div>
+                    <div class="flex items-center">
+                      
+                      <span class="relative font-medium hover:font-bold transition-all duration-300
+          after:content-[''] after:absolute after:left-0 after:bottom-0
+          after:w-0 after:h-[2px] after:bg-current
+          after:transition-all after:duration-300 hover:after:w-full"><a href="/about-us">About</a></span>
+                    </div>
+                    <div class="flex items-center">
+                     
+                      <span class="relative font-medium hover:font-bold transition-all duration-300
+          after:content-[''] after:absolute after:left-0 after:bottom-0
+          after:w-0 after:h-[2px] after:bg-current
+          after:transition-all after:duration-300 hover:after:w-full"><a href="/solutions">Solutions</a></span>
+                    </div>
+                    <div class="flex items-center">
+                     
+                      <span class="relative font-medium hover:font-bold transition-all duration-300
+          after:content-[''] after:absolute after:left-0 after:bottom-0
+          after:w-0 after:h-[2px] after:bg-current
+          after:transition-all after:duration-300 hover:after:w-full"><a href="/contact">Contact</a></span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="space-y-4 text-sm">
+                  <h5 class="text-base font-bold tracking-wide">Contacts</h5>
+
+                  <div class="space-y-4">
+                    <div class="flex items-center">
+                      <div class="flex h-8 w-8 items-center justify-center rounded-full border">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+                        </svg>
+                      </div>
+                      <span class=" ml-3 relative font-medium hover:font-bold transition-all duration-300
+          after:content-[''] after:absolute after:left-0 after:bottom-0
+          after:w-0 after:h-[2px] after:bg-current
+          after:transition-all after:duration-300 hover:after:w-full"><a href="tel:+19192577724" class="phone-number">+1 (919) 257-7724</a></span>
+                    </div>
+                    <div class="flex items-center">
+                      <div class="flex h-8 w-8 items-center justify-center rounded-full border">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                        </svg>
+                      </div>
+                      <span class=" ml-3 relative font-medium hover:font-bold transition-all duration-300
+          after:content-[''] after:absolute after:left-0 after:bottom-0
+          after:w-0 after:h-[2px] after:bg-current
+          after:transition-all after:duration-300 hover:after:w-full"><a href="info.avorasolutions@gmail.com" class="email">info.avorasolutions@gmail.com</a></span>
+                    </div>
+                    <div class="flex items-center">
+                      <div class="flex h-8 w-8 items-center justify-center rounded-full border">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                        </svg>
+                      </div>
+                      <span class=" ml-3"><span class="address">Avora Solutions LLC Raleigh–Durham, North Carolina, USA</span></span>
+                    </div>
+                  </div>
+                </div>
+
+               
+              </div>
+
+              <div class="flex flex-col-reverse px-4 lg:px-8 justify-between border-t pt-5 pb-10 lg:flex-row">
+                <p class="text-sm">© <span id="year"></span>  <span class="business-name">Avora Solutions</span> All rights reserved.</p>
+                
+              </div>
+            </div>
+
+          `,
+    },
+    media: ``
+  });
+
   ///Icon Blocks
   bm.add("default-icon", {
     label: "Icon",
@@ -2262,7 +2377,7 @@ export default (editor, opts = {}) => {
                               },
                               components: [
                                 {
-                      
+
                                   type: "icon",
                                   content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="m2.394 13.742 4.743 3.62 7.616-8.704-1.506-1.316-6.384 7.296-3.257-2.486zm19.359-5.084-1.506-1.316-6.369 7.279-.753-.602-1.25 1.562 2.247 1.798z"></path></svg>',
                                   attributes: {
@@ -2291,7 +2406,7 @@ export default (editor, opts = {}) => {
                               },
                               components: [
                                 {
-                      
+
                                   type: "icon",
                                   content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="m2.394 13.742 4.743 3.62 7.616-8.704-1.506-1.316-6.384 7.296-3.257-2.486zm19.359-5.084-1.506-1.316-6.369 7.279-.753-.602-1.25 1.562 2.247 1.798z"></path></svg>',
                                   attributes: {
@@ -2320,7 +2435,7 @@ export default (editor, opts = {}) => {
                               },
                               components: [
                                 {
-                      
+
                                   type: "icon",
                                   content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="m2.394 13.742 4.743 3.62 7.616-8.704-1.506-1.316-6.384 7.296-3.257-2.486zm19.359-5.084-1.506-1.316-6.369 7.279-.753-.602-1.25 1.562 2.247 1.798z"></path></svg>',
                                   attributes: {
@@ -2349,7 +2464,7 @@ export default (editor, opts = {}) => {
                               },
                               components: [
                                 {
-                      
+
                                   type: "icon",
                                   content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="m2.394 13.742 4.743 3.62 7.616-8.704-1.506-1.316-6.384 7.296-3.257-2.486zm19.359-5.084-1.506-1.316-6.369 7.279-.753-.602-1.25 1.562 2.247 1.798z"></path></svg>',
                                   attributes: {
@@ -2466,7 +2581,7 @@ export default (editor, opts = {}) => {
                               },
                               components: [
                                 {
-                      
+
                                   type: "icon",
                                   content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="m2.394 13.742 4.743 3.62 7.616-8.704-1.506-1.316-6.384 7.296-3.257-2.486zm19.359-5.084-1.506-1.316-6.369 7.279-.753-.602-1.25 1.562 2.247 1.798z"></path></svg>',
                                   attributes: {
@@ -2495,7 +2610,7 @@ export default (editor, opts = {}) => {
                               },
                               components: [
                                 {
-                      
+
                                   type: "icon",
                                   content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="m2.394 13.742 4.743 3.62 7.616-8.704-1.506-1.316-6.384 7.296-3.257-2.486zm19.359-5.084-1.506-1.316-6.369 7.279-.753-.602-1.25 1.562 2.247 1.798z"></path></svg>',
                                   attributes: {
@@ -2524,7 +2639,7 @@ export default (editor, opts = {}) => {
                               },
                               components: [
                                 {
-                      
+
                                   type: "icon",
                                   content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="m2.394 13.742 4.743 3.62 7.616-8.704-1.506-1.316-6.384 7.296-3.257-2.486zm19.359-5.084-1.506-1.316-6.369 7.279-.753-.602-1.25 1.562 2.247 1.798z"></path></svg>',
                                   attributes: {
@@ -2553,7 +2668,7 @@ export default (editor, opts = {}) => {
                               },
                               components: [
                                 {
-                      
+
                                   type: "icon",
                                   content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="m2.394 13.742 4.743 3.62 7.616-8.704-1.506-1.316-6.384 7.296-3.257-2.486zm19.359-5.084-1.506-1.316-6.369 7.279-.753-.602-1.25 1.562 2.247 1.798z"></path></svg>',
                                   attributes: {
@@ -2674,7 +2789,7 @@ export default (editor, opts = {}) => {
                               },
                               components: [
                                 {
-                      
+
                                   type: "icon",
                                   content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="m2.394 13.742 4.743 3.62 7.616-8.704-1.506-1.316-6.384 7.296-3.257-2.486zm19.359-5.084-1.506-1.316-6.369 7.279-.753-.602-1.25 1.562 2.247 1.798z"></path></svg>',
                                   attributes: {
@@ -2703,7 +2818,7 @@ export default (editor, opts = {}) => {
                               },
                               components: [
                                 {
-                      
+
                                   type: "icon",
                                   content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="m2.394 13.742 4.743 3.62 7.616-8.704-1.506-1.316-6.384 7.296-3.257-2.486zm19.359-5.084-1.506-1.316-6.369 7.279-.753-.602-1.25 1.562 2.247 1.798z"></path></svg>',
                                   attributes: {
@@ -2732,7 +2847,7 @@ export default (editor, opts = {}) => {
                               },
                               components: [
                                 {
-                      
+
                                   type: "icon",
                                   content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="m2.394 13.742 4.743 3.62 7.616-8.704-1.506-1.316-6.384 7.296-3.257-2.486zm19.359-5.084-1.506-1.316-6.369 7.279-.753-.602-1.25 1.562 2.247 1.798z"></path></svg>',
                                   attributes: {
@@ -2761,7 +2876,7 @@ export default (editor, opts = {}) => {
                               },
                               components: [
                                 {
-                      
+
                                   type: "icon",
                                   content: '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="m2.394 13.742 4.743 3.62 7.616-8.704-1.506-1.316-6.384 7.296-3.257-2.486zm19.359-5.084-1.506-1.316-6.369 7.279-.753-.602-1.25 1.562 2.247 1.798z"></path></svg>',
                                   attributes: {
@@ -3040,14 +3155,14 @@ export default (editor, opts = {}) => {
   //   },
   //   media: ``
   // });
-  
+
   editor.BlockManager.add("contact-form-iframe", {
     label: "Contact Form (iframe)",
     defaulttheme: true,
     category: "Form",
     content: {
       type: "div",
-  content: `<iframe style='width:100%;height:100%;border:none;' srcdoc='
+      content: `<iframe style='width:100%;height:100%;border:none;' srcdoc='
   <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -3125,7 +3240,7 @@ export default (editor, opts = {}) => {
   `,
     }
   });
-  
+
   bm.add("contact-form-section-2", {
     label: "Contact Section 2",
     defaulttheme: true,
@@ -3591,7 +3706,7 @@ export default (editor, opts = {}) => {
             {
               type: "bg-box",
               attributes: {
-                "bg-overlay":"top-gradient",
+                "bg-overlay": "top-gradient",
                 "bg-image": "https://posten.in/wp-content/uploads/2022/12/0-Post-tensioned-I-Girders.jpeg",
               },
               components: [{
@@ -3656,7 +3771,7 @@ export default (editor, opts = {}) => {
             {
               type: "bg-box",
               attributes: {
-                "bg-overlay":"top-gradient",
+                "bg-overlay": "top-gradient",
                 "bg-image": "https://posten.in/wp-content/uploads/2022/12/0-Segmental-Post-tensioned-Box-Girders.jpeg",
               },
               components: [{
@@ -3721,7 +3836,7 @@ export default (editor, opts = {}) => {
             {
               type: "bg-box",
               attributes: {
-                "bg-overlay":"top-gradient",
+                "bg-overlay": "top-gradient",
                 "bg-image": "https://posten.in/wp-content/uploads/2022/12/0-Post-tensioning-of-Pier-Caps-Pre-tensioning-of-U-Girderss.jpeg",
               },
               components: [{
@@ -3786,7 +3901,7 @@ export default (editor, opts = {}) => {
             {
               type: "bg-box",
               attributes: {
-                "bg-overlay":"top-gradient",
+                "bg-overlay": "top-gradient",
                 "bg-image": "https://posten.in/wp-content/uploads/2022/12/0-Flat-Slab-Post-tensioning-for-Commercial-Buildings.jpeg",
               },
               components: [{
@@ -3851,7 +3966,7 @@ export default (editor, opts = {}) => {
             {
               type: "bg-box",
               attributes: {
-                "bg-overlay":"top-gradient",
+                "bg-overlay": "top-gradient",
                 "bg-image": "https://posten.in/wp-content/uploads/2022/12/0-Post-tensioning-of-Pier-Caps-Pre-tensioning-of-U-Girdersm.jpeg",
               },
               components: [{
@@ -3916,7 +4031,7 @@ export default (editor, opts = {}) => {
             {
               type: "bg-box",
               attributes: {
-                "bg-overlay":"top-gradient",
+                "bg-overlay": "top-gradient",
                 "bg-image": "https://posten.in/wp-content/uploads/2022/12/0-Profiling-of-Round-Mettalic-Sheathing-Ducts.jpeg",
               },
               components: [{
@@ -4009,7 +4124,7 @@ export default (editor, opts = {}) => {
                 alignContent: "content-center",
                 justifyContent: "justify-between",
                 "mobile-height": "100%",
-                
+
               },
               components: [
                 // {
@@ -4039,7 +4154,7 @@ export default (editor, opts = {}) => {
                       components: [
                         {
                           type: "card-body",
-                          classes: [ "z-10", "relative", "px-4" ,"md:px-8", "py-6"],
+                          classes: ["z-10", "relative", "px-4", "md:px-8", "py-6"],
                           components: [
                             {
                               type: "flex",
@@ -4075,9 +4190,9 @@ export default (editor, opts = {}) => {
                                   type: "content-title",
                                   content: "Empowering Healthcare Businesses with Smart Global Solutions."
                                 },
-                               
+
                                 { type: "button-primary", content: "Work With Us" }
-                                
+
                               ]
                             }
                           ],
@@ -4086,7 +4201,7 @@ export default (editor, opts = {}) => {
                     },
 
                   ]
-                },  
+                },
                 {
                   type: "img-wrapper",
                   attributes: {
@@ -4094,23 +4209,23 @@ export default (editor, opts = {}) => {
                     "desktop-width": "50%",
                     "desktop-height": "100%",
                   },
-                  
+
                   components: {
                     type: "custom-image",
                     attributes: {
                       "src": "	https://byte-ai.s3.us-east-1.amazonaws.com/1ad2765d-eaa1-4c54-b271-ae902f0fdc90.png",
-                    
+
                     }
                   }
                 },
 
               ]
             },
-            
+
           ]
         }
       ],
-      
+
     },
     {
       type: "section",
@@ -4123,18 +4238,18 @@ export default (editor, opts = {}) => {
           }
         },
         {
-        type: "container", attributes: { textalign: "center" }, components: [{
-          type: "text-content",
-          attributes: { textalign: "center" },
-          content:
-            "Section Content"
+          type: "container", attributes: { textalign: "center" }, components: [{
+            type: "text-content",
+            attributes: { textalign: "center" },
+            content:
+              "Section Content"
+          }]
         }]
-      }]
     }
 
-  
-  ]
+
+    ]
   });
-  
+
 };
 
