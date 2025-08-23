@@ -528,8 +528,12 @@ export default (editor, opts = {}) => {
     defaulttheme: true,
     content: {
       type: "footer",
+      attributes: {
+        id: `map-${Math.random().toString(36).substr(2, 8)}`,
+        class: "bg-section-dark light-text",
+      },
       content: `
-            <div class="mx-auto section-bg-dark light-text px-4 pt-16 sm:max-w-xl md:max-w-full md:px-24 lg:max-w-screen-xl lg:px-8">
+            <div class="mx-auto px-4 pt-16 sm:max-w-xl md:max-w-full md:px-24 lg:max-w-screen-xl lg:px-8">
               <div class="row-gap-6 mb-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
                 <div class="">
                   <div class="flex flex-col items-start justify-start flex-shrink-0 items-start">

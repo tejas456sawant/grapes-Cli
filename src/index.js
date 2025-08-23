@@ -227,6 +227,26 @@ export default (editor, opts = {}) => {
     return select;
   }
 
+  editor.on('component:selected', (component) => {
+    if (component && component.get('type') === 'card') {
+      let classes = component.getClasses();
+  
+      // Remove "card-background" if present
+      classes = classes.filter(cls => cls !== 'card-background');
+  
+      // Add new classes if not already present
+      if (!classes.includes('bg-section-dark')) {
+        classes.push('bg-section-dark');
+      }
+      if (!classes.includes('light-text')) {
+        classes.push('light-text');
+      }
+  
+      component.setClass(classes);
+    }
+  });
+
+  
   editor.Commands.add('open-width-resize-menu', {
     run(editor) {
       setTimeout(() => {
