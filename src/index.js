@@ -231,10 +231,10 @@ export default (editor, opts = {}) => {
     if (component && component.get('type') === 'card') {
       let classes = component.getClasses();
   
-      // Remove "card-background" if present
+      // Remove "card-background"
       classes = classes.filter(cls => cls !== 'card-background');
   
-      // Add new classes if not already present
+      // Add enforced classes
       if (!classes.includes('bg-section-dark')) {
         classes.push('bg-section-dark');
       }
@@ -243,9 +243,12 @@ export default (editor, opts = {}) => {
       }
   
       component.setClass(classes);
+  
+      // Set background attribute to false
+      component.addAttributes({ background: 'false' });
     }
   });
-
+  
   
   editor.Commands.add('open-width-resize-menu', {
     run(editor) {
