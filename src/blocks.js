@@ -542,7 +542,7 @@ export default (editor, opts = {}) => {
 
                   <div class="lg:max-w-sm">
                     <p data-gjs-type="text-content" class=" mt-4 text-sm">
-                      <h5 class="ml-1 text-xl font-bold tracking-wide"><span class="business-name"></span> </h5>
+                      <h5 class="text-xl font-bold tracking-wide"><span class="business-name"></span> </h5>
                       <p class="business-description">Avora Solutions, based in North Carolina, specializes in virtual staffing, connecting businesses with top-tier global professionals.</p>
                     
                     </p>
