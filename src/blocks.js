@@ -589,7 +589,7 @@ export default (editor, opts = {}) => {
 
                 <!-- Contact Info -->
                 <div class="space-y-4 text-sm">
-                  <h5 class="text-base font-bold tracking-wide">Contacts</h5>
+                  <h5 class="text-base font-bold tracking-wide">Need Help ?</h5>
 
                   <div class="space-y-4">
                     <div class="flex items-center">
