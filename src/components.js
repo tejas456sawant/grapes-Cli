@@ -2,7 +2,6 @@ import IconPicker from "./IconPicker.js";
 import React, { useState, useCallback, useMemo } from "react";
 import ReactDOM from "react-dom/client"; // For React 18+
 
-
 // const BACKEND_URL = "http://127.0.0.1:5000";
 
 const getRegisteredBlocks = () => [
@@ -13,7 +12,6 @@ const getRegisteredBlocks = () => [
   { id: "form", name: "Contact Form", icon: "📋" },
 ];
 
-
 function setupEmptyPlaceholder(ctx) {
   const el = ctx.el;
   const comps = ctx.model.components();
@@ -22,10 +20,10 @@ function setupEmptyPlaceholder(ctx) {
     const isEmpty = comps.length === 0;
 
     if (isEmpty) {
-      el.classList.add('relative', 'min-h-[32px]', 'min-w-[32px]');
+      el.classList.add("relative", "min-h-[32px]", "min-w-[32px]");
 
       if (!ctx.placeholderEl) {
-        const placeholder = document.createElement('div');
+        const placeholder = document.createElement("div");
         placeholder.className = `
           absolute inset-0 flex items-center justify-center
           text-sm text-blue-400 border border-dashed border-blue-300
@@ -39,12 +37,12 @@ function setupEmptyPlaceholder(ctx) {
           <line x1="12" y1="8" x2="12" y2="16" />
           <line x1="8" y1="12" x2="16" y2="12" />
         </svg>
-      </div>`
+      </div>`;
         el.appendChild(placeholder);
         ctx.placeholderEl = placeholder;
       }
     } else {
-      el.classList.remove('min-h-[32px]', 'min-w-[32px]');
+      el.classList.remove("min-h-[32px]", "min-w-[32px]");
       if (ctx.placeholderEl) {
         ctx.placeholderEl.remove();
         ctx.placeholderEl = null;
@@ -53,9 +51,8 @@ function setupEmptyPlaceholder(ctx) {
   };
 
   render();
-  ctx.listenTo(comps, 'add remove reset', render);
+  ctx.listenTo(comps, "add remove reset", render);
 }
-
 
 // Simulate API call with 3 second delay
 async function fetchComponentConfig(type, description) {
@@ -76,8 +73,6 @@ function addComponentAfter(targetComponent, newComponent) {
   parent.components().add(newComponent, { at: index + 1 });
 }
 
-
-
 // Show modal and handle component addition
 function showAddComponentModal(targetComponent) {
   let currentStep = 1;
@@ -92,8 +87,9 @@ function showAddComponentModal(targetComponent) {
   function updateModalContent() {
     modal.innerHTML = `
       <div class="bg-white rounded-lg max-w-2xl w-full mx-4 relative">
-        ${isLoading
-        ? `
+        ${
+          isLoading
+            ? `
           <div class="absolute inset-0 bg-white bg-opacity-75 z-10 flex items-center justify-center rounded-lg">
             <div class="flex flex-col items-center space-y-3">
               <div class="animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-blue-500"></div>
@@ -101,15 +97,16 @@ function showAddComponentModal(targetComponent) {
             </div>
           </div>
         `
-        : ""
-      }
+            : ""
+        }
         <div class="p-6">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-semibold">
               ${currentStep === 1 ? "Choose Block Type" : "Block Details"}
             </h2>
-            <button class="close-modal text-gray-400 hover:text-gray-600" ${isLoading ? "disabled" : ""
-      }>
+            <button class="close-modal text-gray-400 hover:text-gray-600" ${
+              isLoading ? "disabled" : ""
+            }>
               <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -117,12 +114,13 @@ function showAddComponentModal(targetComponent) {
           </div>
           
           <div class="modal-body mb-6">
-            ${currentStep === 1
-        ? `
+            ${
+              currentStep === 1
+                ? `
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 ${registeredBlocks
-          .map(
-            (block) => `
+                  .map(
+                    (block) => `
                   <button 
                     class="component-type-btn flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                     data-type="${block.id}"
@@ -132,16 +130,17 @@ function showAddComponentModal(targetComponent) {
                     <span class="text-left font-medium">${block.name}</span>
                   </button>
                 `,
-          )
-          .join("")}
+                  )
+                  .join("")}
               </div>
             `
-        : `
+                : `
               <div class="space-y-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Selected Block: ${registeredBlocks.find((t) => t.id === selectedType)?.name
-        }
+                    Selected Block: ${
+                      registeredBlocks.find((t) => t.id === selectedType)?.name
+                    }
                   </label>
                 </div>
                 <div>
@@ -158,17 +157,19 @@ function showAddComponentModal(targetComponent) {
                 </div>
               </div>
             `
-      }
+            }
           </div>
 
           <div class="flex justify-between">
-            <button class="back-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium ${currentStep === 1 ? "invisible" : ""
-      }" ${isLoading ? "disabled" : ""}>
+            <button class="back-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium ${
+              currentStep === 1 ? "invisible" : ""
+            }" ${isLoading ? "disabled" : ""}>
               Back
             </button>
             <div class="space-x-3">
-              <button class="cancel-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium" ${isLoading ? "disabled" : ""
-      }>
+              <button class="cancel-btn px-4 py-2 text-gray-600 hover:text-gray-800 font-medium" ${
+                isLoading ? "disabled" : ""
+              }>
                 Cancel
               </button>
               <button 
@@ -274,12 +275,17 @@ export default (editor, options) => {
       // Get the original component ID
       const componentId = selectedComponent.getAttributes().id;
       if (!componentId) {
-        alert("Please select a component", selectedComponent.getAttributes().id);
+        alert(
+          "Please select a component",
+          selectedComponent.getAttributes().id,
+        );
         return;
       }
 
       // Get website ID from URL
-      const websiteId = new URLSearchParams(window.location.search).get("website_id");
+      const websiteId = new URLSearchParams(window.location.search).get(
+        "website_id",
+      );
       if (!websiteId) {
         alert("Website ID not found");
         return;
@@ -328,18 +334,22 @@ export default (editor, options) => {
       // Attach modal events
       const closeModal = () => modal.remove();
       modal.querySelector(".close-modal").addEventListener("click", closeModal);
-      modal.querySelector(".cancel-modal").addEventListener("click", closeModal);
+      modal
+        .querySelector(".cancel-modal")
+        .addEventListener("click", closeModal);
 
-      modal.querySelector(".regenerate-modal").addEventListener("click", async () => {
-        const prompt = modal.querySelector("#regenerate-prompt").value.trim();
+      modal
+        .querySelector(".regenerate-modal")
+        .addEventListener("click", async () => {
+          const prompt = modal.querySelector("#regenerate-prompt").value.trim();
 
-        if (!prompt) {
-          alert("Please enter your improvement instructions");
-          return;
-        }
+          if (!prompt) {
+            alert("Please enter your improvement instructions");
+            return;
+          }
 
-        // Show loading spinner
-        modal.querySelector(".modal-body").innerHTML = `
+          // Show loading spinner
+          modal.querySelector(".modal-body").innerHTML = `
           <div class="flex flex-col items-center justify-center p-8">
             <svg class="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -349,47 +359,47 @@ export default (editor, options) => {
           </div>
         `;
 
-        try {
-          const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("Bearer="))
-            ?.split("=")[1];
+          try {
+            const token = document.cookie
+              .split("; ")
+              .find((row) => row.startsWith("Bearer="))
+              ?.split("=")[1];
 
-          if (!token) {
-            throw new Error("Authorization token not found");
-          }
-
-          const response = await fetch(
-            `${BACKEND_URL}/api/website/${websiteId}/regenerate-section`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({
-                prompt,
-                section: selectedComponent.toJSON(),
-                componentId, // explicitly send the original ID
-              }),
+            if (!token) {
+              throw new Error("Authorization token not found");
             }
-          );
 
-          const data = await response.json();
+            const response = await fetch(
+              `${BACKEND_URL}/api/website/${websiteId}/regenerate-section`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  prompt,
+                  section: selectedComponent.toJSON(),
+                  componentId, // explicitly send the original ID
+                }),
+              },
+            );
 
-          if (data.status && data.section) {
-            replaceComponentById(componentId, data.section, editor);
+            const data = await response.json();
+
+            if (data.status && data.section) {
+              replaceComponentById(componentId, data.section, editor);
+              closeModal();
+              alert("Section regenerated successfully!");
+            } else {
+              throw new Error(data.message || "Invalid response from server");
+            }
+          } catch (error) {
+            console.error("Error regenerating section:", error);
+            alert(`Failed to regenerate: ${error}`);
             closeModal();
-            alert("Section regenerated successfully!");
-          } else {
-            throw new Error(data.message || "Invalid response from server");
           }
-        } catch (error) {
-          console.error("Error regenerating section:", error);
-          alert(`Failed to regenerate: ${error}`);
-          closeModal();
-        }
-      });
+        });
 
       document.body.appendChild(modal);
     },
@@ -428,7 +438,6 @@ export default (editor, options) => {
     // Remove old component
     target.remove();
 
-
     // Insert new component at the same index
     const newComp = parent
       ? parent.append(newComponentData, { at: index })[0]
@@ -437,8 +446,6 @@ export default (editor, options) => {
     // Select new component
     editor.select(newComp);
   }
-
-
 
   editor.Commands.add("open-icon-picker", {
     run(editor) {
@@ -496,18 +503,18 @@ export default (editor, options) => {
         content: `
           <div id="navbar-links-container">
             ${linksList
-            .components()
-            .map(
-              (link, index) => `
+              .components()
+              .map(
+                (link, index) => `
               <div class="mb-2">
                 <input type="text" class="navbar-link-input border rounded px-2 py-1" data-index="${index}" value="${link.get(
-                "content",
-              )}">
+                  "content",
+                )}">
                 <button class="remove-link bg-red-500 text-white px-2 py-1 rounded" data-index="${index}">Remove</button>
               </div>
             `,
-            )
-            .join("")}
+              )
+              .join("")}
           </div>
           <button id="add-navbar-link" class="bg-blue-500 text-white px-3 py-2 rounded mt-4">Add Link</button>
         `,
@@ -554,8 +561,6 @@ export default (editor, options) => {
     },
   });
 
-
-
   // Add component types
   editor.DomComponents.addType("body", {
     model: {
@@ -569,18 +574,19 @@ export default (editor, options) => {
     },
   });
 
-  editor.DomComponents.addType('form-wrapper', {
+  editor.DomComponents.addType("form-wrapper", {
     model: {
       defaults: {
-        tagName: 'div',
+        tagName: "div",
         showEditButton: true,
         draggable: false,
         droppable: false,
         stylable: true,
         attributes: {
-          formsrc: '',
-          'mobile-width': '280px',
-          class: 'relative flex flex-col border border-solid border-gray-500/50 my-2 form-wrapper',
+          formsrc: "",
+          "mobile-width": "280px",
+          class:
+            "relative flex flex-col border border-solid border-gray-500/50 my-2 form-wrapper",
         },
         styles: `
         .form-wrapper iframe{
@@ -588,11 +594,11 @@ export default (editor, options) => {
           width: 100%
         }
         
-        `
+        `,
       },
 
       init() {
-        this.listenTo(this, 'change:attributes:formsrc', this.updateIframe);
+        this.listenTo(this, "change:attributes:formsrc", this.updateIframe);
         this.updateIframe();
       },
 
@@ -600,27 +606,27 @@ export default (editor, options) => {
         const attrs = this.getAttributes();
 
         // Default mobile-width if not set
-        if (!attrs['mobile-width']) {
-          this.addAttributes({ 'mobile-width': '98%' });
-          this.addAttributes({ 'desktop-width': '380px' });
+        if (!attrs["mobile-width"]) {
+          this.addAttributes({ "mobile-width": "98%" });
+          this.addAttributes({ "desktop-width": "380px" });
         }
 
         // Set mobile-height only if formsrc is set and mobile-height is not
-        if (attrs.formsrc && !attrs['mobile-height']) {
-          this.addAttributes({ 'mobile-height': '420px' });
+        if (attrs.formsrc && !attrs["mobile-height"]) {
+          this.addAttributes({ "mobile-height": "420px" });
         }
 
         if (attrs.formsrc) {
-          this.set('content', attrs.formsrc);
+          this.set("content", attrs.formsrc);
         } else {
-          this.set('content', ''); // Clear content
+          this.set("content", ""); // Clear content
         }
-      }
+      },
     },
 
     view: {
       init() {
-        this.listenTo(this.model, 'change:attributes:formsrc', this.render);
+        this.listenTo(this.model, "change:attributes:formsrc", this.render);
         this.render();
       },
 
@@ -644,35 +650,31 @@ export default (editor, options) => {
           </div>
         </div>`;
 
-          const link = this.el.querySelector('.edit-form-link');
+          const link = this.el.querySelector(".edit-form-link");
           if (link) {
-            link.addEventListener('click', () => this.onEditButtonClick());
+            link.addEventListener("click", () => this.onEditButtonClick());
           }
         }
       },
-
-
 
       onEditButtonClick() {
         const component = this.model;
 
         // Dummy list if editor.formsList is not provided
         const forms =
-          (editor.formsList && editor.formsList.length > 0)
+          editor.formsList && editor.formsList.length > 0
             ? editor.formsList
-            : [
-
-            ];
+            : [];
 
         // Modal wrapper
-        const modal = document.createElement('div');
+        const modal = document.createElement("div");
         modal.className =
-          'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+          "fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center";
 
         // Modal content
-        const container = document.createElement('div');
+        const container = document.createElement("div");
         container.className =
-          'bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl shadow-lg p-6 relative';
+          "bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl shadow-lg p-6 relative";
 
         // Basic HTML structure
         const selected = { index: null };
@@ -682,10 +684,11 @@ export default (editor, options) => {
             <div class="form-card border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:bg-blue-50 transition cursor-pointer" data-index="${i}">
               <div class="font-medium text-gray-800">${form.name}</div>
             </div>
-          `
+          `,
           )
-          .join('');
-        const websiteId = new URLSearchParams(window.location.search).get("website_id") || 4;
+          .join("");
+        const websiteId =
+          new URLSearchParams(window.location.search).get("website_id") || 4;
 
         container.innerHTML = `
           <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-black text-xl">&times;</button>
@@ -714,18 +717,20 @@ export default (editor, options) => {
         `;
 
         // Selection logic
-        container.querySelectorAll('.form-card').forEach((el) => {
-          el.addEventListener('click', () => {
-            container.querySelectorAll('.form-card').forEach((card) =>
-              card.classList.remove('border-blue-500', 'bg-blue-50')
-            );
-            el.classList.add('border-blue-500', 'bg-blue-50');
+        container.querySelectorAll(".form-card").forEach((el) => {
+          el.addEventListener("click", () => {
+            container
+              .querySelectorAll(".form-card")
+              .forEach((card) =>
+                card.classList.remove("border-blue-500", "bg-blue-50"),
+              );
+            el.classList.add("border-blue-500", "bg-blue-50");
             selected.index = parseInt(el.dataset.index, 10);
           });
         });
 
         // Save form
-        container.querySelector('.save-modal').addEventListener('click', () => {
+        container.querySelector(".save-modal").addEventListener("click", () => {
           if (selected.index != null) {
             const selectedForm = forms[selected.index];
             component.addAttributes({ formsrc: selectedForm.iframe });
@@ -734,17 +739,16 @@ export default (editor, options) => {
         });
 
         // Cancel and Close buttons
-        container.querySelector('.cancel-modal').addEventListener('click', () =>
-          modal.remove()
-        );
-        container.querySelector('.close-modal').addEventListener('click', () =>
-          modal.remove()
-        );
+        container
+          .querySelector(".cancel-modal")
+          .addEventListener("click", () => modal.remove());
+        container
+          .querySelector(".close-modal")
+          .addEventListener("click", () => modal.remove());
 
         modal.appendChild(container);
         document.body.appendChild(modal);
-      }
-
+      },
     },
   });
 
@@ -769,7 +773,8 @@ export default (editor, options) => {
         droppable: false,
         // Tailwind classes for circle wrapper
         attributes: {
-          class: "w-20 h-20 rounded-full overflow-hidden flex justify-center items-center",
+          class:
+            "w-20 h-20 rounded-full overflow-hidden flex justify-center items-center",
         },
         style: `
         `,
@@ -808,9 +813,10 @@ export default (editor, options) => {
           default: {
             createModalContent(component) {
               const container = document.createElement("div");
-              const childImage = component.components().find((comp) => comp.get("type") === "custom-image");
-              const currentBgImage =
-                childImage.get("attributes")["src"] || "";
+              const childImage = component
+                .components()
+                .find((comp) => comp.get("type") === "custom-image");
+              const currentBgImage = childImage.get("attributes")["src"] || "";
 
               container.innerHTML = `
                 <div class="space-y-4">
@@ -854,7 +860,12 @@ export default (editor, options) => {
                 if (!file) return;
 
                 // Validate file type
-                const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
+                const allowedTypes = [
+                  "image/jpeg",
+                  "image/png",
+                  "image/jpg",
+                  "image/gif",
+                ];
                 if (!allowedTypes.includes(file.type)) {
                   alert("Please select a valid image file");
                   return;
@@ -875,7 +886,7 @@ export default (editor, options) => {
                 async getData() {
                   let result = {
                     attributes: {
-                      "src": "",
+                      src: "",
                     },
                   };
 
@@ -978,7 +989,7 @@ export default (editor, options) => {
             },
           },
         };
-        this.listenTo(this.model, 'change:classes', () => {
+        this.listenTo(this.model, "change:classes", () => {
           // nothing needed here—Grapes will re-render the class list
         });
       },
@@ -986,11 +997,10 @@ export default (editor, options) => {
       onRender() {
         const buttonRowCenter = this.createButtonRow();
         this.el.appendChild(buttonRowCenter);
-
       },
 
       createButtonRow() {
-        console.log("eminem")
+        console.log("eminem");
         const row = document.createElement("div");
         row.className =
           "gjs-component-buttons2 absolute ml-10  transform -translate-x-1/2 flex space-x-2 z-[99]";
@@ -1001,7 +1011,6 @@ export default (editor, options) => {
 
         this.buttonRow = row;
         return row;
-
       },
 
       createModal(component) {
@@ -1078,7 +1087,7 @@ export default (editor, options) => {
         this.model.EditComponent();
       },
       createEditButton() {
-        console.log("eminem2")
+        console.log("eminem2");
 
         const btn = document.createElement("button");
 
@@ -1101,41 +1110,45 @@ export default (editor, options) => {
         this.editButton = btn;
         return btn;
       },
-    }
+    },
   });
 
   const defaultRatios = [
-    { value: 'aspect-square', name: 'Square (1:1)' },
-    { value: 'aspect-[4/3]', name: 'Standard (4:3)' },
-    { value: 'aspect-video', name: 'Wide (16:9)' },      // Tailwind’s aspect-video = 16/9
-    { value: 'aspect-[9/16]', name: 'Portrait (9:16)' },
-    { value: 'custom', name: 'Custom…' }
+    { value: "aspect-square", name: "Square (1:1)" },
+    { value: "aspect-[4/3]", name: "Standard (4:3)" },
+    { value: "aspect-video", name: "Wide (16:9)" }, // Tailwind’s aspect-video = 16/9
+    { value: "aspect-[9/16]", name: "Portrait (9:16)" },
+    { value: "custom", name: "Custom…" },
   ];
 
   // 2. Register the img-wrapper component
-  editor.DomComponents.addType('img-wrapper', {
-    isComponent: el =>
-      el.tagName === 'DIV' && el.classList.contains('img-wrapper'),
+  editor.DomComponents.addType("img-wrapper", {
+    isComponent: (el) =>
+      el.tagName === "DIV" && el.classList.contains("img-wrapper"),
 
     model: {
       defaults: {
-        tagName: 'div',
+        tagName: "div",
         classes: [
-          'img-wrapper', 'flex', 'items-center',
-          'justify-center', 'overflow-hidden', 'relative',
+          "img-wrapper",
+          "flex",
+          "items-center",
+          "justify-center",
+          "overflow-hidden",
+          "relative",
         ],
         droppable: false,
         draggable: false,
         showEditButton: true,
         traits: [
           {
-            type: 'select',
-            name: 'aspect-ratio',
-            label: 'Aspect Ratio',
+            type: "select",
+            name: "aspect-ratio",
+            label: "Aspect Ratio",
             options: defaultRatios,
             changeProp: 1,
-          }
-        ]
+          },
+        ],
       },
 
       init() {
@@ -1143,44 +1156,47 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.updateClasses);
       },
 
-
       updateClasses() {
-        const ratio = parseFloat(this.getAttributes()['aspect-ratio']);
-        if(ratio)
-        this.addStyle({ 'aspect-ratio': ratio });
+        const ratio = parseFloat(this.getAttributes()["aspect-ratio"]);
+        if (ratio) this.addStyle({ "aspect-ratio": ratio });
       },
 
       // opens the floating menu
       EditComponent() {
         // Clean up any old menu
-        document.querySelectorAll('.aspect-ratio-menu').forEach(el => el.remove());
+        document
+          .querySelectorAll(".aspect-ratio-menu")
+          .forEach((el) => el.remove());
 
         const view = this.getView();
         const el = view.el;
-        const currentRatio = parseFloat(this.getAttributes()['aspect-ratio'] || '1.77');
+        const currentRatio = parseFloat(
+          this.getAttributes()["aspect-ratio"] || "1.77",
+        );
         const originalRatio = currentRatio;
 
         const minVal = 0.5;
         const maxVal = 3;
         const initialSliderValue = maxVal + minVal - currentRatio;
 
-        const menu = document.createElement('div');
-        menu.className = 'aspect-ratio-menu absolute z-[99999] p-4 bg-white left-[5rem] bottom-32 shadow-md rounded border text-sm w-64';
+        const menu = document.createElement("div");
+        menu.className =
+          "aspect-ratio-menu absolute z-[99999] p-4 bg-white left-[5rem] bottom-32 shadow-md rounded border text-sm w-64";
         menu.style.position = "absolute";
         menu.style.left = "3.5rem";
         menu.style.bottom = "4rem";
         document.body.appendChild(menu);
 
-        const header = document.createElement('div');
-        header.className = 'flex justify-between items-center mb-3';
+        const header = document.createElement("div");
+        header.className = "flex justify-between items-center mb-3";
 
-        const heading = document.createElement('h3');
-        heading.textContent = 'Adjust Image Size';
-        heading.className = 'font-semibold';
+        const heading = document.createElement("h3");
+        heading.textContent = "Adjust Image Size";
+        heading.className = "font-semibold";
 
-        const close = document.createElement('button');
-        close.innerHTML = '&times;';
-        close.className = 'text-gray-600 text-xl hover:text-black';
+        const close = document.createElement("button");
+        close.innerHTML = "&times;";
+        close.className = "text-gray-600 text-xl hover:text-black";
         close.onclick = () => {
           el.style.aspectRatio = originalRatio;
           menu.remove();
@@ -1189,30 +1205,30 @@ export default (editor, options) => {
         header.append(heading, close);
         menu.appendChild(header);
 
-        const sliderContainer = document.createElement('div');
-        sliderContainer.className = 'mb-2';
+        const sliderContainer = document.createElement("div");
+        sliderContainer.className = "mb-2";
 
-        const slider = document.createElement('input');
-        slider.type = 'range';
+        const slider = document.createElement("input");
+        slider.type = "range";
         slider.min = minVal;
         slider.max = maxVal;
-        slider.step = '0.01';
+        slider.step = "0.01";
         slider.value = initialSliderValue;
-        slider.className = 'w-full';
+        slider.className = "w-full";
 
-        const ratioDisplay = document.createElement('div');
-        ratioDisplay.className = 'text-center text-sm mt-1 text-gray-700';
+        const ratioDisplay = document.createElement("div");
+        ratioDisplay.className = "text-center text-sm mt-1 text-gray-700";
         ratioDisplay.textContent = `Aspect Ratio: ${currentRatio.toFixed(2)}`;
 
         sliderContainer.append(slider, ratioDisplay);
         menu.append(sliderContainer);
 
-        const btn = document.createElement('button');
-        btn.textContent = 'Apply';
-        btn.className = 'w-full px-3 py-1 bg-rose-600 text-white rounded mt-2';
+        const btn = document.createElement("button");
+        btn.textContent = "Apply";
+        btn.className = "w-full px-3 py-1 bg-rose-600 text-white rounded mt-2";
         menu.append(btn);
 
-        slider.addEventListener('input', () => {
+        slider.addEventListener("input", () => {
           const sliderValue = parseFloat(slider.value);
           const aspectValue = (maxVal + minVal - sliderValue).toFixed(2);
           el.style.aspectRatio = aspectValue;
@@ -1222,11 +1238,10 @@ export default (editor, options) => {
         btn.onclick = () => {
           const sliderValue = parseFloat(slider.value);
           const finalRatio = (maxVal + minVal - sliderValue).toFixed(2);
-          this.setAttributes({ 'aspect-ratio': finalRatio });
+          this.setAttributes({ "aspect-ratio": finalRatio });
           menu.remove();
         };
-      }
-
+      },
     },
 
     view: {
@@ -1236,9 +1251,10 @@ export default (editor, options) => {
           default: {
             createModalContent(component) {
               const container = document.createElement("div");
-              const childImage = component.components().find((comp) => comp.get("type") === "custom-image");
-              const currentBgImage =
-                childImage.get("attributes")["src"] || "";
+              const childImage = component
+                .components()
+                .find((comp) => comp.get("type") === "custom-image");
+              const currentBgImage = childImage.get("attributes")["src"] || "";
 
               container.innerHTML = `
               <div class="space-y-4">
@@ -1282,7 +1298,12 @@ export default (editor, options) => {
                 if (!file) return;
 
                 // Validate file type
-                const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
+                const allowedTypes = [
+                  "image/jpeg",
+                  "image/png",
+                  "image/jpg",
+                  "image/gif",
+                ];
                 if (!allowedTypes.includes(file.type)) {
                   alert("Please select a valid image file");
                   return;
@@ -1303,7 +1324,7 @@ export default (editor, options) => {
                 async getData() {
                   let result = {
                     attributes: {
-                      "src": "",
+                      src: "",
                     },
                   };
 
@@ -1406,7 +1427,7 @@ export default (editor, options) => {
             },
           },
         };
-        this.listenTo(this.model, 'change:classes', () => {
+        this.listenTo(this.model, "change:classes", () => {
           // nothing needed here—Grapes will re-render the class list
         });
       },
@@ -1414,11 +1435,10 @@ export default (editor, options) => {
       onRender() {
         const buttonRowCenter = this.createButtonRow();
         this.el.appendChild(buttonRowCenter);
-
       },
 
       createButtonRow() {
-        console.log("eminem")
+        console.log("eminem");
         const row = document.createElement("div");
         row.className =
           "gjs-component-buttons2 absolute top-[35%]  left-1/2 transform -translate-x-1/2 flex space-x-2 z-[99]";
@@ -1429,7 +1449,6 @@ export default (editor, options) => {
 
         this.buttonRow = row;
         return row;
-
       },
 
       createModal(component) {
@@ -1506,7 +1525,7 @@ export default (editor, options) => {
         this.model.EditComponent();
       },
       createEditButton() {
-        console.log("eminem2")
+        console.log("eminem2");
 
         const btn = document.createElement("button");
 
@@ -1529,10 +1548,8 @@ export default (editor, options) => {
         this.editButton = btn;
         return btn;
       },
-    }
+    },
   });
-
-
 
   editor.Components.addType("custom-image", {
     model: {
@@ -1553,7 +1570,7 @@ export default (editor, options) => {
           .custom-image{
             object-fit: cover !important;
           }
-        `
+        `,
       },
 
       init() {
@@ -1578,7 +1595,6 @@ export default (editor, options) => {
         }
       },
     },
-
   });
 
   editor.DomComponents.addType("masonry-grid", {
@@ -1612,13 +1628,9 @@ export default (editor, options) => {
           box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
       `,
-      }
-    }
+      },
+    },
   }),
-
-
-
-
     editor.DomComponents.addType("grid-layout", {
       model: {
         defaults: {
@@ -1771,15 +1783,19 @@ export default (editor, options) => {
           // Function to apply updates live
           const updateAttrs = () => {
             const newAttrs = {
-              desktopColumns: `grid-cols-${menu.querySelector("#columnsDesktop").value || 3
-                }`,
-              mobileColumns: `grid-cols-${menu.querySelector("#columnsMobile").value || 1
-                }`,
+              desktopColumns: `grid-cols-${
+                menu.querySelector("#columnsDesktop").value || 3
+              }`,
+              mobileColumns: `grid-cols-${
+                menu.querySelector("#columnsMobile").value || 1
+              }`,
               gap: menu.querySelector("#gap").value,
               alignItems: menu.querySelector("#alignItems").value,
               alignContent: menu.querySelector("#alignContent").value,
               justifyItems: menu.querySelector("#justifyItems").value,
-              stretch: menu.querySelector("#stretch").checked ? "true" : "false",
+              stretch: menu.querySelector("#stretch").checked
+                ? "true"
+                : "false",
             };
             this.addAttributes(newAttrs);
           };
@@ -2051,7 +2067,6 @@ export default (editor, options) => {
     },
   });
 
-
   editor.DomComponents.addType("image-section", {
     model: {
       defaults: {
@@ -2059,9 +2074,16 @@ export default (editor, options) => {
         movement: true,
         draggable: false,
         droppable: false,
+        classes: [
+          "grid",
+          "grid-cols-1",
+          "md:grid-cols-2",
+          "image-section",
+          "relative",
+          "md:min-h-[400px]",
+          "section",
+        ],
         attributes: {
-          class:
-            "grid grid-cols-1 md:grid-cols-2 image-section relative md:min-h-[400px] section",
           sectiontype: "normal",
           direction: "left",
         },
@@ -2213,7 +2235,7 @@ export default (editor, options) => {
       updateSectionType() {
         const sectionType = this.get("attributes")["sectiontype"] || "normal";
         const classList = this.getClasses() || [];
-      
+
         // Section-type-specific classes we want to clean up before adding new ones
         const sectionTypeClasses = [
           "bg-accent-1",
@@ -2222,10 +2244,12 @@ export default (editor, options) => {
           "bg-section-light",
           "light-text",
         ];
-      
+
         // Remove old section-type classes only
-        let filteredClasses = classList.filter(cls => !sectionTypeClasses.includes(cls));
-      
+        let filteredClasses = classList.filter(
+          (cls) => !sectionTypeClasses.includes(cls),
+        );
+
         // Add section-type specific classes
         switch (sectionType) {
           case "accent-1":
@@ -2242,7 +2266,7 @@ export default (editor, options) => {
             filteredClasses.push("bg-section-light");
             break;
         }
-      
+
         this.setClass(filteredClasses);
       },
     },
@@ -2258,16 +2282,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -2520,9 +2544,16 @@ export default (editor, options) => {
         draggable: false,
         movement: true,
         droppable: false,
+        classes: [
+          "flex",
+          "flex-col",
+          "py-24",
+          "px-3",
+          "md:px-8",
+          "relative",
+          "section",
+        ],
         attributes: {
-          class:
-            "flex flex-col py-24 px-3 md:px-8 relative section",
           sectiontype: "normal",
         },
         traits: [
@@ -2616,30 +2647,51 @@ export default (editor, options) => {
       updatePadding() {
         const paddingTop = this.get("attributes")["paddingTop"];
         const paddingBottom = this.get("attributes")["paddingBottom"];
-      
+
         // If both values are empty or undefined, do nothing
         if (!paddingBottom) return;
-      
+
         const classList = this.getClasses() || [];
-      
+
         const paddingClasses = [
-          "py-0", "py-4", "py-8", "py-12", "py-16", "py-24", "py-32", "py-48",
-          "pt-0", "pt-4", "pt-8", "pt-12", "pt-16", "pt-24", "pt-32", "pt-48",
-          "pb-0", "pb-4", "pb-8", "pb-12", "pb-16", "pb-24", "pb-32", "pb-48",
+          "py-0",
+          "py-4",
+          "py-8",
+          "py-12",
+          "py-16",
+          "py-24",
+          "py-32",
+          "py-48",
+          "pt-0",
+          "pt-4",
+          "pt-8",
+          "pt-12",
+          "pt-16",
+          "pt-24",
+          "pt-32",
+          "pt-48",
+          "pb-0",
+          "pb-4",
+          "pb-8",
+          "pb-12",
+          "pb-16",
+          "pb-24",
+          "pb-32",
+          "pb-48",
         ];
-      
-        let filtered = classList.filter(cls => !paddingClasses.includes(cls));
-      
+
+        let filtered = classList.filter((cls) => !paddingClasses.includes(cls));
+
         if (paddingTop) filtered.push(paddingTop);
         if (paddingBottom) filtered.push(paddingBottom);
-      
+
         this.setClass(filtered);
       },
 
       updateSectionType() {
         const sectionType = this.get("attributes")["sectiontype"] || "normal";
         const classList = this.getClasses() || [];
-      
+
         // Section-type-specific classes we want to clean up before adding new ones
         const sectionTypeClasses = [
           "bg-accent-1",
@@ -2647,12 +2699,14 @@ export default (editor, options) => {
           "bg-section-dark",
           "bg-section-light",
           "light-text",
-          "bg-slate-600"
+          "bg-slate-600",
         ];
-      
+
         // Remove old section-type classes only
-        let filteredClasses = classList.filter(cls => !sectionTypeClasses.includes(cls));
-      
+        let filteredClasses = classList.filter(
+          (cls) => !sectionTypeClasses.includes(cls),
+        );
+
         // Add section-type specific classes
         switch (sectionType) {
           case "accent-1":
@@ -2669,7 +2723,7 @@ export default (editor, options) => {
             filteredClasses.push("bg-section-light");
             break;
         }
-      
+
         this.setClass(filteredClasses);
       },
       getName() {
@@ -2681,7 +2735,6 @@ export default (editor, options) => {
         setupEmptyPlaceholder(this);
       },
       onRender() {
-
         this.updateEditButton();
 
         // Add color swatches to the top right
@@ -2799,9 +2852,16 @@ export default (editor, options) => {
         // disableToolbar: true,
         draggable: false,
         droppable: false,
+        classes: [
+          "flex",
+          "items-center",
+          "overflow-y-visible",
+          "justify-center",
+          "bg-cover",
+          "bg-center",
+          "hero-section",
+        ],
         attributes: {
-          class:
-            "flex items-center overflow-y-visible justify-center bg-cover bg-center hero-section",
           sectiontype: "normal",
         },
         traits: [
@@ -2851,23 +2911,44 @@ export default (editor, options) => {
       updatePadding() {
         const paddingTop = this.get("attributes")["paddingTop"];
         const paddingBottom = this.get("attributes")["paddingBottom"];
-      
+
         // If both values are empty or undefined, do nothing
         if (!paddingTop && !paddingBottom) return;
-      
+
         const classList = this.getClasses() || [];
-      
+
         const paddingClasses = [
-          "py-0", "py-4", "py-8", "py-12", "py-16", "py-24", "py-32", "py-48",
-          "pt-0", "pt-4", "pt-8", "pt-12", "pt-16", "pt-24", "pt-32", "pt-48",
-          "pb-0", "pb-4", "pb-8", "pb-12", "pb-16", "pb-24", "pb-32", "pb-48",
+          "py-0",
+          "py-4",
+          "py-8",
+          "py-12",
+          "py-16",
+          "py-24",
+          "py-32",
+          "py-48",
+          "pt-0",
+          "pt-4",
+          "pt-8",
+          "pt-12",
+          "pt-16",
+          "pt-24",
+          "pt-32",
+          "pt-48",
+          "pb-0",
+          "pb-4",
+          "pb-8",
+          "pb-12",
+          "pb-16",
+          "pb-24",
+          "pb-32",
+          "pb-48",
         ];
-      
-        let filtered = classList.filter(cls => !paddingClasses.includes(cls));
-      
+
+        let filtered = classList.filter((cls) => !paddingClasses.includes(cls));
+
         if (paddingTop) filtered.push(paddingTop);
         if (paddingBottom) filtered.push(paddingBottom);
-      
+
         this.setClass(filtered);
       },
 
@@ -2881,22 +2962,25 @@ export default (editor, options) => {
       updateHeightClass() {
         const heightValue = this.get("attributes")["hero-section-height"];
         const classList = this.getClasses() || [];
-      
+
         // Remove all existing h-[...] or h-screen classes
-        const filtered = classList.filter((cls) => !/^h-\[.*\]$/.test(cls) && cls !== "h-screen");
-      
+        const filtered = classList.filter(
+          (cls) => !/^h-\[.*\]$/.test(cls) && cls !== "h-screen",
+        );
+
         // Add new class if value is provided
         if (heightValue && heightValue.trim() !== "") {
-          const heightClass = heightValue === "screen" ? "h-screen" : `h-[${heightValue}]`;
+          const heightClass =
+            heightValue === "screen" ? "h-screen" : `h-[${heightValue}]`;
           filtered.push(heightClass);
         }
-      
+
         this.setClass(filtered);
       },
       updateSectionType() {
         const sectionType = this.get("attributes")["sectiontype"] || "normal";
         const classList = this.getClasses() || [];
-      
+
         // Section-type-specific classes we want to clean up before adding new ones
         const sectionTypeClasses = [
           "bg-accent-1",
@@ -2905,10 +2989,12 @@ export default (editor, options) => {
           "bg-section-light",
           "light-text",
         ];
-      
+
         // Remove old section-type classes only
-        let filteredClasses = classList.filter(cls => !sectionTypeClasses.includes(cls));
-      
+        let filteredClasses = classList.filter(
+          (cls) => !sectionTypeClasses.includes(cls),
+        );
+
         // Add section-type specific classes
         switch (sectionType) {
           case "accent-1":
@@ -2925,22 +3011,18 @@ export default (editor, options) => {
             filteredClasses.push("bg-section-light");
             break;
         }
-      
+
         this.setClass(filteredClasses);
       },
-
-
     },
     view: {
       onRender() {
-
         this.updateEditButton();
 
         // Add color swatches to the top right
         const colorSwatches = this.createColorSwatches();
         this.el.appendChild(colorSwatches);
       },
-
 
       createButtonRow() {
         if (this.buttonRow) return this.buttonRow;
@@ -3069,7 +3151,6 @@ export default (editor, options) => {
       },
 
       init() {
-
         this.listenTo(this, "change:attributes", this.updateTextAlign);
         this.updateTextAlign();
       },
@@ -3080,7 +3161,13 @@ export default (editor, options) => {
 
         let cls = this.getClasses().filter(
           (c) =>
-            !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+            ![
+              "text-left",
+              "text-center",
+              "text-right",
+              "items-center",
+              "items-end",
+            ].includes(c),
         );
 
         if (align === "left") {
@@ -3101,62 +3188,62 @@ export default (editor, options) => {
     },
   });
 
-  editor.DomComponents.addType('marquee', {
+  editor.DomComponents.addType("marquee", {
     model: {
       defaults: {
-        tagName: 'marquee',
+        tagName: "marquee",
         addinside: true,
         draggable: false,
         droppable: false,
         attributes: {
-          behavior: 'scroll',
-          direction: 'left', // default direction
-          scrollamount: '5',
-          class: 'w-full overflow-hidden whitespace-nowrap text-xl text-gray-800',
+          behavior: "scroll",
+          direction: "left", // default direction
+          scrollamount: "5",
+          class:
+            "w-full overflow-hidden whitespace-nowrap text-xl text-gray-800",
           style: `
             mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
             -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-          `
+          `,
         },
         content: `
           🚀 Launch &nbsp;&nbsp; 💡 Innovation &nbsp;&nbsp; 🌍 Global &nbsp;&nbsp; 📈 Growth &nbsp;&nbsp; 🎯 Target &nbsp;&nbsp; 🤝 Partners &nbsp;&nbsp;
           🚀`,
         traits: [
           {
-            type: 'select',
-            name: 'direction',
-            label: 'Scroll Direction',
+            type: "select",
+            name: "direction",
+            label: "Scroll Direction",
             options: [
-              { value: 'left', name: 'Left' },
-              { value: 'right', name: 'Right' },
-              { value: 'up', name: 'Up' },
-              { value: 'down', name: 'Down' },
+              { value: "left", name: "Left" },
+              { value: "right", name: "Right" },
+              { value: "up", name: "Up" },
+              { value: "down", name: "Down" },
             ],
             changeProp: 1,
-            default: 'left', // initial default
-          }
+            default: "left", // initial default
+          },
         ],
         script: function () {
           // Sync direction attribute with trait
-          const dir = this.getAttribute('direction') || 'left';
-          this.setAttribute('direction', dir);
-        }
+          const dir = this.getAttribute("direction") || "left";
+          this.setAttribute("direction", dir);
+        },
       },
 
       init() {
         // Ensure trait's value reflects in the attribute even on initial render
-        const dir = this.get('attributes').direction || 'left';
+        const dir = this.get("attributes").direction || "left";
         this.addAttributes({ direction: dir });
 
         // React to changes from trait UI
-        this.on('change:attributes:direction', () => {
+        this.on("change:attributes:direction", () => {
           const dir = this.getAttributes().direction;
           this.addAttributes({ direction: dir });
         });
-      }
-    }
+      },
+    },
   });
-
 
   editor.DomComponents.addType("content-title", {
     extend: "text",
@@ -3197,7 +3284,14 @@ export default (editor, options) => {
         const align = attrs.textalign || "left";
 
         let cls = this.getClasses().filter(
-          (c) => !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+          (c) =>
+            ![
+              "text-left",
+              "text-center",
+              "text-right",
+              "items-center",
+              "items-end",
+            ].includes(c),
         );
 
         if (align === "left") {
@@ -3212,7 +3306,6 @@ export default (editor, options) => {
       },
     },
   });
-
 
   editor.DomComponents.addType("content-subtitle", {
     extend: "text",
@@ -3257,7 +3350,14 @@ export default (editor, options) => {
         const align = attrs.textalign || "left";
 
         let cls = this.getClasses().filter(
-          (c) => !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+          (c) =>
+            ![
+              "text-left",
+              "text-center",
+              "text-right",
+              "items-center",
+              "items-end",
+            ].includes(c),
         );
 
         if (align === "left") {
@@ -3301,7 +3401,6 @@ export default (editor, options) => {
     },
   });
 
-
   editor.DomComponents.addType("content-heading", {
     extend: "text",
     model: {
@@ -3339,7 +3438,14 @@ export default (editor, options) => {
         const align = attrs.textalign || "left";
 
         let cls = this.getClasses().filter(
-          (c) => !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+          (c) =>
+            ![
+              "text-left",
+              "text-center",
+              "text-right",
+              "items-center",
+              "items-end",
+            ].includes(c),
         );
 
         if (align === "left") {
@@ -3591,7 +3697,14 @@ export default (editor, options) => {
         const align = attrs.textalign || "left";
 
         let cls = this.getClasses().filter(
-          (c) => !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+          (c) =>
+            ![
+              "text-left",
+              "text-center",
+              "text-right",
+              "items-center",
+              "items-end",
+            ].includes(c),
         );
 
         if (align === "left") {
@@ -3654,7 +3767,14 @@ export default (editor, options) => {
         const align = attrs.textalign || "left";
 
         let cls = this.getClasses().filter(
-          (c) => !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+          (c) =>
+            ![
+              "text-left",
+              "text-center",
+              "text-right",
+              "items-center",
+              "items-end",
+            ].includes(c),
         );
 
         if (align === "left") {
@@ -3716,7 +3836,14 @@ export default (editor, options) => {
         const align = attrs.textalign || "left";
 
         let cls = this.getClasses().filter(
-          (c) => !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+          (c) =>
+            ![
+              "text-left",
+              "text-center",
+              "text-right",
+              "items-center",
+              "items-end",
+            ].includes(c),
         );
 
         if (align === "left") {
@@ -3772,7 +3899,6 @@ export default (editor, options) => {
       },
     },
   });
-  
 
   editor.Components.addType("spacer", {
     model: {
@@ -3784,7 +3910,6 @@ export default (editor, options) => {
       },
     },
   });
-
 
   editor.Components.addType("row-container", {
     model: {
@@ -3928,16 +4053,16 @@ export default (editor, options) => {
                   <div>
                     <label class="block mb-2">Component Type</label>
                     <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                      "type",
+                    )}" class="w-full border p-2 rounded" disabled>
                   </div>
                   <div>
                     <label class="block mb-2">Attributes</label>
                     <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                      component.getAttributes(),
+                      null,
+                      2,
+                    )}</textarea>
                   </div>
                 </div>
               `;
@@ -4200,16 +4325,16 @@ export default (editor, options) => {
                   <div>
                     <label class="block mb-2">Component Type</label>
                     <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                      "type",
+                    )}" class="w-full border p-2 rounded" disabled>
                   </div>
                   <div>
                     <label class="block mb-2">Attributes</label>
                     <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                      component.getAttributes(),
+                      null,
+                      2,
+                    )}</textarea>
                   </div>
                 </div>
               `;
@@ -4359,8 +4484,7 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         attributes: {
-          class:
-            "button-tertiary font-primary transition px-2 pl-0 my-2",
+          class: "button-tertiary font-primary transition px-2 pl-0 my-2",
         },
         styles: `
           .button-tertiary {
@@ -4481,16 +4605,16 @@ export default (editor, options) => {
                   <div>
                     <label class="block mb-2">Component Type</label>
                     <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                      "type",
+                    )}" class="w-full border p-2 rounded" disabled>
                   </div>
                   <div>
                     <label class="block mb-2">Attributes</label>
                     <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                      component.getAttributes(),
+                      null,
+                      2,
+                    )}</textarea>
                   </div>
                 </div>
               `;
@@ -4676,27 +4800,24 @@ export default (editor, options) => {
 }
 
         `,
-
       },
       init() {
         this.listenTo(this, "change:attributes", this.updateIconStyleClass);
         this.updateIconStyleClass();
       },
-  
+
       updateIconStyleClass() {
         const attrs = this.getAttributes() || {};
         const iconStyle = attrs["icon-style"];
-      
+
         // Remove previous icon-style-* classes
-        let cls = this.getClasses().filter(
-          (c) => !c.startsWith("icon-style-")
-        );
-      
+        let cls = this.getClasses().filter((c) => !c.startsWith("icon-style-"));
+
         // Add the new icon-style if valid
         if (iconStyle && iconStyle.startsWith("icon-style-")) {
           cls.push(iconStyle);
         }
-      
+
         this.setClass(cls);
       },
     },
@@ -4712,16 +4833,16 @@ export default (editor, options) => {
                               <div>
                                   <label class="block mb-2">Component Type</label>
                                   <input type="text" value="${component.get(
-                "type",
-              )}" class="w-full border p-2 rounded" disabled>
+                                    "type",
+                                  )}" class="w-full border p-2 rounded" disabled>
                               </div>
                               <div>
                                   <label class="block mb-2">Attributes</label>
                                   <textarea class="w-full border p-2 rounded component-attributes" rows="4">${JSON.stringify(
-                component.getAttributes(),
-                null,
-                2,
-              )}</textarea>
+                                    component.getAttributes(),
+                                    null,
+                                    2,
+                                  )}</textarea>
                               </div>
                           </div>
                       `;
@@ -4833,7 +4954,7 @@ export default (editor, options) => {
         }
       },
 
-      handleDeselect() { },
+      handleDeselect() {},
 
       updateEditButton() {
         const editor = this.em.get("Editor");
@@ -4965,10 +5086,8 @@ export default (editor, options) => {
       },
 
       init() {
-
         this.listenTo(this, "change:attributes", this.updateTextAlign);
         this.updateTextAlign();
-
       },
 
       updateTextAlign() {
@@ -4977,10 +5096,17 @@ export default (editor, options) => {
 
         // Remove previous alignment-related classes
         let cls = this.getClasses().filter(
-          (c) => !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+          (c) =>
+            ![
+              "text-left",
+              "text-center",
+              "text-right",
+              "items-center",
+              "items-end",
+            ].includes(c),
         );
 
-        console.log("Bob " + align)
+        console.log("Bob " + align);
         // Add new alignment classes
         if (align === "left") {
           cls.push("text-left");
@@ -4992,7 +5118,6 @@ export default (editor, options) => {
 
         this.setClass(cls);
       },
-
     },
   });
 
@@ -5023,10 +5148,8 @@ export default (editor, options) => {
       },
 
       init() {
-
         this.listenTo(this, "change:attributes", this.updateTextAlign);
         this.updateTextAlign();
-
       },
 
       updateTextAlign() {
@@ -5035,10 +5158,17 @@ export default (editor, options) => {
 
         // Remove previous alignment-related classes
         let cls = this.getClasses().filter(
-          (c) => !["text-left", "text-center", "text-right", "items-center", "items-end"].includes(c)
+          (c) =>
+            ![
+              "text-left",
+              "text-center",
+              "text-right",
+              "items-center",
+              "items-end",
+            ].includes(c),
         );
 
-        console.log("Bob " + align)
+        console.log("Bob " + align);
         // Add new alignment classes
         if (align === "left") {
           cls.push("text-left");
@@ -5050,10 +5180,8 @@ export default (editor, options) => {
 
         this.setClass(cls);
       },
-
     },
   });
-
 
   editor.Components.addType("title-text-container", {
     model: {
@@ -5128,8 +5256,7 @@ export default (editor, options) => {
         droppable: false,
         tagName: "div",
         attributes: {
-          class:
-            "w-full h-full bg-center bg-cover relative bg-box bg",
+          class: "w-full h-full bg-center bg-cover relative bg-box bg",
           "bg-image": "https://example.com/default-image.jpg", // Initial background image URL
           "bg-overlay": "primary-gradient",
         },
@@ -5278,10 +5405,12 @@ export default (editor, options) => {
               overlayOptions.forEach((option) => {
                 const isSelected = currentBgOverlay === option.id;
                 overlaySwatchesHTML += `
-                  <div class="overlay-swatch-item ${isSelected ? "selected" : ""
+                  <div class="overlay-swatch-item ${
+                    isSelected ? "selected" : ""
                   }" data-overlay="${option.id}">
-                    <div class="swatch" style="background: ${option.color
-                  }"></div>
+                    <div class="swatch" style="background: ${
+                      option.color
+                    }"></div>
                     <div class="swatch-name">${option.name}</div>
                   </div>
                 `;
@@ -5363,7 +5492,12 @@ export default (editor, options) => {
                 if (!file) return;
 
                 // Validate file type
-                const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif",];
+                const allowedTypes = [
+                  "image/jpeg",
+                  "image/png",
+                  "image/jpg",
+                  "image/gif",
+                ];
                 if (!allowedTypes.includes(file.type)) {
                   alert("Please select a valid image file");
                   return;
@@ -5649,9 +5783,18 @@ export default (editor, options) => {
         draggable: false,
         droppable: false,
         disableToolbar: true,
+        classes: [
+          "flex",
+          "items-center",
+          "justify-center",
+          "bg-cover",
+          "bg-center",
+          "overflow-y-visible",
+          "bg-gray-600",
+          "hero-section",
+          "bg",
+        ],
         attributes: {
-          class:
-            "flex items-center justify-center bg-cover bg-center overflow-y-visible bg-gray-600 hero-section bg",
           "bg-image": "https://example.com/default-image.jpg", // Initial background image URL
           "bg-overlay": "primary-gradient", // Default overlay
         },
@@ -5821,7 +5964,11 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
         this.listenTo(this, "change:bg-image", this.updateBackgroundImage);
         this.listenTo(this, "change:bg-overlay", this.updateBackgroundOverlay);
-        this.listenTo(this, "change:hero-section-height", this.updateHeightClass);
+        this.listenTo(
+          this,
+          "change:hero-section-height",
+          this.updateHeightClass,
+        );
         this.updateBackgroundImage();
         this.updateBackgroundOverlay();
         this.updateHeightClass();
@@ -5850,16 +5997,19 @@ export default (editor, options) => {
       updateHeightClass() {
         const heightValue = this.get("attributes")["hero-section-height"];
         const classList = this.getClasses() || [];
-      
+
         // Remove all existing h-[...] or h-screen classes
-        const filtered = classList.filter((cls) => !/^h-\[.*\]$/.test(cls) && cls !== "h-screen");
-      
+        const filtered = classList.filter(
+          (cls) => !/^h-\[.*\]$/.test(cls) && cls !== "h-screen",
+        );
+
         // Add new class if value is provided
         if (heightValue && heightValue.trim() !== "") {
-          const heightClass = heightValue === "screen" ? "h-screen" : `h-[${heightValue}]`;
+          const heightClass =
+            heightValue === "screen" ? "h-screen" : `h-[${heightValue}]`;
           filtered.push(heightClass);
         }
-      
+
         this.setClass(filtered);
       },
       // This method updates DOM classes when the view is available
@@ -5951,10 +6101,12 @@ export default (editor, options) => {
               overlayOptions.forEach((option) => {
                 const isSelected = currentBgOverlay === option.id;
                 overlaySwatchesHTML += `
-                  <div class="overlay-swatch-item ${isSelected ? "selected" : ""
+                  <div class="overlay-swatch-item ${
+                    isSelected ? "selected" : ""
                   }" data-overlay="${option.id}">
-                    <div class="swatch" style="background: ${option.color
-                  }"></div>
+                    <div class="swatch" style="background: ${
+                      option.color
+                    }"></div>
                     <div class="swatch-name">${option.name}</div>
                   </div>
                 `;
@@ -6036,7 +6188,12 @@ export default (editor, options) => {
                 if (!file) return;
 
                 // Validate file type
-                const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
+                const allowedTypes = [
+                  "image/jpeg",
+                  "image/png",
+                  "image/jpg",
+                  "image/gif",
+                ];
                 if (!allowedTypes.includes(file.type)) {
                   alert("Please select a valid image file");
                   return;
@@ -6470,7 +6627,7 @@ export default (editor, options) => {
           class: " w-full gap-2 card break-inside-avoid",
           sectiontype: "normal",
           background: "false",
-          bordered: "false"
+          bordered: "false",
         },
         traits: [
           {
@@ -6558,7 +6715,11 @@ export default (editor, options) => {
       },
 
       init() {
-        this.listenTo(this, "change:attributes", this.updateClassFromAttributes);
+        this.listenTo(
+          this,
+          "change:attributes",
+          this.updateClassFromAttributes,
+        );
         this.updateClassFromAttributes();
       },
 
@@ -6568,8 +6729,9 @@ export default (editor, options) => {
         const background = this.get("attributes")["background"];
 
         // Remove any previous class
-        const updatedClasses = classes
-          .filter(cls => cls !== "card-bordered" && cls !== "card-background");
+        const updatedClasses = classes.filter(
+          (cls) => cls !== "card-bordered" && cls !== "card-background",
+        );
 
         // Add based on trait values
         if (bordered === "true") updatedClasses.push("card-bordered");
@@ -6585,7 +6747,6 @@ export default (editor, options) => {
       },
     },
   });
-
 
   editor.Components.addType("card-horizontal", {
     model: {
@@ -6613,7 +6774,7 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() { },
+      onAttributesChange() {},
     },
   });
 
@@ -6634,7 +6795,7 @@ export default (editor, options) => {
         this.listenTo(this, "change:attributes", this.onAttributesChange);
       },
 
-      onAttributesChange() { },
+      onAttributesChange() {},
     },
     view: {
       init() {
@@ -6643,40 +6804,40 @@ export default (editor, options) => {
     },
   });
 
-  editor.Components.addType('google-map', {
+  editor.Components.addType("google-map", {
     model: {
       defaults: {
         showEditButton: true,
-        tagName: 'div',
+        tagName: "div",
         draggable: false,
         droppable: false,
         traits: [
           {
-            type: 'text',
-            name: 'location',
-            label: 'Location',
-            placeholder: 'e.g., New York, NY',
+            type: "text",
+            name: "location",
+            label: "Location",
+            placeholder: "e.g., New York, NY",
           },
         ],
         attributes: {
-          location: 'New York, NY', // default
+          location: "New York, NY", // default
         },
         components: [
-          { 
+          {
             selectable: false,
             disableMovement: true,
             disableToolbar: true,
             draggable: false,
             droppable: false,
-            tagName: 'iframe',
-            type: 'iframe',
+            tagName: "iframe",
+            type: "iframe",
             attributes: {
-              width: '100%',
-              height: '100%',
-              frameborder: '0',
-              style: 'border:0;height:100%;',
+              width: "100%",
+              height: "100%",
+              frameborder: "0",
+              style: "border:0;height:100%;",
               allowfullscreen: true,
-              loading: 'lazy',
+              loading: "lazy",
             },
           },
         ],
@@ -6684,19 +6845,19 @@ export default (editor, options) => {
           // Nothing needed in script since we are updating iframe src via model
         },
       },
-  
+
       init() {
-        const location = this.get('attributes').location || 'New York, NY';
+        const location = this.get("attributes").location || "New York, NY";
         this.updateMapSrc(location);
-  
-        this.on('change:attributes:location', () => {
-          const newLocation = this.get('attributes').location;
+
+        this.on("change:attributes:location", () => {
+          const newLocation = this.get("attributes").location;
           this.updateMapSrc(newLocation);
         });
       },
-  
+
       updateMapSrc(location) {
-        const iframe = this.get('components').at(0);
+        const iframe = this.get("components").at(0);
         if (iframe) {
           const query = encodeURIComponent(location);
           const src = `https://www.google.com/maps?q=${query}&output=embed`;
@@ -6704,22 +6865,22 @@ export default (editor, options) => {
         }
       },
     },
-  
+
     view: {
       onEditButtonClick() {
         const component = this.model;
-  
-        const modal = document.createElement('div');
+
+        const modal = document.createElement("div");
         modal.className =
-          'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
-  
-        const container = document.createElement('div');
+          "fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center";
+
+        const container = document.createElement("div");
         container.className =
-          'bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl shadow-lg p-6 relative';
-  
+          "bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl shadow-lg p-6 relative";
+
         const currentLocation =
-          component.getAttributes().location || 'New York, NY';
-  
+          component.getAttributes().location || "New York, NY";
+
         container.innerHTML = `
           <button class="close-modal absolute top-4 right-4 text-gray-600 hover:text-black text-xl">&times;</button>
           <h2 class="text-2xl font-semibold text-gray-800 mb-6">Set Google Map Location</h2>
@@ -6748,47 +6909,47 @@ export default (editor, options) => {
             <button class="save-modal px-4 py-2 bg-rose-600 text-white text-sm rounded hover:bg-rose-700">Save</button>
           </div>
         `;
-  
+
         modal.appendChild(container);
         document.body.appendChild(modal);
-  
+
         this.prefillLocation(currentLocation);
         this.attachPreviewListener();
         this.attachSaveListener(component);
         this.attachCloseListeners();
       },
-  
+
       prefillLocation(location) {
-        const input = document.querySelector('#map-location-input');
-        const iframe = document.querySelector('#map-preview-iframe');
+        const input = document.querySelector("#map-location-input");
+        const iframe = document.querySelector("#map-preview-iframe");
         if (input && iframe) {
           input.value = location;
           iframe.src = `https://www.google.com/maps?q=${encodeURIComponent(
-            location
+            location,
           )}&output=embed`;
         }
       },
-  
+
       attachPreviewListener() {
-        const input = document.querySelector('#map-location-input');
-        const iframe = document.querySelector('#map-preview-iframe');
+        const input = document.querySelector("#map-location-input");
+        const iframe = document.querySelector("#map-preview-iframe");
         if (input && iframe) {
-          input.addEventListener('input', () => {
+          input.addEventListener("input", () => {
             const val = input.value.trim();
             if (val.length > 2) {
               iframe.src = `https://www.google.com/maps?q=${encodeURIComponent(
-                val
+                val,
               )}&output=embed`;
             }
           });
         }
       },
-  
+
       attachSaveListener(component) {
-        const saveBtn = document.querySelector('.save-modal');
-        const input = document.querySelector('#map-location-input');
+        const saveBtn = document.querySelector(".save-modal");
+        const input = document.querySelector("#map-location-input");
         if (saveBtn && input) {
-          saveBtn.addEventListener('click', () => {
+          saveBtn.addEventListener("click", () => {
             const newLocation = input.value.trim();
             if (newLocation) {
               component.addAttributes({ location: newLocation });
@@ -6797,28 +6958,26 @@ export default (editor, options) => {
           });
         }
       },
-  
+
       attachCloseListeners() {
-        const closeBtn = document.querySelector('.close-modal');
-        const cancelBtn = document.querySelector('.cancel-modal');
+        const closeBtn = document.querySelector(".close-modal");
+        const cancelBtn = document.querySelector(".cancel-modal");
         if (closeBtn) {
-          closeBtn.addEventListener('click', () => this.closeModal());
+          closeBtn.addEventListener("click", () => this.closeModal());
         }
         if (cancelBtn) {
-          cancelBtn.addEventListener('click', () => this.closeModal());
+          cancelBtn.addEventListener("click", () => this.closeModal());
         }
       },
-  
+
       closeModal() {
-        const modal = document.querySelector('.fixed.inset-0.bg-black');
+        const modal = document.querySelector(".fixed.inset-0.bg-black");
         if (modal) modal.remove();
       },
-    
-
     },
   });
   editor.Components.addType("scroll-marquee", {
-    isComponent: el => el.classList?.contains("scroll-marquee"),
+    isComponent: (el) => el.classList?.contains("scroll-marquee"),
     model: {
       defaults: {
         name: "Scroll Marquee",
@@ -6862,12 +7021,12 @@ export default (editor, options) => {
         `,
       },
     },
-  
+
     view: {
       onRender({ el }) {
         const inner = el.querySelector(".scroll-inner");
         if (!inner || inner.classList.contains("duplicated")) return;
-  
+
         const clone = inner.cloneNode(true);
         clone.setAttribute("aria-hidden", "true");
         clone.classList.add("cloned");
@@ -6876,7 +7035,4 @@ export default (editor, options) => {
       },
     },
   });
-  
-  
-  
 };
