@@ -530,10 +530,9 @@ export default (editor, opts = {}) => {
       type: "footer",
       attributes: {
         id: `map-${Math.random().toString(36).substr(2, 8)}`,
-        class: "bg-section-dark light-text",
+        classes: "bg-section-dark light-text",
       },
-      content: `
-            <div class="mx-auto px-4 pt-16 sm:max-w-xl md:max-w-full md:px-24 lg:max-w-screen-xl lg:px-8">
+      content: `<div class="mx-auto px-4 pt-16 sm:max-w-xl md:max-w-full md:px-24 lg:max-w-screen-xl lg:px-8">
               <div class="row-gap-6 mb-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
                 <div class="">
                   <div class="flex flex-col items-start justify-start flex-shrink-0 items-start">
@@ -542,14 +541,17 @@ export default (editor, opts = {}) => {
 
                   <div class="lg:max-w-sm">
                     <p data-gjs-type="text-content" class=" mt-4 text-sm">
-                      <h5 class="text-xl font-bold tracking-wide"><span class="business-name"></span> </h5>
-                      <p class="business-description">Avora Solutions, based in North Carolina, specializes in virtual staffing, connecting businesses with top-tier global professionals.</p>
+                      </p><h5 class="text-xl font-bold tracking-wide"><span class="business-name">Avora Solutions</span> </h5>
+                      <p class="business-description">Avora Solutions, based in North Carolina, specializes in virtual staffing, connecting businesses with top-tier global professionals.
+
+
+</p>
                     
-                    </p>
+                    <p></p>
                      <p data-gjs-type="text-content" class=" mt-2 text-sm">
-                      <p class="business-hours"></p>
+                      </p><p class="business-hours"></p>
                     
-                    </p>
+                    <p></p>
                   </div>
                 </div>
 
@@ -589,39 +591,40 @@ export default (editor, opts = {}) => {
 
                 <!-- Contact Info -->
                 <div class="space-y-4 text-sm">
-                  <h5 class="text-base font-bold tracking-wide">Need Help ?</h5>
+                  <h5 class="text-base font-bold tracking-wide">Contacts</h5>
 
                   <div class="space-y-4">
                     <div class="flex items-center">
                       <div class="flex h-8 w-8 items-center justify-center rounded-full border">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"></path>
                         </svg>
                       </div>
                       <span class=" ml-3 relative font-medium hover:font-bold transition-all duration-300
           after:content-[''] after:absolute after:left-0 after:bottom-0
           after:w-0 after:h-[2px] after:bg-current
-          after:transition-all after:duration-300 hover:after:w-full"><a href="tel:+19192577724" class="phone-number">+1 (919) 257-7724</a></span>
+          after:transition-all after:duration-300 hover:after:w-full"><a href="tel:+1 (919) 443-5604" class="phone-number">+1 (919) 443-5604</a></span>
                     </div>
                     <div class="flex items-center">
                       <div class="flex h-8 w-8 items-center justify-center rounded-full border">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"></path>
                         </svg>
                       </div>
                       <span class=" ml-3 relative font-medium hover:font-bold transition-all duration-300
           after:content-[''] after:absolute after:left-0 after:bottom-0
           after:w-0 after:h-[2px] after:bg-current
-          after:transition-all after:duration-300 hover:after:w-full"><a href="info.avorasolutions@gmail.com" class="email">info.avorasolutions@gmail.com</a></span>
+          after:transition-all after:duration-300 hover:after:w-full"><a href="mailto:info@avorasolutions.com" class="email">info@avorasolutions.com</a></span>
                     </div>
                     <div class="flex items-center">
                       <div class="flex h-8 w-8 items-center justify-center rounded-full border">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path>
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"></path>
                         </svg>
                       </div>
-                      <span class=" ml-3"><span class="address">Avora Solutions LLC Raleigh–Durham, North Carolina, USA</span></span>
+                      <span class=" ml-3"><span class="address">Avora Solutions LLC
+Raleigh–Durham, North Carolina, USA</span></span>
                     </div>
                   </div>
                 </div>
@@ -633,9 +636,7 @@ export default (editor, opts = {}) => {
                 <p class="text-sm">© <span id="year"></span>  <span class="business-name">Avora Solutions</span> All rights reserved.</p>
                 
               </div>
-            </div>
-
-          `,
+            </div>`,
     },
     media: ``
   });

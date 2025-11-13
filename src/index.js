@@ -508,7 +508,7 @@ editor.Commands.add("update-phone-numbers", {
 
         if (businessdescription) {
           htmlString = htmlString.replace(
-            /<[^>]*class="[^"]*\bbusiness-description\b[^"]*"[^>]*>.*?<\/[^>]*>/gi,
+            /<([a-z0-9]+)[^>]*class="[^"]*\bbusiness-description\b[^"]*"[^>]*>[\s\S]*?<\/\1>/i,
             `<p class="business-description">${businessdescription}</p>${socialLinksDiv}`
           );
         }
