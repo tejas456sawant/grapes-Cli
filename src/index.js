@@ -481,11 +481,6 @@ editor.Commands.add("update-phone-numbers", {
           );
         }
 
-        // Remove old social links and insert after business description
-        htmlString = htmlString.replace(
-          /<div[^>]*class="[^"]*\bsocial-links\b[^"]*"[^>]*>.*?<\/div>/gis,
-          ""
-        );
 
         const socialIconsHTML = generateSocialIconsHTML();
         const socialLinksDiv = `<div class="social-links mt-4">${socialIconsHTML}</div>`;
@@ -509,8 +504,19 @@ editor.Commands.add("update-phone-numbers", {
         if (businessdescription) {
           htmlString = htmlString.replace(
             /<([a-z0-9]+)[^>]*class="[^"]*\bbusiness-description\b[^"]*"[^>]*>[\s\S]*?<\/\1>/i,
-            `<p class="business-description">${businessdescription}</p>${socialLinksDiv}`
+            `<p class="business-description">${businessdescription}</p>`
           );
+        }
+
+         if (allSocialLinksEmpty === false) {
+          const socialIconsHTML = generateSocialIconsHTML();
+          const socialLinksDiv = `<div class="social-links mt-4">${socialIconsHTML}</div>`;
+          
+          // Remove old social links and insert after business description
+            htmlString = htmlString.replace(
+              /<div[^>]*class="[^"]*\bsocial-links\b[^"]*"[^>]*>.*?<\/div>/gis,
+              socialLinksDiv
+            );
         }
 
         return htmlString;
