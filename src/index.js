@@ -508,16 +508,16 @@ editor.Commands.add("update-phone-numbers", {
           );
         }
 
-        //  if (allSocialLinksEmpty === false) {
-        //   const socialIconsHTML = generateSocialIconsHTML();
-        //   const socialLinksDiv = `<div class="social-links mt-4">${socialIconsHTML}</div>`;
+        if (allSocialLinksEmpty === false) {
+          const socialIconsHTML = generateSocialIconsHTML();
+          const socialLinksDiv = `<div class="social-links mt-4">${socialIconsHTML}</div>`;
           
-        //   // Remove old social links and insert after business description
-        //     htmlString = htmlString.replace(
-        //       /<div[^>]*class="[^"]*\bsocial-links\b[^"]*"[^>]*>.*?<\/div>/gis,
-        //       socialLinksDiv
-        //     );
-        // }
+          // Match the entire social-links div INCLUDING nested content
+          htmlString = htmlString.replace(
+            /<div[^>]*class="[^"]*\bsocial-links\b[^"]*"[^>]*>[\s\S]*?<\/div>\s*<\/div>/gi,
+            socialLinksDiv
+          );
+        }
 
         return htmlString;
       } catch (err) {
